@@ -5,7 +5,7 @@ from pyannote.core import Segment
 from google.colab import files
 
 # Hugging Face Token 입력 (화자분리를 위한)
-HUGGINGFACE_TOKEN = "이건 비밀"
+HUGGINGFACE_TOKEN = "이건 비밀 (허깅페이스 토큰)"
 
 # 회의 음성 파일 업로드
 uploaded = files.upload()
