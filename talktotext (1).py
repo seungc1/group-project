@@ -11,6 +11,7 @@ Original file is located at
 !pip install -qq git+https://github.com/openai/whisper.git
 !pip install -qq pyannote.audio
 !pip install -qq ffmpeg-python
+!pip install pydub
 
 import whisper
 import os
