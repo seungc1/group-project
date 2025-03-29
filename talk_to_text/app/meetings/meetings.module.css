@@ -1,0 +1,107 @@
+.container {
+  padding: 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.title {
+  font-size: 2rem;
+  color: #333;
+  margin-bottom: 1rem;
+}
+
+.meetingCount {
+  color: #666;
+  margin-bottom: 2rem;
+}
+
+.meetingsList {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.meetingCard {
+  background: white;
+  border-radius: 8px;
+  padding: 1.5rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.meetingCard:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.meetingTitle {
+  font-size: 1.5rem;
+  color: #333;
+  margin-bottom: 1rem;
+}
+
+.meetingInfo {
+  color: #666;
+}
+
+.meetingInfo p {
+  margin: 0.5rem 0;
+}
+
+.audioSection {
+  margin-top: 1rem;
+}
+
+.audioPlayer {
+  width: 100%;
+  margin-top: 0.5rem;
+}
+
+.loading {
+  text-align: center;
+  padding: 2rem;
+  color: #666;
+}
+
+.error {
+  color: #dc3545;
+  text-align: center;
+  padding: 2rem;
+}
+
+.noMeetings {
+  text-align: center;
+  padding: 2rem;
+  color: #666;
+}
+
+/* 새로 추가된 스타일 */
+.textInfo {
+  margin-top: 1.5rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid #eee;
+}
+
+.transcript {
+  margin-top: 1rem;
+}
+
+.transcriptSegment {
+  margin: 0.8rem 0;
+  line-height: 1.5;
+}
+
+.speaker {
+  font-weight: bold;
+  color: #2c5282;
+  margin-right: 0.5rem;
+}
+
+.text {
+  color: #2d3748;
+}
+
+.expanded {
+  background: #f8f9fa;
+} 
