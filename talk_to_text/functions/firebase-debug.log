@@ -1,0 +1,136 @@
+[debug] [2025-04-03T10:32:01.472Z] ----------------------------------------------------------------------
+[debug] [2025-04-03T10:32:01.473Z] Command:       /usr/local/bin/node /usr/local/bin/firebase deploy --only functions,hosting --debug
+[debug] [2025-04-03T10:32:01.473Z] CLI Version:   13.35.1
+[debug] [2025-04-03T10:32:01.473Z] Platform:      darwin
+[debug] [2025-04-03T10:32:01.474Z] Node Version:  v22.14.0
+[debug] [2025-04-03T10:32:01.474Z] Time:          Thu Apr 03 2025 19:32:01 GMT+0900 (대한민국 표준시)
+[debug] [2025-04-03T10:32:01.474Z] ----------------------------------------------------------------------
+[debug] 
+[debug] [2025-04-03T10:32:01.550Z] Object "/functions" in "firebase.json" has unknown property: {"additionalProperty":"platform"}
+[debug] [2025-04-03T10:32:01.550Z] Field "/functions" in "firebase.json" is possibly invalid: must be array
+[debug] [2025-04-03T10:32:01.550Z] Field "/functions" in "firebase.json" is possibly invalid: must match a schema in anyOf
+[debug] [2025-04-03T10:32:01.552Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2025-04-03T10:32:01.552Z] > authorizing via signed-in user (seungc1114@gmail.com)
+[debug] [2025-04-03T10:32:01.552Z] [iam] checking project talktotext-37f54 for permissions ["cloudfunctions.functions.create","cloudfunctions.functions.delete","cloudfunctions.functions.get","cloudfunctions.functions.list","cloudfunctions.functions.update","cloudfunctions.operations.get","firebase.projects.get","firebasehosting.sites.update"]
+[debug] [2025-04-03T10:32:01.552Z] Checked if tokens are valid: true, expires at: 1743679314266
+[debug] [2025-04-03T10:32:01.552Z] Checked if tokens are valid: true, expires at: 1743679314266
+[debug] [2025-04-03T10:32:01.553Z] >>> [apiv2][query] POST https://cloudresourcemanager.googleapis.com/v1/projects/talktotext-37f54:testIamPermissions [none]
+[debug] [2025-04-03T10:32:01.553Z] >>> [apiv2][(partial)header] POST https://cloudresourcemanager.googleapis.com/v1/projects/talktotext-37f54:testIamPermissions x-goog-quota-user=projects/talktotext-37f54
+[debug] [2025-04-03T10:32:01.553Z] >>> [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects/talktotext-37f54:testIamPermissions {"permissions":["cloudfunctions.functions.create","cloudfunctions.functions.delete","cloudfunctions.functions.get","cloudfunctions.functions.list","cloudfunctions.functions.update","cloudfunctions.operations.get","firebase.projects.get","firebasehosting.sites.update"]}
+[debug] [2025-04-03T10:32:02.412Z] <<< [apiv2][status] POST https://cloudresourcemanager.googleapis.com/v1/projects/talktotext-37f54:testIamPermissions 200
+[debug] [2025-04-03T10:32:02.412Z] <<< [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects/talktotext-37f54:testIamPermissions {"permissions":["cloudfunctions.functions.create","cloudfunctions.functions.delete","cloudfunctions.functions.get","cloudfunctions.functions.list","cloudfunctions.functions.update","cloudfunctions.operations.get","firebase.projects.get","firebasehosting.sites.update"]}
+[debug] [2025-04-03T10:32:02.412Z] Checked if tokens are valid: true, expires at: 1743679314266
+[debug] [2025-04-03T10:32:02.412Z] Checked if tokens are valid: true, expires at: 1743679314266
+[debug] [2025-04-03T10:32:02.413Z] >>> [apiv2][query] POST https://iam.googleapis.com/v1/projects/talktotext-37f54/serviceAccounts/talktotext-37f54@appspot.gserviceaccount.com:testIamPermissions [none]
+[debug] [2025-04-03T10:32:02.413Z] >>> [apiv2][body] POST https://iam.googleapis.com/v1/projects/talktotext-37f54/serviceAccounts/talktotext-37f54@appspot.gserviceaccount.com:testIamPermissions {"permissions":["iam.serviceAccounts.actAs"]}
+[debug] [2025-04-03T10:32:02.773Z] <<< [apiv2][status] POST https://iam.googleapis.com/v1/projects/talktotext-37f54/serviceAccounts/talktotext-37f54@appspot.gserviceaccount.com:testIamPermissions 404
+[debug] [2025-04-03T10:32:02.773Z] <<< [apiv2][body] POST https://iam.googleapis.com/v1/projects/talktotext-37f54/serviceAccounts/talktotext-37f54@appspot.gserviceaccount.com:testIamPermissions {"error":{"code":404,"message":"Unknown service account","status":"NOT_FOUND"}}
+[debug] [2025-04-03T10:32:02.774Z] [functions] service account IAM check errored, deploy may fail: Request to https://iam.googleapis.com/v1/projects/talktotext-37f54/serviceAccounts/talktotext-37f54@appspot.gserviceaccount.com:testIamPermissions had HTTP Error: 404, Unknown service account {"name":"FirebaseError","children":[],"context":{"body":{"error":{"code":404,"message":"Unknown service account","status":"NOT_FOUND"}},"response":{"statusCode":404}},"exit":1,"message":"Request to https://iam.googleapis.com/v1/projects/talktotext-37f54/serviceAccounts/talktotext-37f54@appspot.gserviceaccount.com:testIamPermissions had HTTP Error: 404, Unknown service account","status":404}
+[debug] [2025-04-03T10:32:02.774Z] Checked if tokens are valid: true, expires at: 1743679314266
+[debug] [2025-04-03T10:32:02.774Z] Checked if tokens are valid: true, expires at: 1743679314266
+[debug] [2025-04-03T10:32:02.774Z] >>> [apiv2][query] GET https://firebase.googleapis.com/v1beta1/projects/talktotext-37f54 [none]
+[debug] [2025-04-03T10:32:03.329Z] <<< [apiv2][status] GET https://firebase.googleapis.com/v1beta1/projects/talktotext-37f54 200
+[debug] [2025-04-03T10:32:03.330Z] <<< [apiv2][body] GET https://firebase.googleapis.com/v1beta1/projects/talktotext-37f54 {"projectId":"talktotext-37f54","projectNumber":"682893808651","displayName":"TalkToText","name":"projects/talktotext-37f54","resources":{"hostingSite":"talktotext-37f54"},"state":"ACTIVE","etag":"1_9dae6c76-7cb5-47f4-9cf1-2b6595cc3033"}
+[info] 
+[info] === Deploying to 'talktotext-37f54'...
+[info] 
+[info] i  deploying functions, hosting 
+[debug] [2025-04-03T10:32:03.334Z] Checked if tokens are valid: true, expires at: 1743679314266
+[debug] [2025-04-03T10:32:03.334Z] Checked if tokens are valid: true, expires at: 1743679314266
+[debug] [2025-04-03T10:32:03.334Z] >>> [apiv2][query] GET https://cloudresourcemanager.googleapis.com/v1/projects/talktotext-37f54 [none]
+[debug] [2025-04-03T10:32:03.741Z] <<< [apiv2][status] GET https://cloudresourcemanager.googleapis.com/v1/projects/talktotext-37f54 200
+[debug] [2025-04-03T10:32:03.741Z] <<< [apiv2][body] GET https://cloudresourcemanager.googleapis.com/v1/projects/talktotext-37f54 {"projectNumber":"682893808651","projectId":"talktotext-37f54","lifecycleState":"ACTIVE","name":"TalkToText","labels":{"firebase":"enabled","firebase-core":"disabled"},"createTime":"2025-03-26T07:33:04.098745Z"}
+[info] i  functions: preparing codebase default for deployment 
+[info] i  functions: ensuring required API cloudfunctions.googleapis.com is enabled... 
+[debug] [2025-04-03T10:32:03.742Z] Checked if tokens are valid: true, expires at: 1743679314266
+[debug] [2025-04-03T10:32:03.742Z] Checked if tokens are valid: true, expires at: 1743679314266
+[debug] [2025-04-03T10:32:03.742Z] Checked if tokens are valid: true, expires at: 1743679314266
+[debug] [2025-04-03T10:32:03.742Z] Checked if tokens are valid: true, expires at: 1743679314266
+[info] i  functions: ensuring required API cloudbuild.googleapis.com is enabled... 
+[debug] [2025-04-03T10:32:03.742Z] Checked if tokens are valid: true, expires at: 1743679314266
+[debug] [2025-04-03T10:32:03.742Z] Checked if tokens are valid: true, expires at: 1743679314266
+[info] i  artifactregistry: ensuring required API artifactregistry.googleapis.com is enabled... 
+[debug] [2025-04-03T10:32:03.742Z] Checked if tokens are valid: true, expires at: 1743679314266
+[debug] [2025-04-03T10:32:03.742Z] Checked if tokens are valid: true, expires at: 1743679314266
+[debug] [2025-04-03T10:32:03.743Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/talktotext-37f54/services/cloudfunctions.googleapis.com [none]
+[debug] [2025-04-03T10:32:03.743Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/talktotext-37f54/services/cloudfunctions.googleapis.com x-goog-quota-user=projects/talktotext-37f54
+[debug] [2025-04-03T10:32:03.744Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/talktotext-37f54/services/runtimeconfig.googleapis.com [none]
+[debug] [2025-04-03T10:32:03.744Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/talktotext-37f54/services/runtimeconfig.googleapis.com x-goog-quota-user=projects/talktotext-37f54
+[debug] [2025-04-03T10:32:03.745Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/talktotext-37f54/services/cloudbuild.googleapis.com [none]
+[debug] [2025-04-03T10:32:03.745Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/talktotext-37f54/services/cloudbuild.googleapis.com x-goog-quota-user=projects/talktotext-37f54
+[debug] [2025-04-03T10:32:03.746Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/talktotext-37f54/services/artifactregistry.googleapis.com [none]
+[debug] [2025-04-03T10:32:03.746Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/talktotext-37f54/services/artifactregistry.googleapis.com x-goog-quota-user=projects/talktotext-37f54
+[debug] [2025-04-03T10:32:04.344Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/talktotext-37f54/services/artifactregistry.googleapis.com 200
+[debug] [2025-04-03T10:32:04.344Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/talktotext-37f54/services/artifactregistry.googleapis.com [omitted]
+[info] ✔  artifactregistry: required API artifactregistry.googleapis.com is enabled 
+[debug] [2025-04-03T10:32:04.988Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/talktotext-37f54/services/runtimeconfig.googleapis.com 200
+[debug] [2025-04-03T10:32:04.988Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/talktotext-37f54/services/runtimeconfig.googleapis.com [omitted]
+[debug] [2025-04-03T10:32:04.989Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/talktotext-37f54/services/cloudbuild.googleapis.com 200
+[debug] [2025-04-03T10:32:04.989Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/talktotext-37f54/services/cloudbuild.googleapis.com [omitted]
+[info] ✔  functions: required API cloudbuild.googleapis.com is enabled 
+[debug] [2025-04-03T10:32:05.000Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/talktotext-37f54/services/cloudfunctions.googleapis.com 200
+[debug] [2025-04-03T10:32:05.000Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/talktotext-37f54/services/cloudfunctions.googleapis.com [omitted]
+[info] ✔  functions: required API cloudfunctions.googleapis.com is enabled 
+[debug] [2025-04-03T10:32:05.001Z] Checked if tokens are valid: true, expires at: 1743679314266
+[debug] [2025-04-03T10:32:05.001Z] Checked if tokens are valid: true, expires at: 1743679314266
+[debug] [2025-04-03T10:32:05.001Z] >>> [apiv2][query] GET https://firebase.googleapis.com/v1beta1/projects/talktotext-37f54/adminSdkConfig [none]
+[debug] [2025-04-03T10:32:05.730Z] <<< [apiv2][status] GET https://firebase.googleapis.com/v1beta1/projects/talktotext-37f54/adminSdkConfig 200
+[debug] [2025-04-03T10:32:05.730Z] <<< [apiv2][body] GET https://firebase.googleapis.com/v1beta1/projects/talktotext-37f54/adminSdkConfig {"projectId":"talktotext-37f54","storageBucket":"talktotext-37f54.firebasestorage.app"}
+[debug] [2025-04-03T10:32:05.731Z] Checked if tokens are valid: true, expires at: 1743679314266
+[debug] [2025-04-03T10:32:05.731Z] Checked if tokens are valid: true, expires at: 1743679314266
+[debug] [2025-04-03T10:32:05.731Z] >>> [apiv2][query] GET https://runtimeconfig.googleapis.com/v1beta1/projects/talktotext-37f54/configs [none]
+[debug] [2025-04-03T10:32:06.241Z] <<< [apiv2][status] GET https://runtimeconfig.googleapis.com/v1beta1/projects/talktotext-37f54/configs 200
+[debug] [2025-04-03T10:32:06.241Z] <<< [apiv2][body] GET https://runtimeconfig.googleapis.com/v1beta1/projects/talktotext-37f54/configs {}
+[debug] [2025-04-03T10:32:06.242Z] Validating nodejs source
+[warn] ⚠  functions: Runtime Node.js 18 will be deprecated on 2025-04-30 and will be decommissioned on 2025-10-31, after which you will not be able to deploy without upgrading. Consider upgrading now to avoid disruption. See https://cloud.google.com/functions/docs/runtime-support for full details on the lifecycle policy 
+[warn] ⚠  functions: package.json indicates an outdated version of firebase-functions. Please upgrade using npm install --save firebase-functions@latest in your functions directory. 
+[warn] ⚠  functions: Please note that there will be breaking changes when you upgrade. 
+[debug] [2025-04-03T10:32:06.643Z] > [functions] package.json contents: {
+  "name": "functions",
+  "description": "Cloud Functions for Firebase",
+  "main": "index.js",
+  "engines": {
+    "node": "18"
+  },
+  "scripts": {
+    "lint": "eslint .",
+    "serve": "firebase emulators:start --only functions",
+    "shell": "firebase functions:shell",
+    "start": "npm run shell",
+    "deploy": "firebase deploy --only functions",
+    "logs": "firebase functions:log"
+  },
+  "dependencies": {
+    "firebase-admin": "^12.6.0",
+    "firebase-functions": "^4.4.1",
+    "next": "^15.2.4"
+  },
+  "devDependencies": {
+    "eslint": "^8.15.0",
+    "eslint-config-google": "^0.14.0",
+    "firebase-functions-test": "^3.1.0"
+  },
+  "private": true
+}
+[debug] [2025-04-03T10:32:06.643Z] Building nodejs source
+[info] i  functions: Loading and analyzing source code for codebase default to determine what to deploy 
+[info] i  functions: You are using a version of firebase-functions SDK (4.9.0) that does not have support for the newest Firebase Extensions features. Please update firebase-functions SDK to >=5.1.0 to use them correctly 
+[debug] [2025-04-03T10:32:06.644Z] Could not find functions.yaml. Must use http discovery
+[debug] [2025-04-03T10:32:06.648Z] Found firebase-functions binary at '/Users/user/group-project/group-project/talk_to_text/functions/node_modules/.bin/firebase-functions'
+[info] Serving at port 8674
+
+[debug] [2025-04-03T10:32:06.905Z] Got response from /__/functions.yaml {"endpoints":{"nextApp":{"platform":"gcfv1","availableMemoryMb":null,"timeoutSeconds":null,"minInstances":null,"maxInstances":null,"ingressSettings":null,"serviceAccountEmail":null,"vpc":null,"httpsTrigger":{},"entryPoint":"nextApp"}},"specVersion":"v1alpha1","requiredAPIs":[]}
+[info] i  functions: preparing functions directory for uploading... 
+[info] i  functions: packaged /Users/user/group-project/group-project/talk_to_text/functions (77.68 KB) for uploading 
+[debug] [2025-04-03T10:32:10.953Z] Checked if tokens are valid: true, expires at: 1743679314266
+[debug] [2025-04-03T10:32:10.953Z] Checked if tokens are valid: true, expires at: 1743679314266
+[debug] [2025-04-03T10:32:10.953Z] >>> [apiv2][query] GET https://cloudfunctions.googleapis.com/v1/projects/talktotext-37f54/locations/-/functions [none]
+[debug] [2025-04-03T10:32:11.730Z] <<< [apiv2][status] GET https://cloudfunctions.googleapis.com/v1/projects/talktotext-37f54/locations/-/functions 200
+[debug] [2025-04-03T10:32:11.730Z] <<< [apiv2][body] GET https://cloudfunctions.googleapis.com/v1/projects/talktotext-37f54/locations/-/functions {}
+[debug] [2025-04-03T10:32:11.730Z] Checked if tokens are valid: true, expires at: 1743679314266
+[debug] [2025-04-03T10:32:11.731Z] Checked if tokens are valid: true, expires at: 1743679314266
+[debug] [2025-04-03T10:32:11.731Z] >>> [apiv2][query] GET https://cloudfunctions.googleapis.com/v2/projects/talktotext-37f54/locations/-/functions filter=environment%3D%22GEN_2%22
+[debug] [2025-04-03T10:32:13.056Z] <<< [apiv2][status] GET https://cloudfunctions.googleapis.com/v2/projects/talktotext-37f54/locations/-/functions 200
+[debug] [2025-04-03T10:32:13.057Z] <<< [apiv2][body] GET https://cloudfunctions.googleapis.com/v2/projects/talktotext-37f54/locations/-/functions {"functions":[{"name":"projects/talktotext-37f54/locations/us-central1/functions/nextApp","buildConfig":{"build":"projects/682893808651/locations/us-central1/builds/419de502-06f4-46dc-9fc8-a4bf69cdc375","runtime":"nodejs22","entryPoint":"nextApp","source":{"storageSource":{"bucket":"gcf-v2-sources-682893808651-us-central1","object":"nextApp/function-source.zip","generation":"1743165446817153"}},"environmentVariables":{"GOOGLE_NODE_RUN_SCRIPTS":""},"dockerRepository":"projects/talktotext-37f54/locations/us-central1/repositories/gcf-artifacts","sourceProvenance":{"resolvedStorageSource":{"bucket":"gcf-v2-sources-682893808651-us-central1","object":"nextApp/function-source.zip","generation":"1743165446817153"}},"dockerRegistry":"ARTIFACT_REGISTRY","serviceAccount":"projects/talktotext-37f54/serviceAccounts/682893808651-compute@developer.gserviceaccount.com","automaticUpdatePolicy":{}},"serviceConfig":{"service":"projects/talktotext-37f54/locations/us-central1/services/nextapp","timeoutSeconds":60,"environmentVariables":{"FIREBASE_CONFIG":"{\"projectId\":\"talktotext-37f54\",\"storageBucket\":\"talktotext-37f54.firebasestorage.app\"}","GCLOUD_PROJECT":"talktotext-37f54","EVENTARC_CLOUD_EVENT_SOURCE":"projects/talktotext-37f54/locations/us-central1/services/nextApp","FUNCTION_TARGET":"nextApp","LOG_EXECUTION_ID":"true"},"maxInstanceCount":100,"ingressSettings":"ALLOW_ALL","uri":"https://nextapp-fgvi2gkdtq-uc.a.run.app","serviceAccountEmail":"682893808651-compute@developer.gserviceaccount.com","availableMemory":"256Mi","allTrafficOnLatestRevision":true,"revision":"nextapp-00001-zuf","maxInstanceRequestConcurrency":80,"availableCpu":"1"},"state":"ACTIVE","updateTime":"2025-03-28T12:39:32.354283426Z","labels":{"firebase-functions-hash":"c87d146c445f8f055ae95db1b93fc43af29c0802","deployment-tool":"cli-firebase"},"environment":"GEN_2","url":"https://us-central1-talktotext-37f54.cloudfunctions.net/nextApp","createTime":"2025-03-28T12:37:27.029216712Z","satisfiesPzi":true}]}
+[error] 
+[error] Error: Cannot set CPU on the functions nextApp because they are GCF gen 1
