@@ -13,8 +13,19 @@ from flask_cors import CORS
 from collections import Counter
 import re
 import firebase_admin
-from firebase_admin import credentials, firestore
+from firebase_admin import credentials, firestore, storage
 from konlpy.tag import Okt  # 한국어 키워드 추출용 추가
+
+
+'''
+- Flask 기반의 백엔드 API 서버
+- 음성 파일을 받아서 Whisper로 텍스트로 변환
+- Pyannote로 화자 분리
+- 키워드 추출과 회의록 요약까지 수행
+- 결과를 Firestore에 저장
+- 회의록 요약은 .txt파일로 만들어 Firebase Storage에 저장한 뒤 URL로 반환해주는 구조
+'''
+
 
 # SSL 인증서 검증 비활성화
 ssl._create_default_https_context = ssl._create_unverified_context
@@ -40,7 +51,9 @@ UPSTAGE_API_KEY =os.getenv("UPSTAGE_API_KEY")
 
 # Firebase 인증 및 Firestore 클라이언트 초기화
 cred = credentials.Certificate("firebase_key.json")
-firebase_admin.initialize_app(cred)
+firebase_admin.initialize_app(cred, {
+    "storageBucket": "your-project-id.appspot.com"
+})
 db = firestore.client()
 
 # Whisper 모델 로드
@@ -168,21 +181,30 @@ def process_audio(audio_path):
                 "end": float(segment["end"])      # 종료 시간
             })
 
-        # 6. 키워드 추출 및 요약
-        keywords = extract_keywords(full_text)  # 주요 키워드 추출
-        summary = summarize_text(full_text)     # 전체 내용 요약
+        keywords = extract_keywords(full_text)
+        summary = summarize_text(full_text)
+        # 요약 결과를 텍스트 파일로 저장 및 Firebase Storage에 업로드
+        summary_filename = f"{os.path.splitext(os.path.basename(audio_path))[0]}_summary.txt"
+        with open(summary_filename, "w", encoding="utf-8") as sf:
+            sf.write(summary)
 
-        # 7. Firestore에 결과 저장
+        # Firebase Storage에 업로드
+        bucket = storage.bucket()
+        blob = bucket.blob(f"summaries/{summary_filename}")
+        blob.upload_from_filename(summary_filename)
+        blob.make_public()
+        summary_url = blob.public_url
+
+
         save_to_firestore({
-            "transcript": transcript,  # 화자별 발화 내용
-            "keywords": keywords,      # 추출된 키워드
-            "summary": summary,        # 요약된 내용
-            "text": full_text         # 전체 텍스트
+            "transcript": transcript,
+            "keywords": keywords,
+            "summary": summary,
+        "summaryDownloadUrl": summary_url,
+            "text": full_text
         })
 
-        # 8. 결과 반환
-        return transcript, keywords, summary
-        
+        return transcript, keywords, summary, summary_url
     except Exception as e:
         logger.error(f"오디오 처리 실패: {e}")
         raise
@@ -200,7 +222,7 @@ def process_audio_endpoint():
         if not audio_path:
             return jsonify({"success": False, "error": "오디오 다운로드 실패"}), 400
 
-        transcript, keywords, summary = process_audio(audio_path)
+        transcript, keywords, summary, summary_url = process_audio(audio_path)
 
         os.unlink(audio_path)
 
@@ -208,7 +230,8 @@ def process_audio_endpoint():
             "success": True,
             "transcript": transcript,
             "keywords": keywords,
-            "summary": summary
+            "summary": summary,
+        "summaryDownloadUrl": summary_url
         })
     except Exception as e:
         logger.error(f"처리 오류: {e}")
