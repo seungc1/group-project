@@ -1,4 +1,4 @@
-{
+
   "hosting": {
     "public": "public",
     "ignore": [
@@ -9,7 +9,7 @@
     "rewrites": [
       {
         "source": "**",
-        "function": "nextApp"
+        "function": "/index.html"
       }
     ]
   },
@@ -17,3 +17,4 @@
     "source": "functions"
   }
 }
+{
