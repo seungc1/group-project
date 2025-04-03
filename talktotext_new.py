@@ -67,14 +67,23 @@ def download_audio(url):
 
 # 오디오 파일을 일정 길이(1분)로 분할
 def chunk_audio(audio_path, chunk_length_ms=60000):
+    # 1. AudioSegment를 사용하여 오디오 파일 로드
     audio = AudioSegment.from_file(audio_path)
+    # 2. chunks 디렉토리 생성 (없으면 생성, 있으면 무시)
     os.makedirs("chunks", exist_ok=True)
+    # 3. 청크 파일들의 경로를 저장할 리스트
     chunk_paths = []
+    # 4. 오디오를 chunk_length_ms(기본값 60000ms = 1분) 단위로 분할
     for i in range(0, len(audio), chunk_length_ms):
+        # 현재 위치부터 chunk_length_ms만큼의 오디오 추출
         chunk = audio[i:i + chunk_length_ms]
+        # 청크 파일 경로 생성 (예: chunks/chunk_1.wav, chunks/chunk_2.wav, ...)
         chunk_path = f"chunks/chunk_{i//chunk_length_ms + 1}.wav"
+        # 청크를 WAV 형식으로 저장
         chunk.export(chunk_path, format="wav")
+        # 저장된 청크 파일의 경로를 리스트에 추가
         chunk_paths.append(chunk_path)
+    # 5. 모든 청크 파일의 경로 반환
     return chunk_paths
 
 # 한국어 키워드 추출 함수
@@ -120,45 +129,60 @@ def save_to_firestore(data):
 # 오디오 처리 전체 파이프라인 함수
 def process_audio(audio_path):
     try:
-        segments_all = []
-        full_text = ""
+        # 1. 초기화
+        segments_all = []  # 모든 음성 세그먼트를 저장할 리스트
+        full_text = ""     # 전체 텍스트를 저장할 변수
+        
+        # 2. 오디오 파일을 청크로 분할
         chunk_paths = chunk_audio(audio_path)
         logger.info(f"총 {len(chunk_paths)}개의 청크 생성됨")
 
+        # 3. 각 청크별 음성 인식 처리
         for chunk_path in chunk_paths:
             logger.info(f"Whisper 처리 중: {chunk_path}")
+            # Whisper 모델로 음성을 텍스트로 변환
             result = model.transcribe(chunk_path)
+            # 세그먼트와 텍스트 저장
             segments_all.extend(result["segments"])
             full_text += result["text"].strip() + "\n"
 
+        # 4. 화자 분리 처리
         diarization = pipeline(audio_path)
 
+        # 5. 음성 인식 결과와 화자 분리 결과 통합
         transcript = []
         for segment in segments_all:
+            # 각 세그먼트의 중간 시점 계산
             mid = (segment["start"] + segment["end"]) / 2
             speaker_label = "Unknown"
+            # 해당 시점의 화자 찾기
             for turn, _, speaker in diarization.itertracks(yield_label=True):
                 if turn.start <= mid <= turn.end:
                     speaker_label = speaker
                     break
+            # 결과 저장
             transcript.append({
-                "speaker": speaker_label,
-                "text": segment["text"].strip(),
-                "start": float(segment["start"]),
-                "end": float(segment["end"])
+                "speaker": speaker_label,        # 화자
+                "text": segment["text"].strip(), # 발화 내용
+                "start": float(segment["start"]), # 시작 시간
+                "end": float(segment["end"])      # 종료 시간
             })
 
-        keywords = extract_keywords(full_text)
-        summary = summarize_text(full_text)
+        # 6. 키워드 추출 및 요약
+        keywords = extract_keywords(full_text)  # 주요 키워드 추출
+        summary = summarize_text(full_text)     # 전체 내용 요약
 
+        # 7. Firestore에 결과 저장
         save_to_firestore({
-            "transcript": transcript,
-            "keywords": keywords,
-            "summary": summary,
-            "text": full_text
+            "transcript": transcript,  # 화자별 발화 내용
+            "keywords": keywords,      # 추출된 키워드
+            "summary": summary,        # 요약된 내용
+            "text": full_text         # 전체 텍스트
         })
 
+        # 8. 결과 반환
         return transcript, keywords, summary
+        
     except Exception as e:
         logger.error(f"오디오 처리 실패: {e}")
         raise
