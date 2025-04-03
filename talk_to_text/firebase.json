@@ -1,6 +1,11 @@
-
+{
+  "functions": {
+    "source": "functions",
+    "runtime": "nodejs18",             
+    "platform": "gcfv2"                
+  },
   "hosting": {
-    "public": "public",
+    "public": ".next",
     "ignore": [
       "firebase.json",
       "**/.*",
@@ -9,12 +14,8 @@
     "rewrites": [
       {
         "source": "**",
-        "function": "/index.html"
+        "function": "nextApp"
       }
     ]
-  },
-  "functions": {
-    "source": "functions"
   }
 }
-{
