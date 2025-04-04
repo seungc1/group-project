@@ -39,13 +39,13 @@ CORS(app)
 HUGGINGFACE_TOKEN = "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"
 
 # Upstage API Key 설정
-UPSTAGE_API_KEY = os.getenv("UPSTAGE_API_KEY")
+UPSTAGE_API_KEY = "up_sH6XQ36Gg4Sgu1iso3fin3jWYtBFL"
 
 # Firebase 인증 및 Firestore 클라이언트 초기화
 try:
     cred = credentials.Certificate("firebase_key.json")
     firebase_admin.initialize_app(cred, {
-        "storageBucket": "your-project-id.appspot.com"
+        "storageBucket": "talktotext-37f54.firebasestorage.app"
     })
     db = firestore.client()
     logger.info("Firebase 초기화 완료")

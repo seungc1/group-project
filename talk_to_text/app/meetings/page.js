@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { db } from '@/lib/firebase';
-import { collection, getDocs } from 'firebase/firestore';
+import { collection, getDocs, addDoc } from 'firebase/firestore';
 import styles from './meetings.module.css';
 
 export default function MeetingsPage() {
@@ -10,6 +10,9 @@ export default function MeetingsPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [selectedMeeting, setSelectedMeeting] = useState(null);
+  const [audioUrl, setAudioUrl] = useState('');
+  const [isProcessing, setIsProcessing] = useState(false);
+  const [processingError, setProcessingError] = useState(null);
 
   useEffect(() => {
     const fetchMeetings = async () => {
@@ -33,6 +36,9 @@ export default function MeetingsPage() {
             participantName: data.participantName || [],
             audioUrl: data.audioUrl || null,
             textinfo: data.textinfo || [],
+            keywords: data.keywords || [],
+            summary: data.summary || '',
+            summaryDownloadUrl: data.summaryDownloadUrl || '',
             isExpanded: false
           };
         });
@@ -62,6 +68,66 @@ export default function MeetingsPage() {
       ...meeting,
       isExpanded: meeting.id === meetingId ? !meeting.isExpanded : false
     })));
+  };
+
+  const handleProcessAudio = async () => {
+    if (!audioUrl) {
+      setProcessingError('음성 파일 URL을 입력해주세요.');
+      return;
+    }
+
+    setIsProcessing(true);
+    setProcessingError(null);
+
+    try {
+      const response = await fetch('/api/process-audio', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ audioUrl }),
+      });
+
+      const data = await response.json();
+      if (data.success) {
+        // Firestore에 저장
+        const meetingData = {
+          title: '새 회의록',
+          createdAt: new Date(),
+          participants: 0,
+          participantName: [],
+          audioUrl: audioUrl,
+          textinfo: data.transcript,
+          keywords: data.keywords,
+          summary: data.summary,
+          summaryDownloadUrl: data.summaryDownloadUrl
+        };
+
+        const docRef = await addDoc(collection(db, 'meetings'), meetingData);
+        console.log('Meeting saved with ID:', docRef.id);
+
+        // 회의록 목록 새로고침
+        const meetingsCollection = collection(db, 'meetings');
+        const meetingsSnapshot = await getDocs(meetingsCollection);
+        const meetingsData = meetingsSnapshot.docs.map(doc => ({
+          id: doc.id,
+          ...doc.data(),
+          isExpanded: false
+        }));
+        meetingsData.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+        setMeetings(meetingsData);
+
+        // 입력 필드 초기화
+        setAudioUrl('');
+      } else {
+        setProcessingError(data.error || '처리 중 오류가 발생했습니다.');
+      }
+    } catch (error) {
+      console.error('Processing failed:', error);
+      setProcessingError('서버 연결에 실패했습니다.');
+    } finally {
+      setIsProcessing(false);
+    }
   };
 
   if (loading) {
