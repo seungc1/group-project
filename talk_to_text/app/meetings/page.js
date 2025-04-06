@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { db } from '@/lib/firebase';
 import { collection, getDocs, query, orderBy } from 'firebase/firestore';
-import styles from './meetings.module.css';
+import styles from '../page.module.css';
 
 export default function MeetingsList() {
   const router = useRouter();
@@ -32,23 +32,52 @@ export default function MeetingsList() {
   }, []);
 
   return (
-    <div className={styles.container}>
-      <nav className={styles.navigationRail}>
-        <div className={styles.navItems}>
-          <div className={styles.navItem} onClick={() => router.push('/create')}>
+    <div className={styles['examples-upcoming-web']}>
+      <nav className={styles['navigation-rail']}>
+        <div className={styles['nav-items']}>
+          <div 
+            className={styles['nav-item']} 
+            onClick={() => router.push('/')}
+            style={{ cursor: 'pointer' }}
+          >
+            <div className={styles.icon}>🏠</div>
+            <span>홈</span>
+          </div>
+          <div 
+            className={styles['nav-item']} 
+            onClick={() => router.push('/create')}
+            style={{ cursor: 'pointer' }}
+          >
             <div className={styles.icon}>🎙️</div>
             <span>회의 생성</span>
           </div>
-          <div className={styles.navItem} onClick={() => router.push('/meetings')}>
+          <div className={styles['nav-item']}>
+            <div className={styles.icon}>🎤</div>
+            <span>음성 녹음</span>
+          </div>
+          <div 
+            className={styles['nav-item']}
+            onClick={() => router.push('/meetings')}
+            style={{ cursor: 'pointer' }}
+          >
             <div className={styles.icon}>📋</div>
-            <span>회의록 목록</span>
+            <span>전체 회의록</span>
+          </div>
+          <div className={styles['nav-item']}>
+            <div className={styles.icon}>⚙️</div>
+            <span>미정</span>
           </div>
         </div>
       </nav>
 
-      <main className={styles.mainContent}>
+      <main className={styles['main-content']}>
         <header className={styles.header}>
           <h1>회의록 목록</h1>
+          <div className={styles['header-actions']}>
+            <button className={styles['icon-button']}>📎</button>
+            <button className={styles['icon-button']}>📅</button>
+            <button className={styles['icon-button']}>⋮</button>
+          </div>
         </header>
 
         {loading ? (

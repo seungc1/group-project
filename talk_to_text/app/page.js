@@ -108,95 +108,91 @@ export default function Home() { //메인 컴포넌트 선어
 
   //UI 렌더링
   return (
-    <div className={styles.container}>
-      {/* 왼쪽 사이드바 */}
-      <nav className={styles.sidebar}>
-        <div className={styles.sidebarItem}>
-          <span className={styles.icon}>⭐</span>
-          <span>회의 생성</span>
-        </div>
-        <div className={styles.sidebarItem}>
-          <span className={styles.icon}>⭐</span>
-          <span>회의록 목록</span>
-        </div>
-        <div className={styles.sidebarItem}>
-          <span className={styles.icon}>⭐</span>
-          <span>전체 노트</span>
-        </div>
-        <div className={styles.sidebarItem}>
-          <span className={styles.icon}>⭐</span>
-          <span>설정</span>
+    <div className={styles['examples-upcoming-web']}>
+      {/* 왼쪽 네비게이션 레일 */}
+      <nav className={styles['navigation-rail']}>
+        <div className={styles['nav-items']}>
+          <div 
+            className={styles['nav-item']} 
+            onClick={() => router.push('/')}
+            style={{ cursor: 'pointer' }}
+          >
+            <div className={styles.icon}>🏠</div>
+            <span>홈</span>
+          </div>
+          <div 
+            className={styles['nav-item']} 
+            onClick={() => router.push('/create')}
+            style={{ cursor: 'pointer' }}
+          >
+            <div className={styles.icon}>🎙️</div>
+            <span>회의 생성</span>
+          </div>
+          <div className={styles['nav-item']}>
+            <div className={styles.icon}>🎤</div>
+            <span>음성 녹음</span>
+          </div>
+          <div 
+            className={styles['nav-item']}
+            onClick={() => router.push('/meetings')}
+            style={{ cursor: 'pointer' }}
+          >
+            <div className={styles.icon}>📋</div>
+            <span>전체 회의록</span>
+          </div>
+          <div className={styles['nav-item']}>
+            <div className={styles.icon}>⚙️</div>
+            <span>미정</span>
+          </div>
         </div>
       </nav>
 
       {/* 메인 컨텐츠 */}
-      <main className={styles.mainContent}>
+      <main className={styles['main-content']}>
         {/* 상단 헤더 */}
         <header className={styles.header}>
-          <h1>회의록 관리</h1>
-          <div className={styles.headerActions}>
-            <button className={styles.iconButton}>📎</button>
-            <button className={styles.iconButton}>📅</button>
-            <button className={styles.iconButton}>⋮</button>
+          <h1>Title</h1>
+          <div className={styles['header-actions']}>
+            <button className={styles['icon-button']}>📎</button>
+            <button className={styles['icon-button']}>📅</button>
+            <button className={styles['icon-button']}>⋮</button>
           </div>
         </header>
 
-        {/* 회의록 생성 섹션 */}
-        <section className={styles.section}>
-          <div className={styles.card}>
-            <h2>회의록 생성</h2>
-            <p>음성 파일을 업로드하여 회의록을 자동으로 생성합니다.</p>
-            <button 
-              className={styles.button}
-              onClick={() => router.push('/create')}
-            >
-              회의록 생성하기
-            </button>
-          </div>
-
-          <div className={styles.card}>
-            <h2>회의록 목록</h2>
-            <p>생성된 모든 회의록을 확인하고 관리합니다.</p>
-            <button 
-              className={styles.button}
-              onClick={() => router.push('/meetings')}
-            >
-              회의록 목록 보기
-            </button>
-          </div>
+        {/* 캐러셀 섹션 */}
+        <section className={styles.carousel}>
+          <div className={styles['carousel-item']}></div>
+          <div className={styles['carousel-item']}></div>
+          <div className={styles['carousel-item']}></div>
+          <div className={styles['carousel-item']}></div>
         </section>
 
         {/* 최근 회의 및 전체 노트 섹션 */}
-        <section className={styles.section}>
+        <section className={styles['recent-meetings']}>
           <h2>최근 회의 및 전체 노트?</h2>
-          <div className={styles.meetingList}>
-            <div className={styles.meetingItem}>
-              <div className={styles.meetingIcon}></div>
-              <div className={styles.meetingContent}>
+          <div className={styles['meeting-list']}>
+            <div className={styles['meeting-item']}>
+              <div className={styles.thumbnail}></div>
+              <div className={styles.content}>
                 <h3>회의 이름</h3>
                 <p>회의 간단 설명 ex) 노트 이름, 회의 날짜, 간단 요약?, 참석자</p>
               </div>
-              <button className={styles.moreButton}>⋮</button>
+              <button className={styles['more-button']}>⋮</button>
             </div>
-            <div className={styles.meetingItem}>
-              <div className={styles.meetingIcon}></div>
-              <div className={styles.meetingContent}>
+            <div className={styles['meeting-item']}>
+              <div className={styles.thumbnail}></div>
+              <div className={styles.content}>
                 <h3>회의 이름</h3>
                 <p>회의 간단 설명 ex) 노트 이름, 회의 날짜, 간단 요약?, 참석자</p>
               </div>
-              <button className={styles.moreButton}>⋮</button>
+              <button className={styles['more-button']}>⋮</button>
             </div>
           </div>
         </section>
 
         {/* Floating Action Button */}
-        <button 
-          className={styles.fab}
-          onClick={() => router.push('/create')}
-        >
-          +
-        </button>
+        <button className={styles.fab}>+</button>
       </main>
     </div>
   );
-}
+};
