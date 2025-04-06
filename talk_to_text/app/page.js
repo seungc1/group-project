@@ -1,7 +1,7 @@
 'use client'; //Next.js 13+ 클라이언트 컴포넌트 선언
 
 //상태 관리
-import { useState } from 'react'; //React의 상태 관리 훅
+import { useState, useEffect } from 'react'; //React의 상태 관리 훅
 
 //firebase 설정
 import { db, storage } from '@/lib/firebase'; //firebase 설정 파일에서 db와 storage 가져오기
@@ -10,6 +10,7 @@ import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 
 //라우팅
 import { useRouter } from 'next/navigation';
+import styles from './page.module.css';
 
 export default function Home() { //메인 컴포넌트 선어
   const router = useRouter(); //페이지 이동을 위한 라우터 객체
@@ -107,89 +108,95 @@ export default function Home() { //메인 컴포넌트 선어
 
   //UI 렌더링
   return (
-    <main style={{ padding: 32 }}> //메인 컨테이너
-    {/* 헤더 섹션 */}
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
-        <h1>🎙️ 회의록 생성</h1>
-        {/* 회의록 목록 보기 버튼 */}
-        <button
-          onClick={() => router.push('/meetings')}
-          style={{
-            padding: '10px 20px',
-            backgroundColor: '#4CAF50',
-            color: 'white',
-            border: 'none',
-            borderRadius: '4px',
-            cursor: 'pointer',
-            fontSize: '1rem'
-          }}
-        >
-          회의록 목록 보기
-        </button>
-      </div>
-
-      {/* 회의록 생성 폼(입력) */}
-      <div style={{ marginBottom: 20 }}>
-        {/* 재목 입력 필드 */}
-        <div style={{ marginBottom: 10 }}>
-          <label>제목:</label>
-          <input
-            type="text"
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-            style={{ marginLeft: 10 }}
-          />
+    <div className={styles.container}>
+      {/* 왼쪽 사이드바 */}
+      <nav className={styles.sidebar}>
+        <div className={styles.sidebarItem}>
+          <span className={styles.icon}>⭐</span>
+          <span>회의 생성</span>
         </div>
-
-        {/* 참석자 수 입력 필드 */}
-        <div style={{ marginBottom: 10 }}>
-          <label>참석자 수:</label>
-          <input
-            type="number"
-            value={participants}
-            onChange={(e) => setParticipants(e.target.value)}
-            style={{ marginLeft: 10 }}
-          />
+        <div className={styles.sidebarItem}>
+          <span className={styles.icon}>⭐</span>
+          <span>회의록 목록</span>
         </div>
-
-        {/* 참석자 이름 입력 필드 */}
-        <div style={{ marginBottom: 10 }}>
-          <label>참석자 이름 (쉼표로 구분):</label>
-          <input
-            type="text"
-            value={participantNames}
-            onChange={(e) => setParticipantNames(e.target.value)}
-            style={{ marginLeft: 10 }}
-          />
+        <div className={styles.sidebarItem}>
+          <span className={styles.icon}>⭐</span>
+          <span>전체 노트</span>
         </div>
-
-        {/* 파일 업로드 필드 */}
-        <div style={{ marginBottom: 10 }}>
-          <label>음성 파일:</label>
-          <input
-            type="file"
-            accept="audio/*" //오디오 파일만 업로드 가능
-            onChange={(e) => setFile(e.target.files[0])}
-            style={{ marginLeft: 10 }}
-          />
+        <div className={styles.sidebarItem}>
+          <span className={styles.icon}>⭐</span>
+          <span>설정</span>
         </div>
+      </nav>
 
-        {/* 저장 버튼 */}
+      {/* 메인 컨텐츠 */}
+      <main className={styles.mainContent}>
+        {/* 상단 헤더 */}
+        <header className={styles.header}>
+          <h1>회의록 관리</h1>
+          <div className={styles.headerActions}>
+            <button className={styles.iconButton}>📎</button>
+            <button className={styles.iconButton}>📅</button>
+            <button className={styles.iconButton}>⋮</button>
+          </div>
+        </header>
+
+        {/* 회의록 생성 섹션 */}
+        <section className={styles.section}>
+          <div className={styles.card}>
+            <h2>회의록 생성</h2>
+            <p>음성 파일을 업로드하여 회의록을 자동으로 생성합니다.</p>
+            <button 
+              className={styles.button}
+              onClick={() => router.push('/create')}
+            >
+              회의록 생성하기
+            </button>
+          </div>
+
+          <div className={styles.card}>
+            <h2>회의록 목록</h2>
+            <p>생성된 모든 회의록을 확인하고 관리합니다.</p>
+            <button 
+              className={styles.button}
+              onClick={() => router.push('/meetings')}
+            >
+              회의록 목록 보기
+            </button>
+          </div>
+        </section>
+
+        {/* 최근 회의 및 전체 노트 섹션 */}
+        <section className={styles.section}>
+          <h2>최근 회의 및 전체 노트?</h2>
+          <div className={styles.meetingList}>
+            <div className={styles.meetingItem}>
+              <div className={styles.meetingIcon}></div>
+              <div className={styles.meetingContent}>
+                <h3>회의 이름</h3>
+                <p>회의 간단 설명 ex) 노트 이름, 회의 날짜, 간단 요약?, 참석자</p>
+              </div>
+              <button className={styles.moreButton}>⋮</button>
+            </div>
+            <div className={styles.meetingItem}>
+              <div className={styles.meetingIcon}></div>
+              <div className={styles.meetingContent}>
+                <h3>회의 이름</h3>
+                <p>회의 간단 설명 ex) 노트 이름, 회의 날짜, 간단 요약?, 참석자</p>
+              </div>
+              <button className={styles.moreButton}>⋮</button>
+            </div>
+          </div>
+        </section>
+
+        {/* Floating Action Button */}
         <button 
-          onClick={handleUpload}
-          disabled={processing} // 처리 중일 때 비활성화
-          style={{
-            padding: '10px 20px',
-            backgroundColor: processing ? '#ccc' : '#4a90e2',
-            color: 'white',
-            border: 'none',
-            borderRadius: '4px',
-            cursor: processing ? 'not-allowed' : 'pointer'
-          }}
+          className={styles.fab}
+          onClick={() => router.push('/create')}
         >
-          {processing ? '처리 중...' : '회의록 저장'}
+          +
         </button>
-      </div>
-    </main>
+      </main>
+    </div>
   );
 }
