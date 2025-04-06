@@ -4,7 +4,7 @@ export async function POST(request) {
   try {
     console.log('Audio processing request received');
     
-    const { audioUrl } = await request.json();
+    const { audioUrl, docId } = await request.json();
     
     if (!audioUrl) {
       console.error('No audio URL provided');
@@ -14,7 +14,15 @@ export async function POST(request) {
       );
     }
 
-    console.log('Sending request to Python server:', audioUrl);
+    if (!docId) {
+      console.error('No document ID provided');
+      return NextResponse.json(
+        { success: false, error: '문서 ID가 필요합니다' },
+        { status: 400 }
+      );
+    }
+
+    console.log('Sending request to Python server:', audioUrl, docId);
     
     // Python 서버로 요청 전달
     const response = await fetch('http://127.0.0.1:5000/process-audio', {
@@ -22,7 +30,7 @@ export async function POST(request) {
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ audioUrl })
+      body: JSON.stringify({ audioUrl, docId })
     });
     
     console.log('Python server response status:', response.status);

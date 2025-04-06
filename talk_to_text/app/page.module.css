@@ -615,3 +615,124 @@ a.secondary {
 .viewButton:hover {
   background: #357abd;
 }
+
+/* 회의록 상세 페이지 스타일 */
+.meetingDetail {
+  padding: 20px;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.meetingHeader {
+  margin-bottom: 24px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid #eee;
+}
+
+.meetingHeader h2 {
+  font-size: 24px;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 12px;
+}
+
+.meetingMeta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  color: #666;
+  font-size: 14px;
+}
+
+.meetingMeta p {
+  margin: 0;
+}
+
+.summarySection, .keywordsSection, .transcriptSection, .audioSection {
+  margin-bottom: 32px;
+  padding: 20px;
+  background: #f9f9f9;
+  border-radius: 8px;
+}
+
+.summarySection h3, .keywordsSection h3, .transcriptSection h3, .audioSection h3 {
+  font-size: 18px;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 16px;
+}
+
+.summaryContent {
+  line-height: 1.6;
+  color: #444;
+  white-space: pre-wrap;
+}
+
+.downloadLink {
+  display: inline-block;
+  margin-top: 12px;
+  padding: 8px 16px;
+  background: #0070f3;
+  color: white;
+  border-radius: 4px;
+  text-decoration: none;
+  font-size: 14px;
+  transition: background 0.2s;
+}
+
+.downloadLink:hover {
+  background: #0060df;
+}
+
+.keywordsList {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.keyword {
+  padding: 6px 12px;
+  background: #e0e0e0;
+  border-radius: 16px;
+  font-size: 14px;
+  color: #333;
+}
+
+.transcriptContent {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.transcriptSegment {
+  display: flex;
+  gap: 12px;
+  padding: 12px;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.speaker {
+  font-weight: 600;
+  color: #0070f3;
+  min-width: 80px;
+}
+
+.text {
+  flex: 1;
+  line-height: 1.5;
+}
+
+.audioPlayer {
+  width: 100%;
+  margin-top: 8px;
+}
+
+.error {
+  padding: 40px;
+  text-align: center;
+  color: #e00;
+  font-size: 18px;
+}

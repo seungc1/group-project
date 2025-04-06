@@ -98,7 +98,11 @@ export default function MeetingsList() {
                 </div>
                 <button 
                   className={styles.viewButton}
-                  onClick={() => router.push(`/meetings/${meeting.id}`)}
+                  onClick={() => {
+                    console.log('회의록 ID로 이동:', meeting.id);
+                    const encodedId = encodeURIComponent(meeting.id);
+                    router.push(`/meetings/${encodedId}`);
+                  }}
                 >
                   보기
                 </button>

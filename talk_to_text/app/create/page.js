@@ -53,12 +53,19 @@ export default function CreateMeeting() {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ audioUrl })
+        body: JSON.stringify({ 
+          audioUrl,
+          docId
+        })
       });
 
       const result = await response.json();
       
       if (!response.ok) {
+        throw new Error(result.error || result.details || '음성 처리 중 오류가 발생했습니다');
+      }
+
+      if (!result.success) {
         throw new Error(result.error || '음성 처리 중 오류가 발생했습니다');
       }
       
@@ -70,7 +77,10 @@ export default function CreateMeeting() {
       const updateData = {
         audioUrl,
         audioFileName: newFileName,
-        textinfo
+        textinfo,
+        keywords: result.keywords,
+        summary: result.summary,
+        summaryDownloadUrl: result.summaryDownloadUrl
       };
       
       await updateDoc(doc(db, 'meetings', docId), updateData);
