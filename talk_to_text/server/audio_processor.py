@@ -43,18 +43,18 @@ app = Flask(__name__)
 CORS(app)
 
 # Hugging Face Token (화자 분리용)
-HUGGINGFACE_TOKEN =os.getenv("HUGGINGFACE_TOKEN")
-# HUGGINGFACE_TOKEN = "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"
+# HUGGINGFACE_TOKEN =os.getenv("HUGGINGFACE_TOKEN")
+HUGGINGFACE_TOKEN = "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"
 
 # Upstage API Key 설정 (회의록 요약)
-UPSTAGE_API_KEY =os.getenv("UPSTAGE_API_KEY")
-# UPSTAGE_API_KEY = "up_sH6XQ36Gg4Sgu1iso3fin3jWYtBFL"
+# UPSTAGE_API_KEY =os.getenv("UPSTAGE_API_KEY")
+UPSTAGE_API_KEY = "up_sH6XQ36Gg4Sgu1iso3fin3jWYtBFL"
 
 # Firebase 인증 및 Firestore 클라이언트 초기화
 cred = credentials.Certificate("firebase_key.json")
 firebase_admin.initialize_app(cred, {
-    "storageBucket": "your-project-id.appspot.com"
-    # "talktotext-37f54.firebasestorage.app"
+    "storageBucket": "talktotext-37f54.firebasestorage.app"
+    # "your-project-id.appspot.com"
 })
 db = firestore.client()
 
@@ -67,6 +67,17 @@ logger.info("Whisper 모델 로드 완료")
 logger.info("화자 분리 모델 로딩 중...")
 pipeline = SpeakerDiarization.from_pretrained("pyannote/speaker-diarization", use_auth_token=HUGGINGFACE_TOKEN)
 logger.info("화자 분리 모델 로드 완료")
+
+# 청크 파일 정리 함수
+def cleanup_chunks():
+    import glob
+    try:
+        chunk_files = glob.glob("chunks/*.wav")
+        for file_path in chunk_files:
+            os.remove(file_path)
+        logger.info(f"청크 파일 {len(chunk_files)}개 삭제 완료")
+    except Exception as e:
+        logger.warning(f"청크 파일 삭제 중 오류 발생: {e}")
 
 # 오디오 URL에서 다운로드
 def download_audio(url):
@@ -133,21 +144,26 @@ def summarize_text(text):
         return "요약 실패"
 
 # Firestore에 데이터 저장
-def save_to_firestore(data):
+def save_to_firestore(data, doc_id=None):
     try:
-        doc_ref = db.collection("transcripts").add(data)
+        if doc_id:
+            doc_ref = db.collection("meetings").document(doc_id)
+            doc_ref.update(data)
+        else:
+            doc_ref = db.collection("transcripts").add(data)
         logger.info("Firestore 저장 완료")
-        return doc_ref[1].id
+        return doc_ref.id if doc_id else doc_ref[1].id
     except Exception as e:
         logger.error(f"Firestore 저장 실패: {e}")
-        return None
+        raise  # 에러를 상위로 전파
 
 # 오디오 처리 전체 파이프라인 함수
-def process_audio(audio_path):
+def process_audio(audio_path, doc_id):
+    summary_filename = None
     try:
         # 1. 초기화
-        segments_all = []  # 모든 음성 세그먼트를 저장할 리스트
-        full_text = ""     # 전체 텍스트를 저장할 변수
+        segments_all = []
+        full_text = ""
         
         # 2. 오디오 파일을 청크로 분할
         chunk_paths = chunk_audio(audio_path)
@@ -186,61 +202,91 @@ def process_audio(audio_path):
 
         keywords = extract_keywords(full_text)
         summary = summarize_text(full_text)
+        
         # 요약 결과를 텍스트 파일로 저장 및 Firebase Storage에 업로드
-        summary_filename = f"{os.path.splitext(os.path.basename(audio_path))[0]}_summary.txt"
+        summary_filename = f"{doc_id}.txt"
         with open(summary_filename, "w", encoding="utf-8-sig") as sf:
             sf.write(summary)
 
         # Firebase Storage에 업로드
         bucket = storage.bucket()
-        blob = bucket.blob(f"summaries/{summary_filename}")
+        blob = bucket.blob(f"summaries/{doc_id}.txt")
         blob.upload_from_filename(summary_filename)
         blob.make_public()
         summary_url = blob.public_url
 
-        # 6. Firestore에 저장
-        save_to_firestore({
+        # Firestore에 저장
+        data = {
             "transcript": transcript,
             "keywords": keywords,
             "summary": summary,
             "summaryDownloadUrl": summary_url,
             "text": full_text
-        })
+        }
+        save_to_firestore(data, doc_id)  # doc_id 전달
+
         return transcript, keywords, summary, summary_url
+
     except Exception as e:
-        logger.error(f"오디오 처리 실패: {e}")
+        logger.error(f"오디오 처리 실패: {e}", exc_info=True)
         raise
+
     finally:
         # 청크 파일 삭제
         cleanup_chunks()
-        
+        # 임시 요약 파일 삭제
+        if summary_filename and os.path.exists(summary_filename):
+            try:
+                os.remove(summary_filename)
+                logger.info(f"임시 파일 삭제 완료: {summary_filename}")
+            except Exception as e:
+                logger.warning(f"임시 파일 삭제 실패: {e}")
+
 # 오디오 처리 API 엔드포인트
 @app.route('/process-audio', methods=['POST'])
 def process_audio_endpoint():
     try:
         data = request.get_json()
+        logger.info(f"Received request data: {data}")  # 요청 데이터 로깅
+        
         audio_url = data.get('audioUrl')
+        doc_id = data.get('docId')
+        
         if not audio_url:
+            logger.error("Audio URL is missing")
             return jsonify({"success": False, "error": "오디오 URL이 제공되지 않았습니다."}), 400
+        if not doc_id:
+            logger.error("Document ID is missing")
+            return jsonify({"success": False, "error": "문서 ID가 제공되지 않았습니다."}), 400
 
+        logger.info(f"Downloading audio from URL: {audio_url}")
         audio_path = download_audio(audio_url)
         if not audio_path:
+            logger.error("Failed to download audio")
             return jsonify({"success": False, "error": "오디오 다운로드 실패"}), 400
 
-        transcript, keywords, summary, summary_url = process_audio(audio_path)
+        logger.info(f"Processing audio with doc_id: {doc_id}")
+        transcript, keywords, summary, summary_url = process_audio(audio_path, doc_id)
 
         os.unlink(audio_path)
+        logger.info("Audio processing completed successfully")
 
-        return jsonify({
+        response_data = {
             "success": True,
             "transcript": transcript,
             "keywords": keywords,
             "summary": summary,
             "summaryDownloadUrl": summary_url
-        })
+        }
+        return jsonify(response_data)
+
     except Exception as e:
-        logger.error(f"처리 오류: {e}")
-        return jsonify({"success": False, "error": str(e)}), 500
+        logger.error(f"Processing error: {str(e)}", exc_info=True)  # 상세한 에러 로깅
+        return jsonify({
+            "success": False,
+            "error": str(e),
+            "details": "서버에서 오류가 발생했습니다. 관리자에게 문의하세요."
+        }), 500
 
 # 저장된 회의록 전체 조회 API
 @app.route('/transcripts', methods=['GET'])
@@ -260,13 +306,4 @@ def get_all_transcripts():
 if __name__ == '__main__':
     app.run(port=5000, debug=True)
 
-def cleanup_chunks():
-    import glob
-    try:
-        chunk_files = glob.glob("chunks/*.wav")
-        for file_path in chunk_files:
-            os.remove(file_path)
-        logger.info(f"청크 파일 {len(chunk_files)}개 삭제 완료")
-    except Exception as e:
-        logger.warning(f"청크 파일 삭제 중 오류 발생: {e}")
         
