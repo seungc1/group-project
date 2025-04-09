@@ -1,5 +1,3 @@
-# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
-
 # dependencies
 /node_modules
 /.pnp
@@ -24,9 +22,13 @@
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+firebase-debug.log*
+*.log
 
 # local env files
-.env*.local
+.env
+.env.*
+!.env.example
 
 # vercel
 .vercel
@@ -35,9 +37,18 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
+# python
 ./venv/
 ../.venv/
 venv/
 *.dylib
 
+# firebase
+.firebase/
+.firebase-debug.log
+functions/.firebase/
+functions/.runtimeconfig.json
+functions/firebase-debug.log
+
+# secret files
 server/firebase_key.json
