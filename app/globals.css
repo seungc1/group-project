@@ -1,7 +1,0 @@
-/* 기존 스타일 유지 */
-
-/* Next.js 기본 로고 숨기기 */
-#__next-build-watcher,
-[data-nextjs-dialog-left-right] {
-  display: none !important;
-} 
