@@ -1,8 +1,3 @@
 {
-  "/_not-found/page": "app/_not-found/page.js",
-  "/meetings/[id]/page": "app/meetings/[id]/page.js",
-  "/api/process-audio/route": "app/api/process-audio/route.js",
-  "/meetings/page": "app/meetings/page.js",
-  "/create/page": "app/create/page.js",
   "/page": "app/page.js"
 }

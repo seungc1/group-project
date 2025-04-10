@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { db } from '@/lib/firebase';
+import { db } from '@/functions/lib/firebase';
 import { doc, getDoc, query, collection, where, getDocs } from 'firebase/firestore';
 import styles from '../../page.module.css';
 
