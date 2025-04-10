@@ -1,4 +1,4 @@
-// File: /Users/user/group-project/group-project/talk_to_text/functions/app/page.js
+// File: /Users/jujihwan/Documents/talktotext_jh/talktotext_jh/talk_to_text/functions/app/page.js
 import * as entry from '../../../app/page.js'
 import type { ResolvingMetadata, ResolvingViewport } from 'next/dist/lib/metadata/types/metadata-interface.js'
 
