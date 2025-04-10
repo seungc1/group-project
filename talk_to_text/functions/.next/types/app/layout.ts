@@ -1,4 +1,4 @@
-// File: /Users/user/group-project/group-project/talk_to_text/app/layout.js
+// File: /Users/user/group-project/group-project/talk_to_text/functions/app/layout.js
 import * as entry from '../../../app/layout.js'
 import type { ResolvingMetadata, ResolvingViewport } from 'next/dist/lib/metadata/types/metadata-interface.js'
 
