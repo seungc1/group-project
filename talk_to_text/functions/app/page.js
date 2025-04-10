@@ -12,6 +12,7 @@ import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { useRouter } from 'next/navigation';
 import styles from './page.module.css';
 
+
 export default function Home() { //메인 컴포넌트 선어
   const router = useRouter(); //페이지 이동을 위한 라우터 객체
 
@@ -109,45 +110,8 @@ export default function Home() { //메인 컴포넌트 선어
   //UI 렌더링
   return (
     <div className={styles['examples-upcoming-web']}>
-      {/* 왼쪽 네비게이션 레일 */}
-      <nav className={styles['navigation-rail']}>
-        <div className={styles['nav-items']}>
-          <div 
-            className={styles['nav-item']} 
-            onClick={() => router.push('/')}
-            style={{ cursor: 'pointer' }}
-          >
-            <div className={styles.icon}>🏠</div>
-            <span>홈</span>
-          </div>
-          <div 
-            className={styles['nav-item']} 
-            onClick={() => router.push('/create')}
-            style={{ cursor: 'pointer' }}
-          >
-            <div className={styles.icon}>🎙️</div>
-            <span>회의 생성</span>
-          </div>
-          <div className={styles['nav-item']}>
-            <div className={styles.icon}>🎤</div>
-            <span>음성 녹음</span>
-          </div>
-          <div 
-            className={styles['nav-item']}
-            onClick={() => router.push('/meetings')}
-            style={{ cursor: 'pointer' }}
-          >
-            <div className={styles.icon}>📋</div>
-            <span>전체 회의록</span>
-          </div>
-          <div className={styles['nav-item']}>
-            <div className={styles.icon}>⚙️</div>
-            <span>미정</span>
-          </div>
-        </div>
-      </nav>
-
       {/* 메인 컨텐츠 */}
+      
       <main className={styles['main-content']}>
         {/* 상단 헤더 */}
         <header className={styles.header}>
@@ -194,5 +158,6 @@ export default function Home() { //메인 컴포넌트 선어
         <button className={styles.fab}>+</button>
       </main>
     </div>
+    
   );
 };

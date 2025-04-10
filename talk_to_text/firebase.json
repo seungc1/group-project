@@ -5,7 +5,7 @@
     "platform": "gcfv2"                
   },
   "hosting": {
-    "public": ".next",
+    "public": "functions/.next",
     "ignore": [
       "firebase.json",
       "**/.*",
