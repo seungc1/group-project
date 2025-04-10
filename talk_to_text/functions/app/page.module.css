@@ -736,3 +736,10 @@ a.secondary {
   color: #e00;
   font-size: 18px;
 }
+
+.noOutline {
+  outline: none;
+  border: none;
+  box-shadow: none;
+  background: '#4CAF50'
+}
