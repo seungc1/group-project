@@ -8,13 +8,11 @@ import { db, storage } from '@/lib/firebase'; //firebase 설정 파일에서 db�
 import { collection, addDoc, serverTimestamp, updateDoc, doc, setDoc } from 'firebase/firestore'; //firestore 관련 함수
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 
-//라우팅
-import { useRouter } from 'next/navigation';
 import styles from './page.module.css';
 
 
 export default function Home() { //메인 컴포넌트 선어
-  const router = useRouter(); //페이지 이동을 위한 라우터 객체
+  
 
   //상태 관리 (useState 훅 사용)
   const [file, setFile] = useState(null); //업로드할 파일 상태

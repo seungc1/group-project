@@ -1,5 +1,9 @@
 'use client';
 
+import CalendarModal from '@/components/CalendarModal'; // ✅ default export
+import { addToCalendar } from '@/lib/addToCalendar'; // ✅ named export
+
+
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { db } from '@/lib/firebase';
@@ -7,6 +11,7 @@ import { doc, getDoc, query, collection, where, getDocs } from 'firebase/firesto
 import styles from '../../page.module.css';
 
 export default function MeetingDetail({ params }) {
+  const [modalInfo, setModalInfo] = useState({ visible: false, url: '' });
   const router = useRouter();
   const [meeting, setMeeting] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -19,7 +24,7 @@ export default function MeetingDetail({ params }) {
         const decodedId = decodeURIComponent(id);
         console.log('원본 ID:', id);
         console.log('디코딩된 ID:', decodedId);
-        
+
         // ID가 유효한지 확인
         if (!decodedId || decodedId === 'undefined') {
           console.error('유효하지 않은 회의록 ID');
@@ -27,26 +32,26 @@ export default function MeetingDetail({ params }) {
           setLoading(false);
           return;
         }
-        
+
         const docRef = doc(db, 'meetings', decodedId);
         console.log('문서 참조:', docRef);
-        
+
         const docSnap = await getDoc(docRef);
         console.log('문서 존재 여부:', docSnap.exists());
-        
+
         if (docSnap.exists()) {
           const meetingData = docSnap.data();
           console.log('회의 데이터:', meetingData);
           setMeeting({ id: docSnap.id, ...meetingData });
         } else {
           console.error('회의록을 찾을 수 없습니다. ID:', decodedId);
-          
+
           // ID가 URL 인코딩된 형태인 경우 직접 쿼리 시도
           try {
             console.log('직접 쿼리 시도...');
             const q = query(collection(db, 'meetings'), where('title', '==', decodedId));
             const querySnapshot = await getDocs(q);
-            
+
             if (!querySnapshot.empty) {
               const doc = querySnapshot.docs[0];
               const meetingData = doc.data();
@@ -83,7 +88,7 @@ export default function MeetingDetail({ params }) {
         <header className={styles.header}>
           <h1>회의록 상세</h1>
           <div className={styles['header-actions']}>
-            <button 
+            <button
               className={styles['icon-button']}
               onClick={() => router.push('/meetings')}
             >
@@ -112,20 +117,42 @@ export default function MeetingDetail({ params }) {
               <div className={styles.summarySection}>
                 <h3>회의 요약</h3>
                 <div className={styles.summaryContent}>
-                  {typeof meeting.summary === 'string' 
-                    ? meeting.summary 
+                  {typeof meeting.summary === 'string'
+                    ? meeting.summary
                     : JSON.stringify(meeting.summary)}
                 </div>
+
                 {meeting.summaryDownloadUrl && (
-                  <a 
-                    href={meeting.summaryDownloadUrl} 
-                    target="_blank" 
-                    rel="noopener noreferrer"
-                    className={styles.downloadLink}
-                  >
-                    요약 다운로드
-                  </a>
+                  <div style={{ display: 'flex', gap: '12px', marginTop: '12px' }}>
+                    <a
+                      href={meeting.summaryDownloadUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className={styles.downloadLink}
+                    >
+                      요약 다운로드
+                    </a>
+
+                    <button
+                      className={`${styles.downloadLink} ${styles.noOutline}`}
+                      onClick={async () => {
+                        const start = meeting.createAt?.toDate?.() ?? new Date();
+                        const end = new Date(start.getTime() + 60 * 60 * 1000); // 1시간 후
+
+                        const calendarUrl = await addToCalendar({
+                          title: meeting.title,
+                          startTime: start,
+                          endTime: end,
+                        });
+
+                        setModalInfo({ visible: true, url: calendarUrl });
+                      }}
+                    >
+                      일정 추가
+                    </button>
+                  </div>
                 )}
+
               </div>
             ) : (
               <div className={styles.summarySection}>
@@ -183,14 +210,14 @@ export default function MeetingDetail({ params }) {
               <li>브라우저 콘솔에서 오류 메시지 확인</li>
             </ul>
             <div style={{ marginTop: '20px' }}>
-              <button 
+              <button
                 className={styles.downloadLink}
                 onClick={() => router.push('/meetings')}
                 style={{ marginRight: '10px' }}
               >
                 회의록 목록으로 돌아가기
               </button>
-              <button 
+              <button
                 className={styles.downloadLink}
                 onClick={() => router.push('/create')}
                 style={{ background: '#4CAF50' }}
@@ -201,6 +228,12 @@ export default function MeetingDetail({ params }) {
           </div>
         )}
       </main>
+      <CalendarModal
+        visible={modalInfo.visible}
+        url={modalInfo.url}
+        onClose={() => setModalInfo({ visible: false, url: '' })}
+      />
+
     </div>
   );
 } 
