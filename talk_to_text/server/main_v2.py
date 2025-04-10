@@ -14,8 +14,8 @@ from firebase.storage_handler import upload_summary_text
 from firebase.firestore_handler import save_transcript, get_all_transcripts
 from dotenv import load_dotenv
 
-dotenv_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), ".env.local")
-load_dotenv(dotenv_path)  # 이 줄이 .env.local 파일을 로딩함
+dotenv_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), ".env.server")
+load_dotenv(dotenv_path)
 
 '''
 __file__ → 현재 실행 중인 파일 (main_v2.py)의 위치
