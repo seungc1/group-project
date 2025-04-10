@@ -19,8 +19,7 @@ os.environ['SSL_CERT_FILE'] = ''
 logger = configure_logger()
 
 # Hugging Face 토큰 환경 변수에서 가져오기
-# HUGGINGFACE_TOKEN = os.getenv("HUGGINGFACE_TOKEN")
-HUGGINGFACE_TOKEN = "hf_xxx"  # 노션에 토큰 저장해둠.
+HUGGINGFACE_TOKEN = os.getenv("HUGGINGFACE_TOKEN")
 
 # 화자 분리 파이프라인 로딩 (프로세스 시작 시 1회)
 try:

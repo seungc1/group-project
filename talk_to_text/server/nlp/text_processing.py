@@ -20,8 +20,7 @@ os.environ['SSL_CERT_FILE'] = ''
 logger = configure_logger()
 
 # Upstage API 키는 환경 변수에서 불러옴
-# UPSTAGE_API_KEY = os.getenv("UPSTAGE_API_KEY")
-UPSTAGE_API_KEY = "up_aaaa" # 노션에 토큰 키 저장해둠.
+UPSTAGE_API_KEY = os.getenv("UPSTAGE_API_KEY")
 
 # 키워드 추출 함수 (상위 N개 명사)
 def extract_keywords(text, top_n=5):
