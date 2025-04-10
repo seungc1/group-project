@@ -1,7 +1,7 @@
 'use client';
 
-import CalendarModal from '@/components/CalendarModal'; // ✅ default export
-import { addToCalendar } from '@/lib/addToCalendar'; // ✅ named export
+import CalendarModal from '@/components/CalendarModal';
+import { addToCalendar } from '@/lib/addToCalendar';
 
 
 import { useState, useEffect } from 'react';
@@ -88,12 +88,6 @@ export default function MeetingDetail({ params }) {
         <header className={styles.header}>
           <h1>회의록 상세</h1>
           <div className={styles['header-actions']}>
-            <button
-              className={styles['icon-button']}
-              onClick={() => router.push('/meetings')}
-            >
-              ←
-            </button>
             <button className={styles['icon-button']}>📎</button>
             <button className={styles['icon-button']}>📅</button>
             <button className={styles['icon-button']}>⋮</button>
@@ -105,7 +99,15 @@ export default function MeetingDetail({ params }) {
         ) : meeting ? (
           <div className={styles.meetingDetail}>
             <div className={styles.meetingHeader}>
-              <h2>{meeting.title}</h2>
+              <div className={styles.headerTop}>
+                <h2>{meeting.title}</h2>
+                <button
+                  className={styles['icon-button']}
+                  onClick={() => router.push('/meetings')}
+                >
+                  ✖️
+                </button>
+              </div>
               <div className={styles.meetingMeta}>
                 <p>생성일: {formatDate(meeting.createAt)}</p>
                 <p>참석자: {meeting.participantName ? meeting.participantName.join(', ') : '정보 없음'}</p>
