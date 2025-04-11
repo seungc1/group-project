@@ -6,6 +6,7 @@ import { db, storage } from '@/lib/firebase';
 import { collection, addDoc, serverTimestamp, updateDoc, doc, setDoc } from 'firebase/firestore';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import styles from '../page.module.css';
+import PageHeader from '@/components/PageHeader';
 
 export default function CreateMeeting() {
   const router = useRouter();
@@ -99,14 +100,7 @@ export default function CreateMeeting() {
   return (
     <div className={styles['examples-upcoming-web']}>
       <main className={styles['main-content']}>
-        <header className={styles.header}>
-          <h1>회의록 생성</h1>
-          <div className={styles['header-actions']}>
-            <button className={styles['icon-button']}>📎</button>
-            <button className={styles['icon-button']}>📅</button>
-            <button className={styles['icon-button']}>⋮</button>
-          </div>
-        </header>
+        <PageHeader title="회의록 생성"/>
 
         <div className={styles.carousel}>
           <div className={styles['carousel-item']}>

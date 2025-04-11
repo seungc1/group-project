@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { db } from '@/lib/firebase';
 import { collection, getDocs, query, orderBy } from 'firebase/firestore';
 import styles from '../page.module.css';
+import PageHeader from '@/components/PageHeader';
 
 export default function MeetingsList() {
   const router = useRouter();
@@ -34,14 +35,7 @@ export default function MeetingsList() {
   return (
     <div className={styles['examples-upcoming-web']}>
       <main className={styles['main-content']}>
-        <header className={styles.header}>
-          <h1>회의록 목록</h1>
-          <div className={styles['header-actions']}>
-            <button className={styles['icon-button']}>📎</button>
-            <button className={styles['icon-button']}>📅</button>
-            <button className={styles['icon-button']}>⋮</button>
-          </div>
-        </header>
+        <PageHeader title="페이지 목록"/>
 
         {loading ? (
           <div className={styles.loading}>로딩 중...</div>

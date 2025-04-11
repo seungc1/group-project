@@ -9,6 +9,7 @@ import { useRouter } from 'next/navigation';
 import { db } from '@/lib/firebase';
 import { doc, getDoc, query, collection, where, getDocs } from 'firebase/firestore';
 import styles from '../../page.module.css';
+import PageHeader from '@/components/PageHeader';
 
 export default function MeetingDetail({ params }) {
   const [modalInfo, setModalInfo] = useState({ visible: false, url: '' });
@@ -85,15 +86,8 @@ export default function MeetingDetail({ params }) {
   return (
     <div className={styles['examples-upcoming-web']}>
       <main className={styles['main-content']}>
-        <header className={styles.header}>
-          <h1>회의록 상세</h1>
-          <div className={styles['header-actions']}>
-            <button className={styles['icon-button']}>📎</button>
-            <button className={styles['icon-button']}>📅</button>
-            <button className={styles['icon-button']}>⋮</button>
-          </div>
-        </header>
-
+        <PageHeader title="회의록 상세" />
+        
         {loading ? (
           <div className={styles.loading}>로딩 중...</div>
         ) : meeting ? (

@@ -7,7 +7,7 @@ import { useState, useEffect } from 'react'; //React의 상태 관리 훅
 import { db, storage } from '@/lib/firebase'; //firebase 설정 파일에서 db와 storage 가져오기
 import { collection, addDoc, serverTimestamp, updateDoc, doc, setDoc } from 'firebase/firestore'; //firestore 관련 함수
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
-
+import PageHeader from '@/components/PageHeader';
 import styles from './page.module.css';
 
 
@@ -112,15 +112,7 @@ export default function Home() { //메인 컴포넌트 선어
       
       <main className={styles['main-content']}>
         {/* 상단 헤더 */}
-        <header className={styles.header}>
-          <h1>Title</h1>
-          <div className={styles['header-actions']}>
-            <button className={styles['icon-button']}>📎</button>
-            <button className={styles['icon-button']}>📅</button>
-            <button className={styles['icon-button']}>⋮</button>
-          </div>
-        </header>
-
+        <PageHeader title="Title"/>
         {/* 캐러셀 섹션 */}
         <section className={styles.carousel}>
           <div className={styles['carousel-item']}></div>
