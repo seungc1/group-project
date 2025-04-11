@@ -2,10 +2,11 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { db, storage } from '@/functions/lib/firebase';
+import { db, storage } from '@/lib/firebase';
 import { collection, addDoc, serverTimestamp, updateDoc, doc, setDoc } from 'firebase/firestore';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import styles from '../page.module.css';
+import Header from '../components/Header';
 
 export default function CreateMeeting() {
   const router = useRouter();
@@ -97,107 +98,60 @@ export default function CreateMeeting() {
   };
 
   return (
-    <div className={styles['examples-upcoming-web']}>
-      <nav className={styles['navigation-rail']}>
-        <div className={styles['nav-items']}>
-          <div 
-            className={styles['nav-item']} 
-            onClick={() => router.push('/')}
-            style={{ cursor: 'pointer' }}
-          >
-            <div className={styles.icon}>🏠</div>
-            <span>홈</span>
-          </div>
-          <div 
-            className={styles['nav-item']} 
-            onClick={() => router.push('/create')}
-            style={{ cursor: 'pointer' }}
-          >
-            <div className={styles.icon}>🎙️</div>
-            <span>회의 생성</span>
-          </div>
-          <div className={styles['nav-item']}>
-            <div className={styles.icon}>🎤</div>
-            <span>음성 녹음</span>
-          </div>
-          <div 
-            className={styles['nav-item']}
-            onClick={() => router.push('/meetings')}
-            style={{ cursor: 'pointer' }}
-          >
-            <div className={styles.icon}>📋</div>
-            <span>전체 회의록</span>
-          </div>
-          <div className={styles['nav-item']}>
-            <div className={styles.icon}>⚙️</div>
-            <span>미정</span>
-          </div>
-        </div>
-      </nav>
-
-      <main className={styles['main-content']}>
-        <header className={styles.header}>
-          <h1>회의록 생성</h1>
-          <div className={styles['header-actions']}>
-            <button className={styles['icon-button']}>📎</button>
-            <button className={styles['icon-button']}>📅</button>
-            <button className={styles['icon-button']}>⋮</button>
-          </div>
-        </header>
-
-        <div className={styles.carousel}>
-          <div className={styles['carousel-item']}>
-            <div className={styles.form}>
-              <div className={styles.formGroup}>
-                <label>제목:</label>
-                <input
-                  type="text"
-                  value={title}
-                  onChange={(e) => setTitle(e.target.value)}
-                  placeholder="회의 제목을 입력하세요"
-                />
-              </div>
-
-              <div className={styles.formGroup}>
-                <label>참석자 수:</label>
-                <input
-                  type="number"
-                  value={participants}
-                  onChange={(e) => setParticipants(e.target.value)}
-                  placeholder="참석자 수를 입력하세요"
-                />
-              </div>
-
-              <div className={styles.formGroup}>
-                <label>참석자 이름 (쉼표로 구분):</label>
-                <input
-                  type="text"
-                  value={participantNames}
-                  onChange={(e) => setParticipantNames(e.target.value)}
-                  placeholder="참석자 이름을 쉼표로 구분하여 입력하세요"
-                />
-              </div>
-
-              <div className={styles.formGroup}>
-                <label>음성 파일:</label>
-                <input
-                  type="file"
-                  accept="audio/*"
-                  onChange={(e) => setFile(e.target.files[0])}
-                />
-              </div>
-
-              <button 
-                className={styles.submitButton}
-                onClick={handleUpload}
-                disabled={processing}
-              >
-                {processing ? '처리 중...' : '회의록 저장'}
-              </button>
+    <>
+      <Header title="회의록 생성" />
+      <div className={styles.carousel}>
+        <div className={styles['carousel-item']}>
+          <div className={styles.form}>
+            <div className={styles.formGroup}>
+              <label>제목:</label>
+              <input
+                type="text"
+                value={title}
+                onChange={(e) => setTitle(e.target.value)}
+                placeholder="회의 제목을 입력하세요"
+              />
             </div>
+
+            <div className={styles.formGroup}>
+              <label>참석자 수:</label>
+              <input
+                type="number"
+                value={participants}
+                onChange={(e) => setParticipants(e.target.value)}
+                placeholder="참석자 수를 입력하세요"
+              />
+            </div>
+
+            <div className={styles.formGroup}>
+              <label>참석자 이름 (쉼표로 구분):</label>
+              <input
+                type="text"
+                value={participantNames}
+                onChange={(e) => setParticipantNames(e.target.value)}
+                placeholder="참석자 이름을 쉼표로 구분하여 입력하세요"
+              />
+            </div>
+
+            <div className={styles.formGroup}>
+              <label>음성 파일:</label>
+              <input
+                type="file"
+                accept="audio/*"
+                onChange={(e) => setFile(e.target.files[0])}
+              />
+            </div>
+
+            <button 
+              className={styles.submitButton}
+              onClick={handleUpload}
+              disabled={processing}
+            >
+              {processing ? '처리 중...' : '회의록 저장'}
+            </button>
           </div>
         </div>
-      </main>
-    </div>
+      </div>
+    </>
   );
 } 
