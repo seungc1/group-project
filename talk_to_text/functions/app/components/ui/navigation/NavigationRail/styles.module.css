@@ -1,0 +1,84 @@
+.navigation-rail {
+    width: 240px;
+    min-height: 100vh;
+    background: white;
+    padding: 20px 0;
+    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+    transition: width 0.3s ease;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 1000;
+  }
+  
+  .navigation-rail.collapsed {
+    width: 80px;
+  }
+  
+  .nav-items {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+  
+  .nav-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 20px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    color: #000000;
+  }
+  
+  .nav-item:hover {
+    background-color: #f0f0f0;
+  }
+  
+  .icon {
+    font-size: 24px;
+    min-width: 24px;
+    text-align: center;
+  }
+  
+  .nav-item span {
+    font-size: 14px;
+    white-space: nowrap;
+    opacity: 1;
+    transition: opacity 0.3s ease;
+    color: #000000;
+    font-weight: 500;
+  }
+  
+  .collapsed .nav-item {
+    justify-content: center;
+    padding: 12px 0;
+  }
+  
+  .collapsed .nav-item span {
+    opacity: 0;
+    width: 0;
+    overflow: hidden;
+  }
+  
+  .toggle-button {
+    position: absolute;
+    top: 20px;
+    right: -12px;
+    width: 24px;
+    height: 24px;
+    background: white;
+    border: 1px solid #e0e0e0;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    z-index: 10;
+    color: #000000;
+  }
+  
+  .toggle-button:hover {
+    background: #f5f5f5;
+  }
