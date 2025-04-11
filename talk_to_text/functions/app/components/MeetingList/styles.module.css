@@ -1,0 +1,72 @@
+.recent-meetings {
+  padding: 20px;
+}
+
+.recent-meetings h2 {
+  margin: 0 0 20px 0;
+  font-size: 20px;
+  color: #212529;
+}
+
+.meeting-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.meeting-item {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 16px;
+  background-color: #f8f9fa;
+  border-radius: 8px;
+  transition: background-color 0.2s;
+}
+
+.meeting-item:hover {
+  background-color: #e9ecef;
+}
+
+.thumbnail {
+  width: 60px;
+  height: 60px;
+  background-color: #dee2e6;
+  border-radius: 4px;
+  flex-shrink: 0;
+}
+
+.content {
+  flex: 1;
+}
+
+.content h3 {
+  margin: 0 0 4px 0;
+  font-size: 16px;
+  color: #212529;
+}
+
+.content p {
+  margin: 0;
+  font-size: 14px;
+  color: #6c757d;
+}
+
+.more-button {
+  width: 32px;
+  height: 32px;
+  border: none;
+  background: none;
+  cursor: pointer;
+  font-size: 20px;
+  color: #6c757d;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transition: background-color 0.2s;
+}
+
+.more-button:hover {
+  background-color: #dee2e6;
+} 

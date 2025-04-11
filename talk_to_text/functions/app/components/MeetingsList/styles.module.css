@@ -1,0 +1,87 @@
+.meetingsList {
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.meetingItem {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px;
+  background-color: #f8f9fa;
+  border-radius: 8px;
+  transition: background-color 0.2s;
+}
+
+.meetingItem:hover {
+  background-color: #e9ecef;
+}
+
+.meetingContent {
+  flex: 1;
+}
+
+.meetingContent h3 {
+  margin: 0 0 8px 0;
+  font-size: 18px;
+  color: #212529;
+}
+
+.meetingContent p {
+  margin: 4px 0;
+  color: #6c757d;
+  font-size: 14px;
+}
+
+.summary {
+  margin-top: 8px;
+  color: #495057;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.viewButton {
+  padding: 8px 16px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.viewButton:hover {
+  background-color: #0056b3;
+}
+
+.loading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 200px;
+  color: #6c757d;
+  font-size: 16px;
+}
+
+.error {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 200px;
+  color: #dc3545;
+  font-size: 16px;
+  text-align: center;
+  padding: 0 20px;
+}
+
+.empty {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 200px;
+  color: #6c757d;
+  font-size: 16px;
+  text-align: center;
+} 
