@@ -1,6 +1,6 @@
 'use client';
 
-import PageHeader from "@/components/PageHeader";
+import PageHeader from "@/components/pageHeader";
 import styles from '@/app/page.module.css';
 
 export default function aiEditMeetingNote() {

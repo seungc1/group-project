@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import { db } from '@/lib/firebase';
 import { collection, getDocs, query, orderBy } from 'firebase/firestore';
 import styles from '../page.module.css';
-import PageHeader from '@/components/PageHeader';
+import PageHeader from '@/components/pageHeader';
 
 export default function MeetingsList() {
   const router = useRouter();
