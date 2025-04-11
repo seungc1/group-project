@@ -20,10 +20,9 @@ os.environ['SSL_CERT_FILE'] = ''
 logger = configure_logger()
 
 # Upstage API 키는 환경 변수에서 불러옴
-# UPSTAGE_API_KEY = os.getenv("UPSTAGE_API_KEY")
-UPSTAGE_API_KEY = "up_sH6XQ36Gg4Sgu1iso3fin3jWYtBFL"
+UPSTAGE_API_KEY = os.getenv("UPSTAGE_API_KEY")
 
-# 키워드 추출 함수 (상위 N개 명사)
+# 키워드 추출 함수 (상위 N개 명사) <-- 너무 단순해서 실제 사용에 적합하지 않음
 def extract_keywords(text, top_n=5):
     try:
         # 간단한 정규식으로 단어 추출 (한글, 영문, 숫자)

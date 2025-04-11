@@ -13,13 +13,17 @@ os.environ['GRPC_ENABLE_CHANNEL_Z'] = '0'
 
 logger = configure_logger()
 
-# Firebase 인증 및 Firestore 클라이언트 초기화
+# 환경 변수에서 값 불러오기
+firebase_key_path = os.getenv("GOOGLE_APPLICATION_CREDENTIALS")
+firebase_storage = os.getenv("FIREBASE_STORAGE_BUCKET")
+firebase_project = os.getenv("FIREBASE_PROJECT_ID")
+
 # Firebase 초기화 (최초 1회만 수행)
 if not firebase_admin._apps:
     cred = credentials.Certificate("firebase_key.json")
     firebase_admin.initialize_app(cred, {
-        "storageBucket": "talktotext-37f54.firebasestorage.app",
-        "projectId": "talktotext-37f54"
+        "storageBucket": firebase_storage,
+        "projectId": firebase_project
     })
 
 # Firestore 클라이언트 초기화

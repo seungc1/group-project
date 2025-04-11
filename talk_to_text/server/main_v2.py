@@ -12,6 +12,17 @@ from diarization.diarization import apply_diarization, merge_segments_with_speak
 from nlp.text_processing import extract_keywords, summarize_text
 from firebase.storage_handler import upload_summary_text
 from firebase.firestore_handler import save_transcript, get_all_transcripts
+from dotenv import load_dotenv
+
+dotenv_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), ".env.server")
+load_dotenv(dotenv_path)
+
+'''
+__file__ → 현재 실행 중인 파일 (main_v2.py)의 위치
+os.path.dirname(__file__) → /server 폴더
+os.path.dirname(os.path.dirname(__file__)) → /talk_to_text 폴더
+그 안에 있는 .env.local 파일 경로를 정확히 지정해서 불러옴
+'''
 
 # SSL 검증 완전 비활성화
 ssl._create_default_https_context = ssl._create_unverified_context

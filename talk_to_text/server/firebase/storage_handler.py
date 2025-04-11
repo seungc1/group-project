@@ -38,4 +38,3 @@ def upload_summary_file(local_path, remote_folder="summaries"):
     except Exception as e:
         logger.error(f"Storage 업로드 실패: {e}")
         raise
-    
