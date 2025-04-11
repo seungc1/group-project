@@ -1,46 +1,30 @@
-'use client'; //Next.js 13+ 클라이언트 컴포넌트 선언
+/**
+ * 메인 홈페이지 컴포넌트
+ * - 애플리케이션의 메인 페이지
+ * - 캐러셀, 최근 회의록, 플로팅 액션 버튼 등으로 구성
+ */
 
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
-import styles from './page.module.css';
-import Header from './components/Header';
+// 필요한 컴포넌트 임포트
+import Header from './components/ui/layout/Header';
+import Carousel from './components/ui/Carousel';
+import RecentMeetings from './components/features/Meeting/RecentMeetings';
+import FloatingActionButton from './components/common/buttons/FloatingActionButton';
 
+/**
+ * 홈페이지 메인 컴포넌트
+ * @returns {JSX.Element} 홈페이지 UI
+ */
 export default function Home() {
-  const router = useRouter();
-
   return (
     <>
+      {/* 페이지 헤더 컴포넌트 */}
       <Header title="홈" />
-      <section className={styles.carousel}>
-        <div className={styles['carousel-item']}></div>
-        <div className={styles['carousel-item']}></div>
-        <div className={styles['carousel-item']}></div>
-        <div className={styles['carousel-item']}></div>
-      </section>
-
-      <section className={styles['recent-meetings']}>
-        <h2>최근 회의 및 전체 노트</h2>
-        <div className={styles['meeting-list']}>
-          <div className={styles['meeting-item']}>
-            <div className={styles.thumbnail}></div>
-            <div className={styles.content}>
-              <h3>회의 이름</h3>
-              <p>회의 간단 설명 ex) 노트 이름, 회의 날짜, 간단 요약?, 참석자</p>
-            </div>
-            <button className={styles['more-button']}>⋮</button>
-          </div>
-          <div className={styles['meeting-item']}>
-            <div className={styles.thumbnail}></div>
-            <div className={styles.content}>
-              <h3>회의 이름</h3>
-              <p>회의 간단 설명 ex) 노트 이름, 회의 날짜, 간단 요약?, 참석자</p>
-            </div>
-            <button className={styles['more-button']}>⋮</button>
-          </div>
-        </div>
-      </section>
-
-      <button className={styles.fab}>+</button>
+      {/* 메인 캐러셀 컴포넌트 */}
+      <Carousel />
+      {/* 최근 회의록 목록 컴포넌트 */}
+      <RecentMeetings />
+      {/* 플로팅 액션 버튼 컴포넌트 */}
+      <FloatingActionButton />
     </>
   );
 }

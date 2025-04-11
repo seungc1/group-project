@@ -1,0 +1,45 @@
+.meeting-item {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem;
+  background-color: white;
+  border-radius: 0.5rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.thumbnail {
+  width: 80px;
+  height: 80px;
+  background-color: #f3f4f6;
+  border-radius: 0.25rem;
+  flex-shrink: 0;
+}
+
+.content {
+  flex: 1;
+}
+
+.content h3 {
+  font-size: 1.125rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  color: #333;
+}
+
+.content p {
+  font-size: 0.875rem;
+  color: #6b7280;
+}
+
+.more-button {
+  padding: 0.5rem;
+  color: #6b7280;
+  cursor: pointer;
+  background: none;
+  border: none;
+}
+
+.more-button:hover {
+  color: #333;
+} 

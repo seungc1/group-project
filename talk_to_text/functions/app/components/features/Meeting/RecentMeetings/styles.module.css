@@ -1,0 +1,15 @@
+.recent-meetings {
+  padding: 1rem;
+}
+
+.recent-meetings h2 {
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+  color: #333;
+}
+
+.meeting-list {
+  display: grid;
+  gap: 1rem;
+} 

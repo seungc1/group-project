@@ -1,0 +1,79 @@
+.recent-meetings {
+  padding: 20px;
+}
+
+.recent-meetings h2 {
+  margin: 0 0 20px 0;
+  font-size: 20px;
+  color: #212529;
+}
+
+.meeting-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 20px;
+}
+
+.meeting-item {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 20px;
+  background-color: white;
+  border-radius: 12px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.meeting-item:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.meeting-item h3 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 600;
+  color: #000000;
+}
+
+.meeting-item p {
+  margin: 0;
+  font-size: 14px;
+  color: #000000;
+}
+
+.loading {
+  text-align: center;
+  padding: 40px;
+  font-size: 16px;
+  color: #000000;
+}
+
+.empty {
+  text-align: center;
+  padding: 40px;
+  font-size: 16px;
+  color: #000000;
+}
+
+.more-button {
+  width: 32px;
+  height: 32px;
+  border: none;
+  background: none;
+  cursor: pointer;
+  font-size: 20px;
+  color: #6c757d;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transition: background-color 0.2s;
+}
+
+.more-button:hover {
+  background-color: #dee2e6;
+} 
