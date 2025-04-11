@@ -1,6 +1,6 @@
 'use client';
 
-import CalendarModal from '@/components/CalendarModal';
+import CalendarModal from '@/components/calendarModal';
 import { addToCalendar } from '@/lib/addToCalendar';
 
 
@@ -9,7 +9,7 @@ import { useRouter } from 'next/navigation';
 import { db } from '@/lib/firebase';
 import { doc, getDoc, query, collection, where, getDocs } from 'firebase/firestore';
 import styles from '../../page.module.css';
-import PageHeader from '@/components/PageHeader';
+import PageHeader from '@/components/pageHeader';
 
 export default function MeetingDetail({ params }) {
   const [modalInfo, setModalInfo] = useState({ visible: false, url: '' });

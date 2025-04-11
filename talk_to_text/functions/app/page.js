@@ -7,7 +7,7 @@ import { useState, useEffect } from 'react'; //React의 상태 관리 훅
 import { db, storage } from '@/lib/firebase'; //firebase 설정 파일에서 db와 storage 가져오기
 import { collection, addDoc, serverTimestamp, updateDoc, doc, setDoc } from 'firebase/firestore'; //firestore 관련 함수
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
-import PageHeader from '@/components/PageHeader';
+import PageHeader from '@/components/pageHeader';
 import styles from './page.module.css';
 
 

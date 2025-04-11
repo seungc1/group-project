@@ -6,7 +6,7 @@ import { db, storage } from '@/lib/firebase';
 import { collection, addDoc, serverTimestamp, updateDoc, doc, setDoc } from 'firebase/firestore';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import styles from '../page.module.css';
-import PageHeader from '@/components/PageHeader';
+import PageHeader from '@/components/pageHeader';
 
 export default function CreateMeeting() {
   const router = useRouter();
