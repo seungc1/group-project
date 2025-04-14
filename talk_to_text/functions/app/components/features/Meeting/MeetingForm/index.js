@@ -26,8 +26,20 @@ export default function MeetingForm() {
 
   return (
     <form action={handleSubmit} className={styles.form}>
+      <div className={styles.formSection}>
+        <div className={styles.formGroup}>
+          <label>프로젝트 이름:</label>
+          <input
+            type="text"
+            name="projectId"
+            placeholder="프로젝트 ID를 입력하세요"
+            required
+          />
+        </div>
+      </div>
+
       <div className={styles.formGroup}>
-        <label>제목:</label>
+        <label>회의 이름:</label>
         <input
           type="text"
           name="title"
@@ -53,6 +65,16 @@ export default function MeetingForm() {
           name="participantNames"
           placeholder="참석자 이름을 쉼표로 구분하여 입력하세요"
           required
+        />
+      </div>
+
+      <div className={styles.formGroup}>
+        <label>회의록 목록:</label>
+        <textarea
+          name="meetingMinutesList"
+          placeholder="회의록 목록을 입력하세요 (예: 1. 프로젝트 현황 보고&#13;&#10;2. 일정 조율&#13;&#10;3. 다음 단계 논의)"
+          rows="5"
+          className={styles.textArea}
         />
       </div>
 

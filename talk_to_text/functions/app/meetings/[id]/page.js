@@ -23,4 +23,4 @@ export default function MeetingDetailPage({ params }) {
       <MeetingDetail id={params.id} />
     </>
   );
-} 
+}

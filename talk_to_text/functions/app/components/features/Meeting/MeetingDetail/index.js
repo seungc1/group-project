@@ -27,4 +27,4 @@ export default async function MeetingDetail({ id }) {
       <MeetingAudio meeting={meeting} />
     </div>
   );
-} 
+}

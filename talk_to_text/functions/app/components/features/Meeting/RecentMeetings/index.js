@@ -5,15 +5,16 @@
  */
 import { getRecentMeetings } from '@/app/services/meetingService';
 import MeetingItem from '../MeetingItem';
+import styles from './styles.module.css';
 
 export default async function RecentMeetings() {
   const meetings = await getRecentMeetings();
 
   return (
     <div className="space-y-4">
-      <h2 className="text-2xl font-bold">최근 회의</h2>
+      <h2 className={styles['recent-meetings-title']}>최근 회의</h2>
       {meetings.length === 0 ? (
-        <p className="text-gray-500">아직 회의가 없습니다.</p>
+        <p className={styles['no-meetings-message']}>아직 회의가 없습니다.</p>
       ) : (
         <div className="grid gap-4">
           {meetings.map((meeting) => (

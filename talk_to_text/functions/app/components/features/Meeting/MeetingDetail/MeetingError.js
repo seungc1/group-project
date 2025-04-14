@@ -28,4 +28,4 @@ export default function MeetingError({ id }) {
       <ErrorActions />
     </div>
   );
-} 
+}

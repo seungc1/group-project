@@ -32,4 +32,4 @@ export default function MeetingHeader({ meeting }) {
       </div>
     </div>
   );
-} 
+}
