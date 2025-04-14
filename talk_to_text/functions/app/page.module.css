@@ -196,8 +196,17 @@ a.secondary {
 
 /* 메인 컨텐츠 스타일 */
 .mainContent {
-  flex: 1;
-  padding: 32px;
+  margin-left: 240px;
+  padding: 20px;
+  width: calc(100% - 240px);
+  min-height: 100vh;
+  transition: margin-left 0.3s ease, width 0.3s ease;
+}
+
+/* 사이드바가 접힌 상태일 때의 메인 콘텐츠 스타일 */
+.mainContent.sidebarCollapsed {
+  margin-left: 80px;
+  width: calc(100% - 80px);
 }
 
 /* 헤더 스타일 */

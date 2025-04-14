@@ -1,0 +1,17 @@
+.carousel {
+  display: flex;
+  overflow-x: auto;
+  gap: 1rem;
+  padding: 1rem;
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+}
+
+.carousel-item {
+  flex: 0 0 auto;
+  width: 300px;
+  height: 200px;
+  background-color: #f3f4f6;
+  border-radius: 0.5rem;
+  scroll-snap-align: start;
+}
