@@ -1,7 +1,0 @@
-{
-  "/page": "app/page.js",
-  "/create/page": "app/create/page.js",
-  "/meetings/page": "app/meetings/page.js",
-  "/api/meetings/route": "app/api/meetings/route.js",
-  "/meetings/[id]/page": "app/meetings/[id]/page.js"
-}
