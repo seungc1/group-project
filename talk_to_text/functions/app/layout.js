@@ -14,7 +14,7 @@
  */
 
 // Geist 폰트 임포트
-import localFont from "next/font/local";
+
 // 전역 스타일시트 임포트
 // 전역 스타일시트 임포트
 import "./globals.css";
@@ -33,11 +33,7 @@ import styles from './page.module.css';
  * - 가변 폰트로 다양한 두께 지원
  * - CSS 변수로 폰트 패밀리 설정
  */
-const geistSans = localFont({
-  src: "./fonts/GeistVF.woff",
-  variable: "--font-geist-sans",
-  weight: "100 900",
-});
+
 
 /**
  * Geist Mono 폰트 설정
@@ -50,11 +46,7 @@ const geistSans = localFont({
  * - 모노스페이스 폰트로 코드 블록 등에 사용
  * - CSS 변수로 폰트 패밀리 설정
  */
-const geistMono = localFont({
-  src: "./fonts/GeistMonoVF.woff",
-  variable: "--font-geist-mono",
-  weight: "100 900",
-});
+
 
 // 메타데이터 설정
 // 메타데이터 설정
@@ -80,7 +72,7 @@ export default function RootLayout({ children }) {
     <html lang="en">
       {/* 폰트 변수를 body에 적용 */}
       {/* 폰트 변수를 body에 적용 */}
-      <body className={`${geistSans.variable} ${geistMono.variable}`}>
+      <body style={{ fontFamily: 'var(--font-geist-sans)' }}>
         {/* 사이드바와 메인 콘텐츠를 포함하는 레이아웃 래퍼 */}
         <LayoutWrapper>
           {children}
