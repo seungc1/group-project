@@ -5,7 +5,6 @@
  * @param {string} meeting.textinfo[].speaker - 발화자 이름
  * @param {string} meeting.textinfo[].text - 발화 내용
  */
-'use client';
 
 import styles from './styles.module.css';
 

@@ -13,7 +13,6 @@ os.environ['GRPC_ENABLE_CHANNEL_Z'] = '0'
 
 logger = configure_logger()
 
-# Firebase 인증 및 Firestore 클라이언트 초기화
 # 환경 변수에서 값 불러오기
 firebase_key_path = os.getenv("GOOGLE_APPLICATION_CREDENTIALS")
 firebase_storage = os.getenv("FIREBASE_STORAGE_BUCKET")
