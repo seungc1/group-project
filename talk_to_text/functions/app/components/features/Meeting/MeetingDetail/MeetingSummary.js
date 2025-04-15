@@ -4,10 +4,10 @@
  * @param {string|Object} meeting.summary - 회의 요약 내용
  * @param {string} meeting.summaryDownloadUrl - 요약 다운로드 URL
  */
-'use client';
 
 // 컴포넌트 스타일 임포트
 import styles from './styles.module.css';
+import DownloadButton from './DownloadButton';
 
 export default function MeetingSummary({ meeting }) {
   // 요약 섹션 UI 렌더링
@@ -33,15 +33,7 @@ export default function MeetingSummary({ meeting }) {
       {/* 다운로드 URL이 있는 경우 다운로드 섹션 표시 */}
       {meeting.summaryDownloadUrl && (
         <div className={styles.downloadSection}>
-          {/* 다운로드 링크 */}
-          <a
-            href={meeting.summaryDownloadUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            className={styles.downloadLink}
-          >
-            요약 다운로드
-          </a>
+          <DownloadButton url={meeting.summaryDownloadUrl} />
         </div>
       )}
     </div>

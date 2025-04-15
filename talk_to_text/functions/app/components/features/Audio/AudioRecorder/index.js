@@ -2,6 +2,8 @@
  * 오디오 녹음을 처리하는 컴포넌트
  * @param {Function} onRecordingComplete - 녹음 완료 시 호출되는 콜백 함수
  */
+'use client';
+
 import { useState, useRef } from 'react'; // React의 상태 관리와 참조를 위한 훅 임포트
 import styles from './styles.module.css'; // 컴포넌트 스타일 임포트
 
