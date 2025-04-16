@@ -8,6 +8,7 @@
  */
 'use client';
 
+import CloseButton from '@/app/components/common/buttons/CloseButton';
 // 컴포넌트 스타일 임포트
 import styles from './styles.module.css';
 
@@ -34,6 +35,7 @@ export default function MeetingHeader({ meeting }) {
       {/* 회의 제목 섹션 */}
       <div className={styles.headerTop}>
         <h2>{meeting.title}</h2>
+        <CloseButton />
       </div>
       
       {/* 회의 메타 정보 섹션 */}
