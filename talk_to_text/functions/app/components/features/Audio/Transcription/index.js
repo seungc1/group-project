@@ -3,7 +3,6 @@
  * @param {string} text - 변환된 텍스트
  * @param {boolean} isLoading - 변환 중인지 여부
  */
-import { useState } from 'react'; // React의 상태 관리를 위한 훅 임포트
 import styles from './styles.module.css'; // 컴포넌트 스타일 임포트
 
 export const Transcription = ({ text, isLoading }) => {

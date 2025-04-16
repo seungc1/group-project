@@ -4,13 +4,10 @@
  * @param {string} meeting.title - 회의 제목
  * @param {string} meeting.description - 회의 설명
  */
-'use client';
-
-// 컴포넌트 스타일 임포트
 import styles from './styles.module.css';
+import MeetingItemActions from './MeetingItemActions';
 
 export default function MeetingItem({ meeting }) {
-  // 회의 아이템 UI 렌더링
   return (
     <div className={styles['meeting-item']}>
       {/* 썸네일 영역 */}
@@ -19,13 +16,21 @@ export default function MeetingItem({ meeting }) {
       {/* 회의 내용 영역 */}
       <div className={styles.content}>
         {/* 회의 제목 */}
-        <h3>{meeting.title}</h3>
+        <h3 className={styles['meeting-title']}>{meeting.title}</h3>
         {/* 회의 설명 */}
-        <p>{meeting.description}</p>
+        <p className={styles['meeting-description']}>{meeting.description}</p>
+        <div className={styles['meeting-meta']}>
+          <span className={styles['meeting-date']}>
+            {new Date(meeting.createdAt).toLocaleDateString()}
+          </span>
+          <span className={styles['meeting-participants']}>
+            {meeting.participants?.length || 0}명 참석
+          </span>
+        </div>
       </div>
       
-      {/* 추가 메뉴 버튼 */}
-      <button className={styles['more-button']}>⋮</button>
+      {/* 클라이언트 컴포넌트로 분리된 액션 버튼들 */}
+      <MeetingItemActions meetingId={meeting.id} />
     </div>
   );
 } 
