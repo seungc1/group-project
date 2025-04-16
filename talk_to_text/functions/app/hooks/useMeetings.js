@@ -30,4 +30,4 @@ export const useMeetings = () => {
   }, []);
 
   return { meetings, loading, error };
-}; 
+};

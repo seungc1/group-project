@@ -3,7 +3,6 @@
  * @param {Object} meeting - 회의 데이터 객체
  * @param {Array} meeting.keywords - 회의의 주요 키워드 배열
  */
-'use client';
 
 import styles from './styles.module.css';
 

@@ -24,8 +24,13 @@ yarn-debug.log*
 yarn-error.log*
 firebase-debug.log*
 *.log
+firebase-debug.log*
+*.log
 
 # local env files
+.env
+.env.*
+!.env.example
 .env
 .env.*
 !.env.example
@@ -42,6 +47,7 @@ next-env.d.ts
 ../.venv/
 venv/
 *.dylib
+.venv/
 
 # firebase
 .firebase/
