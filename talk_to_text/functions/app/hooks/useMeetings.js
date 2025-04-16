@@ -19,7 +19,7 @@ export const useMeetings = () => {
         setMeetings(meetingsList);
         setError(null);
       } catch (error) {
-        console.error('Error fetching meetings:', error);
+        console.error('Error fetching meetings:', error)
         setError('회의 데이터를 가져오는 중 오류가 발생했습니다.');
       } finally {
         setLoading(false);

@@ -14,6 +14,9 @@
 }
 
 .headerTop {
+  display: flex;
+  justify-content: space-between; /* 좌우 양끝 정렬 */
+  align-items: center;           /* 수직 정렬 */
   margin-bottom: 1rem;
 }
 
