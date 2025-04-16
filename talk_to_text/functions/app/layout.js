@@ -20,7 +20,6 @@
 import "./globals.css";
 // 레이아웃 래퍼 컴포넌트 임포트
 import LayoutWrapper from './components/layout/LayoutWrapper';
-import NavBar from "@/components/navBar";
 import styles from './page.module.css';
 
 /**
