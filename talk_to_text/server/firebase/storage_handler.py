@@ -5,15 +5,19 @@ from utils.logger import configure_logger
 logger = configure_logger()
 
 # 요약 결과를 텍스트 파일로 저장 및 Firebase Storage에 업로드
-def upload_summary_text(summary_text, audio_filename, remote_folder="summaries"):
+def upload_summary_text(summary_text, audio_filename, keywords, remote_folder="summaries"):
     try:
         # 파일명 생성 (예: sample_summary.txt)
         summary_filename = f"{os.path.splitext(os.path.basename(audio_filename))[0]}_summary.txt"
         local_path = os.path.join("/tmp", summary_filename)  # 임시 디렉토리 사용
 
+        # 키워드를 문자열로 변환하여 텍스트에 추가
+        keyword_str = "\n- " + "\n- ".join(keywords) if keywords else "없음"
+        full_content = f"{summary_text.strip()}\n\n[키워드]{keyword_str}"
+
         # 텍스트 파일 저장
         with open(local_path, "w", encoding="utf-8-sig") as f:
-            f.write(summary_text)
+            f.write(full_content)
 
         # Storage 업로드
         return upload_summary_file(local_path, remote_folder)

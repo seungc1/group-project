@@ -6,6 +6,9 @@ import re
 from collections import Counter
 from utils.logger import configure_logger
 
+from sklearn.feature_extraction.text import TfidfVectorizer
+from konlpy.tag import Okt
+
 # SSL 검증 완전 비활성화
 ssl._create_default_https_context = ssl._create_unverified_context
 urllib3.disable_warnings()
@@ -21,6 +24,42 @@ logger = configure_logger()
 
 # Upstage API 키는 환경 변수에서 불러옴
 UPSTAGE_API_KEY = os.getenv("UPSTAGE_API_KEY")
+
+# TF-IDF 기반 키워드 추출 함수
+def extract_keywords_tfidf(text, top_n=5):
+    try:
+        # 입력된 전체 텍스트를 문장 단위로 분리
+        sentences = re.split(r'[.!?]\s+', text)
+
+        okt = Okt()
+        processed = []
+
+        for sentence in sentences:
+            # 각 문장에서 명사 추출
+            nouns = okt.nouns(sentence)
+            # 길이가 1 이하인 단어는 제외
+            nouns = [word for word in nouns if len(word) > 1]
+            # 명사들을 공백으로 구분된 문자열로 변환
+            processed.append(" ".join(nouns))
+
+        # TF-IDF 벡터 생성기 초기화 및 벡터화 수행
+        vectorizer = TfidfVectorizer()
+        tfidf_matrix = vectorizer.fit_transform(processed)
+
+        # 단어 리스트 및 각 단어의 TF-IDF 점수 합산
+        feature_names = vectorizer.get_feature_names_out()
+        scores = tfidf_matrix.sum(axis=0).A1  # 전체 문서에서의 점수 합계
+
+        # 단어와 점수를 묶고 점수 기준으로 정렬
+        tfidf_scores = list(zip(feature_names, scores))
+        tfidf_scores.sort(key=lambda x: x[1], reverse=True)
+
+        # 상위 top_n개의 단어만 추출하여 반환
+        return [word for word, _ in tfidf_scores[:top_n]]
+
+    except Exception as e:
+        logger.error(f"TF-IDF 키워드 추출 실패: {e}")
+        return []
 
 # 키워드 추출 함수 (상위 N개 명사) <-- 너무 단순해서 실제 사용에 적합하지 않음
 def extract_keywords(text, top_n=5):
