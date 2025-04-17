@@ -63,4 +63,5 @@ server/firebase_key.json
 talk_to_text/server/firebase/firebase_key.json
 talk_to_text/server/cal_module/calendar_service_key.json
 group-project/talk_to_text/server/firebase/firebase_key.json
-group-project/talk_to_text/server/cal_module/calendar_service_key.json
+group-project/talk_to_text/server/cal_module/calendar_service_key.jsontalk_to_text/server/firebase/firebase_key.json
+talk_to_text/server/cal_module/calendar_service_key.json
