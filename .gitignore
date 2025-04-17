@@ -24,3 +24,5 @@ lib/
 
 # GitHub workflows
 .github/workflows
+
+.DS_Store
