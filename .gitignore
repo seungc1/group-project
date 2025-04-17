@@ -11,4 +11,16 @@ __pycache__/
 # Distribution / packaging
 dist/
 build/
-*.egg-info/ 
+*.egg-info/
+
+# Environment variables
+.env
+
+# Node.js
+node_modules/
+
+# Build output
+lib/
+
+# GitHub workflows
+.github/workflows
