@@ -67,3 +67,5 @@ group-project/talk_to_text/server/cal_module/calendar_service_key.jsontalk_to_te
 talk_to_text/server/cal_module/calendar_service_key.json
 talk_to_text/server/firebase/firebase_key.json
 talk_to_text/server/cal_module/calendar_service_key.json
+server/firebase_key.json
+
