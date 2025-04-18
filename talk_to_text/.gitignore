@@ -58,3 +58,14 @@ functions/firebase-debug.log
 
 # secret files
 server/firebase_key.json
+
+# .gitignore 맨 아래에 추가
+talk_to_text/server/firebase/firebase_key.json
+talk_to_text/server/cal_module/calendar_service_key.json
+group-project/talk_to_text/server/firebase/firebase_key.json
+group-project/talk_to_text/server/cal_module/calendar_service_key.jsontalk_to_text/server/firebase/firebase_key.json
+talk_to_text/server/cal_module/calendar_service_key.json
+talk_to_text/server/firebase/firebase_key.json
+talk_to_text/server/cal_module/calendar_service_key.json
+server/firebase_key.json
+
