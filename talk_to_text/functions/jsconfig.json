@@ -2,8 +2,7 @@
   "compilerOptions": {
     "baseUrl": ".",
     "paths": {
-      "@/*": ["./*"],
-      "@/functions/*": ["./*"]
+      "@/*": ["./app/*"] // 여기를 app 기준으로 재설정
     }
   }
-} 
+}
