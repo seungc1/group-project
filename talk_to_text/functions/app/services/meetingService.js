@@ -63,7 +63,7 @@ export async function getMeetingById(id) {
   }
 }
 
-export async function createMeeting({ title, participants, participantNames, file }) {
+export async function createMeeting({ title, participants, participantNames, meetingDate, file }) {
   try {
     // 문서 ID 생성
     const currentDate = new Date();
@@ -80,6 +80,7 @@ export async function createMeeting({ title, participants, participantNames, fil
       title,
       participants,
       participantName: participantNames,
+      meetingDate,
       createAt: serverTimestamp()
     });
 
