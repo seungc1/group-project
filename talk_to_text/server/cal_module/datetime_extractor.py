@@ -1,5 +1,6 @@
 import re
 import dateparser
+import uuid
 from datetime import datetime, timedelta
 from utils.logger import configure_logger
 from dateparser.search import search_dates
@@ -23,7 +24,7 @@ def rule_based_datetime(text: str, base: datetime) -> list[datetime]:
         "목요일": 3, "금요일": 4, "토요일": 5, "일요일": 6
     }
 
-    if "다음 주" in text:
+    if "다음 주" in text or "다음주" in text:
         for label, weekday in days.items():
             if label in text:
                 offset = ((7 - base.weekday() + weekday) % 7) + 7
@@ -47,18 +48,20 @@ def extract_time(text: str) -> list[tuple[int, int]]:
     return times
 
 # 자연어 기반 날짜 및 시간 인식 후 datetime 리스트로 반환
-def extract_datetimes_from_text(text: str) -> list[datetime]:
+def extract_datetimes_from_text(text: str) -> list[dict]:
     try:
         base = datetime.now()
-        datetimes = []
         seen = set()
         final = []
 
-        # 규칙 기반 날짜 추출
         rule_based = rule_based_datetime(text, base)
-        datetimes.extend(rule_based)
+        for dt in rule_based:
+            final.append({
+                "expression": "RULE_BASED_EXPRESSION",
+                "datetime": dt.isoformat(),
+                "logId": str(uuid.uuid4())  # 여기서 logId 생성해서 넣는다
+            })
 
-        # dateparser를 사용한 추가 날짜 인식
         parsed = search_dates(
             text,
             languages=["ko"],
@@ -69,26 +72,24 @@ def extract_datetimes_from_text(text: str) -> list[datetime]:
             }
         )
         if parsed:
-            for _, dt in parsed:
+            time_parts = extract_time(text)
+            for phrase, dt in parsed:
                 if dt.date() >= base.date():
-                    datetimes.append(dt)
+                    if time_parts:
+                        hour, minute = time_parts.pop(0)
+                    else:
+                        hour, minute = 10, 0
+                    dt = dt.replace(hour=hour, minute=minute, second=0, microsecond=0)
 
-        # 시간 표현 추출
-        time_parts = extract_time(text)
+                    while (dt.date(), dt.hour) in seen:
+                        dt += timedelta(hours=1)
+                    seen.add((dt.date(), dt.hour))
 
-        # 날짜와 시간 결합
-        for date in sorted(datetimes):
-            if time_parts:
-                hour, minute = time_parts.pop(0)
-            else:
-                hour, minute = 10, 0  # 기본 시간 설정
-            dt = date.replace(hour=hour, minute=minute, second=0, microsecond=0)
-
-            # 동일한 시간 중복 방지를 위한 자동 보정
-            while (dt.date(), dt.hour) in seen:
-                dt += timedelta(hours=1)
-            seen.add((dt.date(), dt.hour))
-            final.append(dt)
+                    final.append({
+                        "expression": phrase,
+                        "datetime": dt.isoformat(),
+                        "logId": str(uuid.uuid4())  # 🔥 여기서도 logId 넣어준다
+                    })
 
         logger.info(f"[Datetime 추출 결과]: {final}")
         return final

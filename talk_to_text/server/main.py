@@ -2,6 +2,8 @@ import os
 import ssl
 import urllib3
 import requests
+from firebase_admin import firestore
+from datetime import datetime
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 from concurrent.futures import ThreadPoolExecutor
@@ -19,6 +21,7 @@ from cal_module.datetime_extractor import extract_datetimes_from_text
 from task.task_extractor import extract_task_commands_with_solar
 from task.google_task_register import register_tasks
 
+from calendar_logs_project.main import extract_and_store_schedule_logs
 
 # .env.local 파일 경로 설정
 dotenv_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".env.server"))
@@ -69,29 +72,49 @@ def process_audio_endpoint():
 
         # 4. NLP 처리
         keywords = extract_keywords_tfidf(full_text, top_n=5)   # 키워드 추출 (TF-IDF 기반)
-        # keywords = extract_keywords(full_text)
-        summary = summarize_text(full_text) 
+        summary = summarize_text(full_text)
+        summary_text = summary
         
-        # 4-1. 요약 또는 원문에서 회의 일정 날짜 추출
-        # 여러 날짜 추출
-        meeting_datetimes = extract_datetimes_from_text(summary)
-        calendar_links = []  # 생성된 일정 링크 저장용
-        event_links = []
-        datetimes = extract_datetimes_from_text(summary)
+        # calendar_logs 문서 업데이트 함수
+        def update_calendar_log(log_id, event_url):
+            db = firestore.client()
+            log_ref = db.collection('calendar_logs').document(log_id)
+            log_ref.update({
+                "calendarEventUrl": event_url,
+                "status": "success"
+            })
+        
+        # 4-1. 회의 일정 추출 및 Firestore calendar_logs 저장
+        meeting_id = os.path.splitext(os.path.basename(audio_path))[0]
 
+        # 4-2. 추출된 datetimes를 즉시 캘린더 등록
+        datetimes = extract_and_store_schedule_logs(summary_text, meeting_id)
+        event_links = []
+        
         if datetimes:
-            for dt in datetimes:
-                logger.info(f"회의 일정으로 인식된 날짜: {dt}")
-                event_link = create_calendar_event("회의 있음", dt)
+            for dt_info in datetimes:
+                logger.info(f"회의 일정으로 인식된 날짜: {dt_info}")
+
+                start_datetime = dt_info["datetime"]  # 여기서 datetime만 꺼낸다.
+                # 만약 datetime이 문자열이면 datetime 객체로 변환
+                if isinstance(start_datetime, str):
+                    start_datetime = datetime.fromisoformat(start_datetime)
+
+                event_link = create_calendar_event("회의 있음", start_datetime)
+
                 if event_link:
                     event_links.append(event_link)
                     logger.info(f"Google Calendar 일정 등록 성공: {event_link}")
+                    
+                    # calendar_logs 문서 업데이트
+                    update_calendar_log(dt_info["logId"], event_link)
+
                 else:
                     logger.warning("Google Calendar 일정 등록 실패")
         else:
             logger.info("요약에서 일정 관련 날짜를 찾지 못했음.")
             
-        # 4-2. 작업 명령어 추출 및 Google Tasks 등록
+        # 4-3. 작업 명령어 추출 및 Google Tasks 등록
         summary_text = summary  # Whisper 결과 요약에서 가져옴
 
         # 1. 명령형 문장 추출
@@ -104,9 +127,7 @@ def process_audio_endpoint():
         
         # 5. 요약 파일 저장 및 Firebase 업로드
         summary_url = upload_summary_text(summary, audio_path, keywords)
-        # meeting_id = os.path.splitext(os.path.basename(audio_path))[0]
-        # summary_url = upload_summary_text(summary, audio_path, keywords, meeting_id)
-
+        
         # 6. Firestore에 저장
         save_transcript({
             "transcript": transcript,

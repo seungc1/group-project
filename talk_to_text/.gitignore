@@ -65,3 +65,6 @@ group-project/talk_to_text/server/firebase/firebase_key.json
 group-project/talk_to_text/server/cal_module/calendar_service_key.json
 group-project/talk_to_text/server/task/token.json
 group-project/talk_to_text/server/task/credentials.json
+
+__pycache__/
+*.pyc
