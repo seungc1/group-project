@@ -16,6 +16,10 @@ from dotenv import load_dotenv
 from cal_module.calendar_sync import create_calendar_event
 from cal_module.datetime_extractor import extract_datetimes_from_text
 
+from task.task_extractor import extract_task_commands_with_solar
+from task.google_task_register import register_tasks
+
+
 # .env.local 파일 경로 설정
 dotenv_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".env.server"))
 load_dotenv(dotenv_path)
@@ -86,10 +90,22 @@ def process_audio_endpoint():
                     logger.warning("Google Calendar 일정 등록 실패")
         else:
             logger.info("요약에서 일정 관련 날짜를 찾지 못했음.")
-        
+            
+        # 4-2. 작업 명령어 추출 및 Google Tasks 등록
+        summary_text = summary  # Whisper 결과 요약에서 가져옴
+
+        # 1. 명령형 문장 추출
+        commands = extract_task_commands_with_solar(summary_text)
+        commands = [cmd for cmd in commands if cmd.strip()]  # 불필요한 공백 제거
+
+        # 2. Google Tasks 등록
+        if commands:
+            register_tasks(commands)
         
         # 5. 요약 파일 저장 및 Firebase 업로드
         summary_url = upload_summary_text(summary, audio_path, keywords)
+        # meeting_id = os.path.splitext(os.path.basename(audio_path))[0]
+        # summary_url = upload_summary_text(summary, audio_path, keywords, meeting_id)
 
         # 6. Firestore에 저장
         save_transcript({
