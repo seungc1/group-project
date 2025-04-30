@@ -1,69 +1,80 @@
 import re
-import dateparser
 import uuid
+import dateparser
 from datetime import datetime, timedelta
-from utils.logger import configure_logger
 from dateparser.search import search_dates
+from utils.logger import configure_logger
 
 logger = configure_logger()
 
-# 자연어 표현으로 날짜 계산 (예: 내일, 모레, 다음주 요일 등)
-def rule_based_datetime(text: str, base: datetime) -> list[datetime]:
+# 요일 인덱스
+DAYS = {
+    "월요일": 0, "화요일": 1, "수요일": 2,
+    "목요일": 3, "금요일": 4, "토요일": 5, "일요일": 6
+}
+
+# 시간대 키워드 → 기본 시각 매핑
+TIME_KEYWORDS = {
+    "아침": (8, 0),
+    "점심": (12, 0),
+    "정오": (12, 0),
+    "낮": (12, 0),
+    "오후": (15, 0),
+    "저녁": (18, 0),
+    "밤": (21, 0),
+    "새벽": (5, 0)
+}
+
+def rule_based_datetime(text: str, base: datetime) -> list[tuple[str, datetime]]:
     results = []
-
     if "내일" in text:
-        results.append(base + timedelta(days=1))
+        results.append(("내일", base + timedelta(days=1)))
     if "모레" in text:
-        results.append(base + timedelta(days=2))
-    if "글피" in text:
-        results.append(base + timedelta(days=3))
-
-    # 요일 기반 다음 주 날짜 계산
-    days = {
-        "월요일": 0, "화요일": 1, "수요일": 2,
-        "목요일": 3, "금요일": 4, "토요일": 5, "일요일": 6
-    }
-
+        results.append(("모레", base + timedelta(days=2)))
     if "다음 주" in text or "다음주" in text:
-        for label, weekday in days.items():
+        for label, weekday in DAYS.items():
             if label in text:
                 offset = ((7 - base.weekday() + weekday) % 7) + 7
-                results.append(base + timedelta(days=offset))
-
+                results.append((f"다음주 {label}", base + timedelta(days=offset)))
     return results
 
-# 시간 정보 추출 (예: 오후 3시 → (15, 0))
-def extract_time(text: str) -> list[tuple[int, int]]:
-    time_patterns = re.findall(r"(오전|오후)?\s*(\d{1,2})(?:시|:)?(?:\s*(\d{1,2})분)?", text)
-    times = []
-
-    for meridiem, hour, minute in time_patterns:
+def extract_time(text: str) -> tuple[int, int] | None:
+    match = re.search(r"(오전|오후)?\s*(\d{1,2})(시|:)?\s*(\d{1,2})?분?", text)
+    if match:
+        meridiem, hour, _, minute = match.groups()
         hour = int(hour)
         minute = int(minute) if minute else 0
         if meridiem == "오후" and hour < 12:
             hour += 12
         if meridiem == "오전" and hour == 12:
             hour = 0
-        times.append((hour, minute))
-    return times
+        return hour, minute
 
-# 자연어 기반 날짜 및 시간 인식 후 datetime 리스트로 반환
+    for keyword, (h, m) in TIME_KEYWORDS.items():
+        if keyword in text:
+            return h, m
+
+    return None
+
 def extract_datetimes_from_text(text: str) -> list[dict]:
-    try:
-        base = datetime.now()
-        seen = set()
-        final = []
+    base = datetime.now()
+    seen = set()
+    final = []
 
-        rule_based = rule_based_datetime(text, base)
-        for dt in rule_based:
-            final.append({
-                "expression": "RULE_BASED_EXPRESSION",
-                "datetime": dt.isoformat(),
-                "logId": str(uuid.uuid4())  # 여기서 logId 생성해서 넣는다
-            })
+    expressions = re.split(r"[,\n]|그리고|또는", text)
 
-        parsed = search_dates(
-            text,
+    for expr in expressions:
+        expr = expr.strip()
+        if not expr:
+            continue
+
+        results = {}
+        rule_dates = rule_based_datetime(expr, base)
+        for label, dt in rule_dates:
+            results[label] = dt
+
+        parsed_dates = search_dates(
+            expr,
             languages=["ko"],
             settings={
                 "PREFER_DATES_FROM": "future",
@@ -71,29 +82,29 @@ def extract_datetimes_from_text(text: str) -> list[dict]:
                 "RETURN_AS_TIMEZONE_AWARE": False
             }
         )
-        if parsed:
-            time_parts = extract_time(text)
-            for phrase, dt in parsed:
+
+        if parsed_dates:
+            for phrase, dt in parsed_dates:
                 if dt.date() >= base.date():
-                    if time_parts:
-                        hour, minute = time_parts.pop(0)
-                    else:
-                        hour, minute = 10, 0
-                    dt = dt.replace(hour=hour, minute=minute, second=0, microsecond=0)
+                    already = any(abs((dt - existing).total_seconds()) < 60 for existing in results.values())
+                    if not already:
+                        results[phrase] = dt
 
-                    while (dt.date(), dt.hour) in seen:
-                        dt += timedelta(hours=1)
-                    seen.add((dt.date(), dt.hour))
+        if not results:
+            continue
 
-                    final.append({
-                        "expression": phrase,
-                        "datetime": dt.isoformat(),
-                        "logId": str(uuid.uuid4())  # 🔥 여기서도 logId 넣어준다
-                    })
+        time_part = extract_time(expr)
+        for phrase, dt in results.items():
+            hour, minute = time_part if time_part else (10, 0)
+            dt = dt.replace(hour=hour, minute=minute, second=0, microsecond=0)
+            key = (dt.date(), dt.hour, dt.minute)
+            if key in seen:
+                continue
+            seen.add(key)
+            final.append({
+                "expression": phrase,
+                "datetime": dt.isoformat(),
+                "logId": str(uuid.uuid4())
+            })
 
-        logger.info(f"[Datetime 추출 결과]: {final}")
-        return final
-
-    except Exception as e:
-        logger.exception(f"[Datetime 추출 실패]: {e}")
-        return []
+    return final
