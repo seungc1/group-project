@@ -8,6 +8,7 @@
 // 컴포넌트 스타일 임포트
 import styles from './styles.module.css';
 import DownloadButton from './DownloadButton';
+import ShareButton from './ShareButton';
 import EditSummaryButton from './EditSummaryButton';
 
 export default function MeetingSummary({ meeting }) {
@@ -36,6 +37,7 @@ export default function MeetingSummary({ meeting }) {
         <div className={styles.downloadSection}>
           <DownloadButton url={meeting.summaryDownloadUrl} />
           <EditSummaryButton meetingId={meeting.id} />
+          <ShareButton url={meeting.summaryDownloadUrl} />
         </div>
       )}
     </div>
