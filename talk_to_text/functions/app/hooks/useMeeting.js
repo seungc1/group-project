@@ -3,7 +3,7 @@
 // 특정 회의 상세 정보가 필요한 경우 사용
 
 import { useEffect, useState } from 'react';
-import { db } from '@/lib/firebase';
+import { db } from 'lib/firebase';
 import { doc, getDoc } from 'firebase/firestore';
 
 export function useMeeting(meetingId) {

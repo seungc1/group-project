@@ -2,7 +2,7 @@
  * 회의 관련 데이터를 서버 사이드에서 가져오는 서비스
  */
 
-import { db, storage } from '@/lib/firebase';
+import { db, storage } from 'lib/firebase';
 import { doc, getDoc, collection, query, where, getDocs, setDoc, updateDoc, serverTimestamp } from 'firebase/firestore';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 
