@@ -24,13 +24,8 @@ yarn-debug.log*
 yarn-error.log*
 firebase-debug.log*
 *.log
-firebase-debug.log*
-*.log
 
 # local env files
-.env
-.env.*
-!.env.example
 .env
 .env.*
 !.env.example
@@ -58,14 +53,18 @@ functions/firebase-debug.log
 
 # secret files
 server/firebase_key.json
+server/firebase/firebase_key.json
+server/cal_module/calendar_service_key.json
+server/task/token.json
+server/task/credentials.json
 
-# .gitignore 맨 아래에 추가
+# 추가로 talk_to_text 프로젝트 경로
 talk_to_text/server/firebase/firebase_key.json
 talk_to_text/server/cal_module/calendar_service_key.json
 group-project/talk_to_text/server/firebase/firebase_key.json
-group-project/talk_to_text/server/cal_module/calendar_service_key.jsontalk_to_text/server/firebase/firebase_key.json
-talk_to_text/server/cal_module/calendar_service_key.json
-talk_to_text/server/firebase/firebase_key.json
-talk_to_text/server/cal_module/calendar_service_key.json
-server/firebase_key.json
+group-project/talk_to_text/server/cal_module/calendar_service_key.json
+group-project/talk_to_text/server/task/token.json
+group-project/talk_to_text/server/task/credentials.json
 
+__pycache__/
+*.pyc

@@ -26,4 +26,4 @@ export default function FileUpload({ onFileSelect, selectedFile }) {
       </div>
     </div>
   );
-} 
+}

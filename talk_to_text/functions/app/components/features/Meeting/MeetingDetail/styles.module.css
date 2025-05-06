@@ -1,5 +1,15 @@
 .meetingDetail {
   padding: 1rem;
+  max-width: 1200px;
+  margin: 0 auto;
+  min-height: 100vh;
+}
+
+.meetingContent {
+  padding: 2rem;
+  background-color: white;
+  border-radius: 0.5rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
 .loading {
@@ -15,8 +25,8 @@
 
 .headerTop {
   display: flex;
-  justify-content: space-between; /* 좌우 양끝 정렬 */
-  align-items: center;           /* 수직 정렬 */
+  justify-content: space-between;
+  align-items: center;
   margin-bottom: 1rem;
 }
 
