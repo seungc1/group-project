@@ -27,7 +27,7 @@ export const uploadMeeting = async ({ file, title, participants, participantName
   await uploadBytes(storageRef, file);
   const audioUrl = await getDownloadURL(storageRef);
 
-  const response = await fetch('/api/process-audio', {
+  const response = await fetch('http://localhost:5000/api/process-audio', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ audioUrl, docId }),
