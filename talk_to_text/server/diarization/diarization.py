@@ -2,6 +2,7 @@ import os
 import ssl
 import urllib3
 import requests
+import subprocess
 from pyannote.audio.pipelines import SpeakerDiarization
 from utils.logger import configure_logger
 
@@ -19,9 +20,25 @@ os.environ['SSL_CERT_FILE'] = ''
 logger = configure_logger()
 
 # Hugging Face 토큰 환경 변수에서 가져오기
-# HUGGINGFACE_TOKEN = os.getenv("HUGGINGFACE_TOKEN")
-#HUGGINGFACE_TOKEN = "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"
 HUGGINGFACE_TOKEN = os.getenv("HUGGINGFACE_TOKEN")
+
+# 오디오 파일을 16kHz mono로 변환하는 전처리 함수
+def convert_to_16k_mono(input_path: str, output_path: str) -> str:
+    try:
+        command = [
+            'ffmpeg',
+            '-y',
+            '-i', input_path,
+            '-ac', '1',
+            '-ar', '16000',
+            output_path
+        ]
+        subprocess.run(command, check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        logger.info(f"[전처리 완료] {output_path} (16kHz mono)")
+        return output_path
+    except subprocess.CalledProcessError as e:
+        logger.error(f"오디오 전처리 실패: {e}")
+        raise
 
 # 화자 분리 파이프라인 로딩 (프로세스 시작 시 1회)
 try:
@@ -39,6 +56,10 @@ except Exception as e:
 # 화자 분리 실행 함수
 def apply_diarization(audio_path):
     try:
+        # 1. 16kHz mono로 전처리 자동 수행
+        preprocessed_path = "/tmp/converted.wav"
+        convert_to_16k_mono(audio_path, preprocessed_path)
+        # 2. 화자 분리 수행        
         diarization = pipeline(audio_path)
         logger.info("화자 분리 처리 완료")
         return diarization

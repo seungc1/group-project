@@ -90,7 +90,7 @@ export async function createMeeting({ title, participants, participantNames, mee
     const audioUrl = await getDownloadURL(storageRef);
     
     // 음성 처리 API 호출
-    const response = await fetch('/api/process-audio', {
+    const response = await fetch('http://localhost:5000/api/process-audio', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

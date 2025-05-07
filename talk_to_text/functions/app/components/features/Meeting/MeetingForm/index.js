@@ -16,8 +16,12 @@ import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 
 export default function MeetingForm() {
   const router = useRouter();
+  const [selectedFile, setSelectedFile] = useState(null);
 
   async function handleSubmit(formData) {
+    if (selectedFile) {
+      formData.append('file', selectedFile);
+    }
     try {
       const result = await submitMeeting(formData);
       if (result.success) {
@@ -92,7 +96,10 @@ export default function MeetingForm() {
         />
       </div>
 
-      <FileUpload name="file" />
+      <FileUpload
+        onFileSelect={setSelectedFile}
+        selectedFile={selectedFile}
+      />
 
       <LoadingButton type="submit" text="회의록 저장" />
     </form>
