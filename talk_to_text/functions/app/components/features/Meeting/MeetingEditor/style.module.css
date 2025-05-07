@@ -1,0 +1,51 @@
+/* 요약 섹션과 수정 섹션 공통 UI 스타일 */
+.summarySection {
+  margin-bottom: 2rem;                             /* 섹션 간 여백 */
+  padding: 1.5rem;                                 /* 안쪽 여백 */
+  background-color: white;                         /* 배경색 */
+  border-radius: 0.5rem;                           /* 모서리 둥글게 */
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);         /* 약한 그림자 효과 */
+}
+
+/* 전체 페이지 좌우 영역을 나누는 부모 컨테이너 */
+.container {
+  display: flex;                                   /* 좌우 영역 배치 */
+  gap: 24px;                                       /* 좌우 간격 */
+  margin-top: 20px;                                /* 상단 여백 */
+  width: 100%;                                     /* 전체 너비 사용 */
+  min-height: 100vh;                               /* 브라우저 세로 전체 높이 */
+}
+
+/* 좌/우 공통 영역 스타일 */
+.leftPane,
+.rightPane {
+  flex: 1;                                         /* 동일한 너비 */
+  background: #f9f9f9;                             /* 연한 회색 배경 */
+  padding: 24px;                                   /* 내부 여백 */
+  border-radius: 8px;                              /* 둥근 테두리 */
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);        /* 약한 그림자 */
+  display: flex;                                   /* 내부 요소 정렬용 */
+  flex-direction: column;                          /* 세로 정렬 */
+  height: 100%;                                    /* 부모 높이 전체 차지 */
+  overflow-y: auto;                                /* 넘칠 경우 스크롤 */
+}
+
+/* 왼쪽 요약 textarea: 전체 영역 중 80% 차지하게 강제 */
+.leftPane textarea,
+.rightPane textarea {
+  flex: 1;                                   /* 부모 높이의 80% 고정 */
+  resize: vertical;                                /* 세로 방향만 리사이즈 가능 */
+  padding: 12px;                                   /* 텍스트 여백 */
+  font-size: 14px;                                 /* 글자 크기 */
+  border: 1px solid #ccc;                          /* 테두리 색 */
+  border-radius: 4px;                              /* 둥근 테두리 */
+  min-height: 600px;                               /* 최소 높이 제한 */
+  margin-bottom: 16px;                             /* 아래 버튼과 여백 */
+  box-sizing: border-box;                          /* 패딩 포함 너비 계산 */
+}
+
+
+/* 오른쪽 버튼 여백 */
+.rightPane button {
+  margin-bottom: 16px;                             /* 아래 여백 */
+}

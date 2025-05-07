@@ -19,7 +19,7 @@ export default async function MeetingDetail({ id }) {
   }
 
   return (
-    <div className={styles.meetingDetail}>
+    <div className={styles.meetingContent}>
       <MeetingHeader meeting={meeting} />
       <MeetingSummary meeting={meeting} />
       <MeetingKeywords meeting={meeting} />

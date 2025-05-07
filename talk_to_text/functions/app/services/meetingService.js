@@ -37,17 +37,23 @@ export async function getMeetingById(id) {
     const docRef = doc(db, 'meetings', decodedId);
     const docSnap = await getDoc(docRef);
 
+    const normalizeMeeting = (data) => {
+      // Firestore Timestamp 객체를 문자열로 변환
+      const createAt = data.createAt?.toDate?.().toISOString?.() || null;
+      return { ...data, createAt };
+    };
+
     if (docSnap.exists()) {
-      return { id: docSnap.id, ...docSnap.data() };
+      return { id: docSnap.id, ...normalizeMeeting(docSnap.data()) };
     }
 
-    // 직접 쿼리를 통한 대체 검색
+    // 대체 쿼리 (title이 ID일 경우)
     const q = query(collection(db, 'meetings'), where('title', '==', decodedId));
     const querySnapshot = await getDocs(q);
 
     if (!querySnapshot.empty) {
       const doc = querySnapshot.docs[0];
-      return { id: doc.id, ...doc.data() };
+      return { id: doc.id, ...normalizeMeeting(doc.data()) };
     }
 
     return null;
@@ -57,7 +63,7 @@ export async function getMeetingById(id) {
   }
 }
 
-export async function createMeeting({ title, participants, participantNames, file }) {
+export async function createMeeting({ title, participants, participantNames, meetingDate, file }) {
   try {
     // 문서 ID 생성
     const currentDate = new Date();
@@ -74,6 +80,7 @@ export async function createMeeting({ title, participants, participantNames, fil
       title,
       participants,
       participantName: participantNames,
+      meetingDate,
       createAt: serverTimestamp()
     });
 

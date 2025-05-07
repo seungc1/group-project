@@ -1,3 +1,7 @@
+// app/hooks/useMeetings.js
+// const { meetings, loading, error } = useMeetings(); 으로 사용가능
+//  회의 목록 전체가 필요한 경우 사용
+
 import { useState, useEffect } from 'react';
 import { db } from '@/lib/firebase';
 import { collection, getDocs, query, orderBy } from 'firebase/firestore';

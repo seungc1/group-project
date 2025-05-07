@@ -8,6 +8,7 @@
 // 컴포넌트 스타일 임포트
 import styles from './styles.module.css';
 import DownloadButton from './DownloadButton';
+import EditSummaryButton from './EditSummaryButton';
 
 export default function MeetingSummary({ meeting }) {
   // 요약 섹션 UI 렌더링
@@ -34,6 +35,7 @@ export default function MeetingSummary({ meeting }) {
       {meeting.summaryDownloadUrl && (
         <div className={styles.downloadSection}>
           <DownloadButton url={meeting.summaryDownloadUrl} />
+          <EditSummaryButton meetingId={meeting.id} />
         </div>
       )}
     </div>
