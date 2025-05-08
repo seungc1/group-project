@@ -8,3 +8,4 @@ konlpy
 python-dotenv
 dateparser
 google-auth-oauthlib
+firebase-admin
