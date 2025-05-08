@@ -87,6 +87,15 @@ export const NavigationRail = ({ isCollapsed, setIsCollapsed }) => {
           <span>설정</span>
         </div>
 
+        {/* 음성파일 형식 변환 메뉴 아이템 */}
+        <div 
+          className={styles['nav-item']}
+          onClick={() => router.push('/wav-convert')}
+        >
+          <div className={styles.icon}>🍖</div>
+          <span>오디오 변환</span>
+        </div>
+
         {/* 인증 관련 버튼들 */}
         <div className={styles['auth-buttons']}>
           {user ? (
@@ -119,4 +128,4 @@ export const NavigationRail = ({ isCollapsed, setIsCollapsed }) => {
       </div>
     </nav>
   );
-}; 
+};
