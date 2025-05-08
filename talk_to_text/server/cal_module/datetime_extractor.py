@@ -3,6 +3,7 @@ import uuid
 import dateparser
 from datetime import datetime, timedelta
 from dateparser.search import search_dates
+from typing import Union, Tuple, Optional
 from utils.logger import configure_logger
 
 # 로깅 설정

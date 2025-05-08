@@ -1,18 +1,10 @@
 rules_version = '2';
+
 service cloud.firestore {
   match /databases/{database}/documents {
-    
-    // meetings 컬렉션의 모든 문서에 대해
-    // 개발 중에는 읽기(read)를 모두 허용하고,
-    // 쓰기(write)는 인증된 사용자만 허용
-    match /meetings/{meetingId} {
-      allow read:  if true;
-      allow write: if request.auth != null;
-    }
-
-    // 나머지 모든 컬렉션/문서는 기본 차단
+    // 모든 컬렉션에 대해 인증 없이도 모든 작업 허용
     match /{document=**} {
-      allow read, write: if false;
+      allow read, write: if true;
     }
   }
 }

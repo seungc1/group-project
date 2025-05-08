@@ -8,16 +8,30 @@
 
 // React 훅과 라우터 임포트
 import { useRouter } from 'next/navigation';
+import { useAuth } from '@/app/context/AuthContext';
 // 컴포넌트 스타일 임포트
 import styles from './styles.module.css';
 
 export const NavigationRail = ({ isCollapsed, setIsCollapsed }) => {
   // 라우터 인스턴스 생성
   const router = useRouter();
+  const { user, logout } = useAuth();
 
   // 사이드바 접기/펼치기 토글 함수
   const toggleCollapse = () => {
     setIsCollapsed(!isCollapsed);
+  };
+
+  const handleLogin = () => {
+    router.push('/login');
+  };
+
+  const handleSignup = () => {
+    router.push('/signup');
+  };
+
+  const handleLogout = async () => {
+    await logout();
   };
 
   // 네비게이션 레일 UI 렌더링
@@ -80,6 +94,36 @@ export const NavigationRail = ({ isCollapsed, setIsCollapsed }) => {
         >
           <div className={styles.icon}>🍖</div>
           <span>오디오 변환</span>
+        </div>
+
+        {/* 인증 관련 버튼들 */}
+        <div className={styles['auth-buttons']}>
+          {user ? (
+            <div 
+              className={styles['nav-item']}
+              onClick={handleLogout}
+            >
+              <div className={styles.icon}>🚪</div>
+              <span>로그아웃</span>
+            </div>
+          ) : (
+            <>
+              <div 
+                className={styles['nav-item']}
+                onClick={handleLogin}
+              >
+                <div className={styles.icon}>🔑</div>
+                <span>로그인</span>
+              </div>
+              <div 
+                className={styles['nav-item']}
+                onClick={handleSignup}
+              >
+                <div className={styles.icon}>📝</div>
+                <span>회원가입</span>
+              </div>
+            </>
+          )}
         </div>
       </div>
     </nav>

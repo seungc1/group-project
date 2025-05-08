@@ -1,5 +1,5 @@
 {
-  "name": "talk_to_text",
+  "name": "talk-to-text",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -12,11 +12,15 @@
   },
   "dependencies": {
     "@firebasegen/default-connector": "file:dataconnect-generated/js/default-connector",
-    "firebase": "^11.5.0",
+    "firebase": "^10.8.0",
     "firebase-admin": "^13.2.0",
     "firebase-functions": "^6.3.2",
-    "next": "^14.2.25",
-    "react": "^18.3.1",
-    "react-dom": "^18.3.1"
+    "next": "latest",
+    "react": "^18",
+    "react-dom": "^18"
+  },
+  "devDependencies": {
+    "eslint": "^8",
+    "eslint-config-next": "14.1.0"
   }
 }

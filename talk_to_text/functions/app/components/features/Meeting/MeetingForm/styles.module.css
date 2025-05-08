@@ -1,3 +1,9 @@
+.error {
+  color: #dc3545;
+  font-size: 0.875rem;
+  margin-top: 0.25rem;
+}
+
 .form {
   display: flex;
   flex-direction: column;
@@ -49,4 +55,9 @@
   resize: vertical;
   font-family: inherit;
   line-height: 1.5;
+}
+
+.datepickerCalendar {
+  min-width: 100% !important;
+  font-size: 1.1rem;
 }

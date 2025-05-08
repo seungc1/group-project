@@ -1,27 +1,54 @@
+'use client';
+
 /**
- * 회의 목록을 표시하는 컴포넌트
- * - 회의 데이터를 가져와서 목록으로 표시
- * - 각 회의 항목 클릭 시 상세 페이지로 이동
+ * MeetingList 컴포넌트
+ * - 회의 목록을 표시하는 컴포넌트
  * - 로딩, 에러, 빈 목록 상태 처리
  */
-import { getRecentMeetings } from '@/app/services/meetingService';
+import { getMeetings } from '@/lib/meetingsService';
 import MeetingListItem from './MeetingListItem';
 import styles from './styles.module.css';
+import { useState, useEffect } from 'react';
+import { useAuth } from '@/app/context/AuthContext';
 
-export default async function MeetingList() {
-  // 서버에서 회의 데이터 가져오기
-  const meetings = await getRecentMeetings();
+export default function MeetingList() {
+  const [meetings, setMeetings] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const { user } = useAuth();
 
-  // 회의 목록이 비어있을 때 표시
-  if (meetings.length === 0) {
-    return <div className={styles.empty}>등록된 회의가 없습니다.</div>;
+  useEffect(() => {
+    const fetchMeetings = async () => {
+      if (user) {
+        try {
+          const meetingsList = await getMeetings(user.uid);
+          setMeetings(meetingsList);
+        } catch (err) {
+          setError(err.message);
+        } finally {
+          setLoading(false);
+        }
+      }
+    };
+
+    fetchMeetings();
+  }, [user]);
+
+  if (loading) {
+    return <div className={styles.loading}>로딩 중...</div>;
   }
 
-  // 회의 목록 UI 렌더링
+  if (error) {
+    return <div className={styles.error}>에러 발생: {error}</div>;
+  }
+
+  if (meetings.length === 0) {
+    return <div className={styles.empty}>회의가 없습니다.</div>;
+  }
+
   return (
-    <div className={styles.meetingsList}>
-      {/* 각 회의 항목을 순회하며 렌더링 */}
-      {meetings.map((meeting) => (
+    <div className={styles.meetingList}>
+      {meetings.map(meeting => (
         <MeetingListItem key={meeting.id} meeting={meeting} />
       ))}
     </div>

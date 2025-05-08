@@ -20,7 +20,10 @@ os.environ['SSL_CERT_FILE'] = ''
 logger = configure_logger()
 
 # Hugging Face 토큰 환경 변수에서 가져오기
-HUGGINGFACE_TOKEN = os.getenv("HUGGINGFACE_TOKEN")
+#HUGGINGFACE_TOKEN = os.getenv("HUGGINGFACE_TOKEN")
+
+os.environ["HUGGINGFACE_TOKEN"] = "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"
+HUGGINGFACE_TOKEN = os.environ["HUGGINGFACE_TOKEN"]
 
 # 오디오 파일을 16kHz mono로 변환하는 전처리 함수
 def convert_to_16k_mono(input_path: str, output_path: str) -> str:
