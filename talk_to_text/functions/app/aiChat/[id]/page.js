@@ -1,4 +1,4 @@
-import Header from '@/components/ui/layout/Header';
+import Header from '@/components/ui/layout/Header/index';
 import MeetingEditor from '@/components/features/Meeting/MeetingEditor';
 import { getMeetingById } from '@/services/meetingService';
 export default async function aiEditMeetingNote({ params }) {
