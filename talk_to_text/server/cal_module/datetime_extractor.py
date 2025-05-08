@@ -3,6 +3,7 @@ import uuid
 import dateparser
 from datetime import datetime, timedelta
 from dateparser.search import search_dates
+from typing import Union, Tuple, Optional
 from utils.logger import configure_logger
 
 logger = configure_logger()
@@ -38,7 +39,7 @@ def rule_based_datetime(text: str, base: datetime) -> list[tuple[str, datetime]]
                 results.append((f"다음주 {label}", base + timedelta(days=offset)))
     return results
 
-def extract_time(text: str) -> tuple[int, int] | None:
+def extract_time(text: str) -> Optional[Tuple[int, int]]:
     match = re.search(r"(오전|오후)?\s*(\d{1,2})(시|:)?\s*(\d{1,2})?분?", text)
     if match:
         meridiem, hour, _, minute = match.groups()
