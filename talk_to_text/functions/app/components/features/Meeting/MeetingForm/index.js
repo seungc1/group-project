@@ -14,14 +14,17 @@ import { db, storage } from '@/lib/firebase';
 import { collection, addDoc, serverTimestamp, updateDoc, doc, setDoc } from 'firebase/firestore';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { useAuth } from '@/app/context/AuthContext';
+import DatePicker from 'react-datepicker';
+import 'react-datepicker/dist/react-datepicker.css';
 
-export default function MeetingForm() {
+export default function MeetingForm({ projectId }) {
   const router = useRouter();
   const { user } = useAuth();
   const [errors, setErrors] = useState({});
   const [selectedFile, setSelectedFile] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState(null);
+  const [meetingDate, setMeetingDate] = useState(null);
 
   const handleFileSelect = (file) => {
     // 파일 유효성 검사
@@ -51,11 +54,9 @@ export default function MeetingForm() {
     const newErrors = {};
     if (!user) newErrors.auth = '로그인이 필요합니다';
     if (!formData.get('title')) newErrors.title = '회의 제목을 입력해주세요';
-    if (!formData.get('participants')) newErrors.participants = '참석자 수를 입력해주세요';
     if (!formData.get('participantNames')) newErrors.participantNames = '참석자 이름을 입력해주세요';
-    if (!formData.get('meetingDate')) newErrors.meetingDate = '회의 날짜를 입력해주세요';
+    if (!meetingDate) newErrors.meetingDate = '회의 날짜를 입력해주세요';
     if (!selectedFile) newErrors.file = '음성 파일을 선택해주세요';
-    
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -78,10 +79,9 @@ export default function MeetingForm() {
       const formDataWithFile = new FormData();
       formDataWithFile.append('userId', user.uid);  // 사용자 ID 추가
       formDataWithFile.append('title', formData.get('title'));
-      formDataWithFile.append('participants', formData.get('participants'));
       formDataWithFile.append('participantNames', formData.get('participantNames'));
-      formDataWithFile.append('meetingDate', formData.get('meetingDate'));
-      formDataWithFile.append('projectId', formData.get('projectId'));
+      formDataWithFile.append('meetingDate', meetingDate ? meetingDate.toISOString().slice(0, 10) : '');
+      formDataWithFile.append('projectId', projectId);
       formDataWithFile.append('projectDescription', formData.get('projectDescription') || '');
       formDataWithFile.append('meetingMinutesList', formData.get('meetingMinutesList') || '');
       
@@ -112,7 +112,6 @@ export default function MeetingForm() {
           meetingMinutesList: formData.get('meetingMinutesList') || '',
           meetingDate: formData.get('meetingDate') || '',
           participantNames: formData.get('participantNames') || '',
-          participants: formData.get('participants') || 0,
           title: formData.get('title') || ''
         })
       });
@@ -131,16 +130,9 @@ export default function MeetingForm() {
 
       // meetings 저장 후 users/{userId}/projects/{projectId}에 모든 정보 저장
       const userId = user.uid;
-      const projectId = formData.get('projectId');
-      const folderId = formData.get('folderId') || '';
-      const projectName = formData.get('projectName') || projectId;
-      const projectDescription = formData.get('projectDescription') || '';
       const projectRef = doc(db, 'users', userId, 'projects', projectId);
       await setDoc(projectRef, {
         projectId,
-        folderId,
-        name: projectName,
-        description: projectDescription,
         createdAt: serverTimestamp(),
         createdBy: userId,
         members: [userId]
@@ -174,28 +166,6 @@ export default function MeetingForm() {
       }}
       className={styles.form}
     >
-      <div className={styles.formSection}>
-        <div className={styles.formGroup}>
-          <label>프로젝트 이름:</label>
-          <input
-            type="text"
-            name="projectId"
-            placeholder="프로젝트 ID를 입력하세요"
-            required
-          />
-          {errors.projectId && <span className={styles.error}>{errors.projectId}</span>}
-        </div>
-      </div>
-
-      <div className={styles.formGroup}>
-        <label>프로젝트 설명:</label>
-        <input
-          type="text"
-          name="projectDescription"
-          placeholder="프로젝트 설명을 입력하세요"
-        />
-      </div>
-
       <div className={styles.formGroup}>
         <label>회의 이름:</label>
         <input
@@ -209,32 +179,26 @@ export default function MeetingForm() {
 
       <div className={styles.formGroup}>
         <label>회의 날짜:</label>
-        <input
-          type="text"
-          name="meetingDate"
-          placeholder="회의 날짜를 입력하세요"
+        <DatePicker
+          selected={meetingDate}
+          onChange={date => setMeetingDate(date)}
+          dateFormat="yyyy-MM-dd"
+          placeholderText="날짜를 선택하세요"
+          className={styles.input}
+          calendarClassName={styles.datepickerCalendar}
+          popperPlacement="bottom-start"
           required
+          name="meetingDate"
         />
         {errors.meetingDate && <span className={styles.error}>{errors.meetingDate}</span>}
       </div>
 
       <div className={styles.formGroup}>
-        <label>참석자 수:</label>
-        <input
-          type="number"
-          name="participants"
-          placeholder="참석자 수를 입력하세요"
-          required
-        />
-        {errors.participants && <span className={styles.error}>{errors.participants}</span>}
-      </div>
-
-      <div className={styles.formGroup}>
-        <label>참석자 이름 (쉼표로 구분):</label>
+        <label>참여자 이름 (쉼표로 구분):</label>
         <input
           type="text"
           name="participantNames"
-          placeholder="참석자 이름을 쉼표로 구분하여 입력하세요"
+          placeholder="참여자 이름을 쉼표로 구분하여 입력하세요"
           required
         />
         {errors.participantNames && <span className={styles.error}>{errors.participantNames}</span>}

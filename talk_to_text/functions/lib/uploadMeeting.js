@@ -1,6 +1,6 @@
 import { setDoc, updateDoc, doc, serverTimestamp } from 'firebase/firestore';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
-import { db, storage } from '@/lib/firebase';
+import { db, storage } from 'lib/firebase';
 
 export const uploadMeeting = async ({ file, title, participants, participantNames }) => {
   const formatDate = (date) => {

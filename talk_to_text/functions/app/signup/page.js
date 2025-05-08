@@ -24,7 +24,8 @@ export default function Signup() {
       await signup(email, password, name);
       router.push('/');
     } catch (err) {
-      setError('회원가입에 실패했습니다. 다시 시도해주세요.');
+      setError(err.message || '회원가입에 실패했습니다. 다시 시도해주세요.');
+      console.error('회원가입 에러:', err);
     }
   };
 

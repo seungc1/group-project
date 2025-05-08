@@ -2,7 +2,7 @@
 
 import { createContext, useContext, useEffect, useState } from 'react';
 import { auth } from '@/lib/firebase';
-import { onAuthStateChanged, signOut } from 'firebase/auth';
+import { onAuthStateChanged, signOut, createUserWithEmailAndPassword, updateProfile, signInWithEmailAndPassword } from 'firebase/auth';
 
 const AuthContext = createContext();
 
@@ -39,10 +39,27 @@ export function AuthProvider({ children }) {
     }
   };
 
+  const signup = async (email, password, name) => {
+    if (!auth) throw new Error('Firebase Auth가 초기화되지 않았습니다.');
+    const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+    if (name) {
+      await updateProfile(userCredential.user, { displayName: name });
+    }
+    return userCredential.user;
+  };
+
+  const login = async (email, password) => {
+    if (!auth) throw new Error('Firebase Auth가 초기화되지 않았습니다.');
+    const userCredential = await signInWithEmailAndPassword(auth, email, password);
+    return userCredential.user;
+  };
+
   const value = {
     user,
     loading,
-    logout
+    logout,
+    signup,
+    login
   };
 
   return (

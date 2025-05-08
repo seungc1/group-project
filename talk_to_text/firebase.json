@@ -1,8 +1,11 @@
 {
+  "firestore": {
+    "rules": "firestore.rules"
+  },
   "functions": {
     "source": "functions",
-    "runtime": "nodejs18",             
-    "platform": "gcfv2"                
+    "runtime": "nodejs18",
+    "platform": "gcfv2"
   },
   "hosting": {
     "public": "functions/.next",

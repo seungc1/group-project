@@ -9,26 +9,23 @@ export async function submitMeeting(formData) {
     // 폼 데이터 추출
     const userId = formData.get('userId');
     const title = formData.get('title');
-    const participants = formData.get('participants');
     const participantNames = formData.get('participantNames');
     const meetingDate = formData.get('meetingDate');
-    const projectId = formData.get('projectId');
     const meetingMinutesList = formData.get('meetingMinutesList');
     const file = formData.get('file');
+    const projectId = formData.get('projectId');
 
     console.log('Received form data:', {
       userId,
       title,
-      participants,
       participantNames,
       meetingDate,
-      projectId,
       meetingMinutesList,
       file: file ? { name: file.name, type: file.type, size: file.size } : null
     });
 
-    // 유효성 검사
-    if (!userId || !file || !title || !participants || !participantNames || !meetingDate || !projectId) {
+    // 유효성 검사 (실제 폼에 있는 필드만 체크)
+    if (!userId || !file || !title || !participantNames || !meetingDate) {
       throw new Error('모든 필드를 입력해주세요.');
     }
 
@@ -48,7 +45,6 @@ export async function submitMeeting(formData) {
       const initialData = {
         projectId,
         title,
-        participants: Number(participants),
         participantNames: participantNames.split(',').map(name => name.trim()),
         meetingDate,
         meetingMinutesList: meetingMinutesList || '',
