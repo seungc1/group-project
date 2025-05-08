@@ -1,7 +1,7 @@
 'use client';
 
 import { doc, getDoc, updateDoc } from 'firebase/firestore';
-import { db } from '@/lib/firebase';
+import { db } from 'lib/firebase';
 
 /**
  * 저장 버튼 컴포넌트
