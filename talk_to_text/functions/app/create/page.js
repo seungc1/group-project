@@ -26,9 +26,20 @@ export default function CreateProject() {
   const [description, setDescription] = useState('');
   const [startDate, setStartDate] = useState(null);
   const [participants, setParticipants] = useState('');
-  const [participantNames, setParticipantNames] = useState('');
+  const [participantNames, setParticipantNames] = useState(['']);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+
+  const handleParticipantNameChange = (idx, value) => {
+    setParticipantNames(prev => prev.map((name, i) => i === idx ? value : name));
+  };
+  const handleAddParticipant = () => {
+    setParticipantNames(prev => [...prev, '']);
+  };
+  const handleRemoveParticipant = (idx) => {
+    if (participantNames.length === 1) return;
+    setParticipantNames(prev => prev.filter((_, i) => i !== idx));
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -36,20 +47,29 @@ export default function CreateProject() {
       setError('로그인이 필요합니다.');
       return;
     }
-    if (!name || !startDate || !participants || !participantNames) {
+    if (!name || !startDate || participantNames.filter(n => n.trim()).length === 0) {
       setError('모든 필수 항목을 입력하세요.');
       return;
     }
     setLoading(true);
     try {
       const projectId = Date.now().toString();
+      let names = participantNames;
+      if (typeof names === 'string') {
+        try {
+          names = JSON.parse(names);
+        } catch {
+          names = names.split(',').map(n => n.trim());
+        }
+      }
+      names = Array.isArray(names) ? names.filter(n => n.trim()) : [];
       await setDoc(doc(db, 'users', user.uid, 'projects', projectId), {
         projectId,
         name,
         description,
         startDate: startDate ? startDate.toISOString().slice(0, 10) : '',
-        participants: Number(participants),
-        participantNames: participantNames.split(',').map(n => n.trim()),
+        participants: names.length,
+        participantNames: names,
         createdAt: serverTimestamp(),
         createdBy: user.uid,
         members: [user.uid]
@@ -104,24 +124,25 @@ export default function CreateProject() {
             />
           </div>
           <div className={styles.formGroup}>
-            <label>참석자 수</label>
-            <input
-              type="number"
-              value={participants}
-              onChange={e => setParticipants(e.target.value)}
-              required
-              placeholder="참석자 수를 입력하세요"
-            />
-          </div>
-          <div className={styles.formGroup}>
-            <label>참석자 이름 (쉼표로 구분)</label>
-            <input
-              type="text"
-              value={participantNames}
-              onChange={e => setParticipantNames(e.target.value)}
-              required
-              placeholder="참석자 이름을 입력하세요"
-            />
+            <label>참석자 이름</label>
+            {participantNames.map((name, idx) => (
+              <div key={idx} style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 4 }}>
+                <input
+                  type="text"
+                  value={name}
+                  onChange={e => handleParticipantNameChange(idx, e.target.value)}
+                  placeholder="참석자 이름을 입력하세요"
+                  required
+                  style={{ flex: 1 }}
+                />
+                {participantNames.length > 1 && (
+                  <button type="button" onClick={() => handleRemoveParticipant(idx)}>-</button>
+                )}
+                {idx === participantNames.length - 1 && (
+                  <button type="button" onClick={handleAddParticipant}>+</button>
+                )}
+              </div>
+            ))}
           </div>
           {error && <div className={styles.error}>{error}</div>}
           <button type="submit" disabled={loading} style={{marginTop: '1rem', padding: '1rem', borderRadius: '0.5rem', background: '#4f46e5', color: 'white', fontWeight: 600, fontSize: '1.125rem', border: 'none', cursor: 'pointer'}}>

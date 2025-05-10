@@ -47,3 +47,11 @@
   display: grid;
   gap: 16px;
 }
+
+.recentMeetings h2 {
+  color: #111;
+}
+
+.projectCard p {
+  color: black;
+}

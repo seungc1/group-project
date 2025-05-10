@@ -61,3 +61,7 @@
   min-width: 100% !important;
   font-size: 1.1rem;
 }
+
+.meetingCreateTitle {
+  color: #111;
+}

@@ -1,4 +1,6 @@
 import os
+os.environ["GRPC_VERBOSITY"] = "ERROR"
+os.environ["GRPC_TRACE"] = ""
 import ssl
 import urllib3
 import requests
@@ -7,6 +9,7 @@ from datetime import datetime
 from flask import Flask, request, jsonify, make_response
 from flask_cors import CORS
 from concurrent.futures import ThreadPoolExecutor
+import json
 
 from utils.logger import configure_logger
 from audio.audio import download_audio, process_whisper_from_path
@@ -171,6 +174,15 @@ def process_audio_endpoint():
         # 5. 요약 파일 저장 및 Firebase 업로드
         summary_url = upload_summary_text(summary, audio_path, keywords)
         
+        # participantNames를 Firestore에 배열로 변환
+        participant_names = data.get('participantNames', [])
+        if isinstance(participant_names, str):
+            try:
+                participant_names = json.loads(participant_names)
+            except Exception:
+                participant_names = [participant_names]
+        participant_names = [n for n in participant_names if n and str(n).strip()]
+
         # 6. Firestore에 저장
         save_meeting_data(userId, projectId, meetingId, {
             'audioFileName': data.get('audioFileName', ''),
@@ -179,7 +191,7 @@ def process_audio_endpoint():
             'createdBy': userId,
             'meetingDate': data.get('meetingDate', ''),
             'meetingMinutesList': meetingMinutesList,
-            'participantNames': data.get('participantNames', []),
+            'participantNames': participant_names,  # 배열로 저장
             'participants': data.get('participants', 0),
             'projectId': projectId,
             'status': 'completed',

@@ -7,7 +7,7 @@
 
 'use client';
 
-import { useParams } from 'next/navigation';
+import { useParams, useSearchParams } from 'next/navigation';
 import Header from '@/components/ui/layout/Header';
 import MeetingDetail from '@/components/features/Meeting/MeetingDetail';
 
@@ -16,7 +16,9 @@ import MeetingDetail from '@/components/features/Meeting/MeetingDetail';
  * @returns {JSX.Element} 회의록 상세 페이지 UI
  */
 export default function MeetingDetailPage() {
-  const { id, projectId } = useParams();
+  const { id } = useParams();
+  const searchParams = useSearchParams();
+  const projectId = searchParams.get('projectId');
 
   return (
     <>

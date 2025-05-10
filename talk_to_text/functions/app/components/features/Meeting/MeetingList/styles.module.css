@@ -13,6 +13,7 @@
   background-color: #f8f9fa;
   border-radius: 8px;
   transition: background-color 0.2s;
+  color: #212121;
 }
 
 .meetingItem:hover {
@@ -84,4 +85,49 @@
   color: #6c757d;
   font-size: 16px;
   text-align: center;
+}
+
+/* 프로젝트/회의 제목 */
+.meetingTitle {
+  color: #212121;
+  font-size: 18px;
+  font-weight: bold;
+  margin-bottom: 4px;
+}
+
+/* 생성일 등 날짜 */
+.meetingDate {
+  color: #212121;
+  font-size: 14px;
+  margin-bottom: 2px;
+}
+
+/* 설명 */
+.meetingDescription {
+  color: #212121;
+  font-size: 14px;
+}
+
+.paginationContainer {
+  margin-top: 24px;
+  text-align: center;
+}
+
+.pageButton {
+  margin: 0 4px;
+  padding: 6px 12px;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+  background: #fff;
+  color: #333;
+  cursor: pointer;
+  font-weight: normal;
+  transition: all 0.2s;
+}
+
+.activePageButton {
+  border: 2px solid #4f46e5;
+  background: #eef2ff;
+  color: #4f46e5;
+  font-weight: bold;
 } 

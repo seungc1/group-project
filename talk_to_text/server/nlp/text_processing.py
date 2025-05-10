@@ -25,6 +25,7 @@ logger = configure_logger()
 
 # Upstage API 키는 환경 변수에서 불러옴
 UPSTAGE_API_KEY = os.getenv("UPSTAGE_API_KEY")
+print("[DEBUG] UPSTAGE_API_KEY:", str(UPSTAGE_API_KEY)[:6], "(length:", len(str(UPSTAGE_API_KEY)), ")")
 # OpenAI API 키 설정
 openai.api_key = os.getenv("OPENAI_API_KEY")
 
@@ -148,6 +149,7 @@ def summarize_text(text):
             },
             verify=False  # SSL 검증 비활성화
         )
+        print("[DEBUG] Upstage API response:", response.json())  # 응답 전체 출력
         return response.json()["choices"][0]["message"]["content"]
     except Exception as e:
         logger.error(f"요약 실패: {e}")
