@@ -63,7 +63,7 @@ export const NavigationRail = ({ isCollapsed, setIsCollapsed }) => {
           onClick={() => router.push('/create')}
         >
           <div className={styles.icon}>🎙️</div>
-          <span>회의 생성</span>
+          <span>프로젝트 생성</span>
         </div>
 
         {/* 전체 회의록 메뉴 아이템 */}
@@ -72,7 +72,7 @@ export const NavigationRail = ({ isCollapsed, setIsCollapsed }) => {
           onClick={() => router.push('/meetings')}
         >
           <div className={styles.icon}>📋</div>
-          <span>전체 회의록</span>
+          <span>전체 프로젝트</span>
         </div>
 
         {/* 음성 녹음 메뉴 아이템 */}

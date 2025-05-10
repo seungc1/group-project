@@ -15,6 +15,8 @@ export default function ProjectDetailPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [project, setProject] = useState(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const meetingsPerPage = 5;
   const router = useRouter();
 
   useEffect(() => {
@@ -43,6 +45,12 @@ export default function ProjectDetailPage() {
   if (error) return <div>에러 발생: {error}</div>;
   if (!project) return <div>프로젝트를 찾을 수 없습니다.</div>;
 
+  // 페이지네이션 계산
+  const indexOfLast = currentPage * meetingsPerPage;
+  const indexOfFirst = indexOfLast - meetingsPerPage;
+  const currentMeetings = meetings.slice(indexOfFirst, indexOfLast);
+  const totalPages = Math.ceil(meetings.length / meetingsPerPage);
+
   return (
     <>
       <Header title={`프로젝트: ${project.name}`} />
@@ -62,11 +70,29 @@ export default function ProjectDetailPage() {
         {meetings.length === 0 ? (
           <div className={styles.empty}>등록된 회의가 없습니다.</div>
         ) : (
-          <div className={styles.meetingList}>
-            {meetings.map(meeting => (
-              <MeetingListItem key={meeting.id} meeting={meeting} />
-            ))}
-          </div>
+          <>
+            <div className={styles.meetingList}>
+              {currentMeetings.map(meeting => (
+                <MeetingListItem key={meeting.id} meeting={meeting} />
+              ))}
+            </div>
+            {/* 페이지네이션 버튼 */}
+            <div className={styles.paginationContainer}>
+              {Array.from({ length: totalPages }, (_, i) => (
+                <button
+                  key={i}
+                  onClick={() => setCurrentPage(i + 1)}
+                  className={
+                    currentPage === i + 1
+                      ? `${styles.pageButton} ${styles.activePageButton}`
+                      : styles.pageButton
+                  }
+                >
+                  {i + 1}
+                </button>
+              ))}
+            </div>
+          </>
         )}
       </div>
     </>

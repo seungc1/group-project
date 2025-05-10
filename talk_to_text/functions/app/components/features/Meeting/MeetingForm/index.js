@@ -25,6 +25,7 @@ export default function MeetingForm({ projectId }) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState(null);
   const [meetingDate, setMeetingDate] = useState(null);
+  const [participantNames, setParticipantNames] = useState(['']);
 
   const handleFileSelect = (file) => {
     // 파일 유효성 검사
@@ -50,11 +51,22 @@ export default function MeetingForm({ projectId }) {
     setErrors({ ...errors, file: '' }); // 파일 선택 시 에러 메시지 제거
   };
 
+  const handleParticipantNameChange = (idx, value) => {
+    setParticipantNames(prev => prev.map((name, i) => i === idx ? value : name));
+  };
+  const handleAddParticipant = () => {
+    setParticipantNames(prev => [...prev, '']);
+  };
+  const handleRemoveParticipant = (idx) => {
+    if (participantNames.length === 1) return;
+    setParticipantNames(prev => prev.filter((_, i) => i !== idx));
+  };
+
   const validateForm = (formData) => {
     const newErrors = {};
     if (!user) newErrors.auth = '로그인이 필요합니다';
     if (!formData.get('title')) newErrors.title = '회의 제목을 입력해주세요';
-    if (!formData.get('participantNames')) newErrors.participantNames = '참석자 이름을 입력해주세요';
+    if (participantNames.filter(name => name.trim()).length === 0) newErrors.participantNames = '참석자 이름을 1명 이상 입력해주세요';
     if (!meetingDate) newErrors.meetingDate = '회의 날짜를 입력해주세요';
     if (!selectedFile) newErrors.file = '음성 파일을 선택해주세요';
     setErrors(newErrors);
@@ -79,7 +91,8 @@ export default function MeetingForm({ projectId }) {
       const formDataWithFile = new FormData();
       formDataWithFile.append('userId', user.uid);  // 사용자 ID 추가
       formDataWithFile.append('title', formData.get('title'));
-      formDataWithFile.append('participantNames', formData.get('participantNames'));
+      formDataWithFile.append('participantNames', JSON.stringify(participantNames.filter(name => name.trim())));
+      formDataWithFile.append('participants', participantNames.filter(name => name.trim()).length);
       formDataWithFile.append('meetingDate', meetingDate ? meetingDate.toISOString().slice(0, 10) : '');
       formDataWithFile.append('projectId', projectId);
       formDataWithFile.append('projectDescription', formData.get('projectDescription') || '');
@@ -111,7 +124,7 @@ export default function MeetingForm({ projectId }) {
           projectId: result.projectId,
           meetingMinutesList: formData.get('meetingMinutesList') || '',
           meetingDate: formData.get('meetingDate') || '',
-          participantNames: formData.get('participantNames') || '',
+          participantNames: JSON.stringify(participantNames.filter(name => name.trim())),
           title: formData.get('title') || ''
         })
       });
@@ -192,15 +205,26 @@ export default function MeetingForm({ projectId }) {
         />
         {errors.meetingDate && <span className={styles.error}>{errors.meetingDate}</span>}
       </div>
-
       <div className={styles.formGroup}>
-        <label>참여자 이름 (쉼표로 구분):</label>
-        <input
-          type="text"
-          name="participantNames"
-          placeholder="참여자 이름을 쉼표로 구분하여 입력하세요"
-          required
-        />
+        <label>참석자 이름:</label>
+        {participantNames.map((name, idx) => (
+          <div key={idx} style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 4 }}>
+            <input
+              type="text"
+              value={name}
+              onChange={e => handleParticipantNameChange(idx, e.target.value)}
+              placeholder="참석자 이름을 입력하세요"
+              required
+              style={{ flex: 1 }}
+            />
+            {participantNames.length > 1 && (
+              <button type="button" onClick={() => handleRemoveParticipant(idx)}>-</button>
+            )}
+            {idx === participantNames.length - 1 && (
+              <button type="button" onClick={handleAddParticipant}>+</button>
+            )}
+          </div>
+        ))}
         {errors.participantNames && <span className={styles.error}>{errors.participantNames}</span>}
       </div>
 

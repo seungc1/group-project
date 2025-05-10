@@ -1,28 +1,48 @@
 'use client';
 
 /**
- * MeetingList 컴포넌트
- * - 회의 목록을 표시하는 컴포넌트
- * - 로딩, 에러, 빈 목록 상태 처리
+ * ProjectList 컴포넌트 (기존 MeetingListItem 디자인/구조와 동일)
+ * - 해당 계정의 프로젝트 목록을 MeetingListItem 스타일로 표시
  */
-import { getMeetings } from '@/lib/meetingsService';
-import MeetingListItem from './MeetingListItem';
+import { getAllProjects } from '@/lib/meetingsService';
 import styles from './styles.module.css';
 import { useState, useEffect } from 'react';
 import { useAuth } from '@/app/context/AuthContext';
+import { useRouter } from 'next/navigation';
 
-export default function MeetingList() {
-  const [meetings, setMeetings] = useState([]);
+function ProjectListItem({ project }) {
+  const router = useRouter();
+  const handleClick = () => {
+    router.push(`/projects/${project.id}`);
+  };
+  return (
+    <div className={styles.meetingItem}>
+      <div className={styles.meetingContent}>
+        <h3>{project.name}</h3>
+        <p>설명: {project.description || '-'}</p>
+        <p>생성일: {project.createdAt?.toDate ? project.createdAt.toDate().toLocaleDateString() : '-'}</p>
+      </div>
+      <button className={styles.viewButton} onClick={handleClick}>
+        보기
+      </button>
+    </div>
+  );
+}
+
+export default function ProjectList() {
+  const [projects, setProjects] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const { user } = useAuth();
+  const [currentPage, setCurrentPage] = useState(1);
+  const projectsPerPage = 5;
 
   useEffect(() => {
-    const fetchMeetings = async () => {
+    const fetchProjects = async () => {
       if (user) {
         try {
-          const meetingsList = await getMeetings(user.uid);
-          setMeetings(meetingsList);
+          const projectsList = await getAllProjects(user.uid);
+          setProjects(projectsList);
         } catch (err) {
           setError(err.message);
         } finally {
@@ -30,8 +50,7 @@ export default function MeetingList() {
         }
       }
     };
-
-    fetchMeetings();
+    fetchProjects();
   }, [user]);
 
   if (loading) {
@@ -42,15 +61,39 @@ export default function MeetingList() {
     return <div className={styles.error}>에러 발생: {error}</div>;
   }
 
-  if (meetings.length === 0) {
-    return <div className={styles.empty}>회의가 없습니다.</div>;
+  if (projects.length === 0) {
+    return <div className={styles.empty}>프로젝트가 없습니다.</div>;
   }
 
+  // 페이지네이션 계산
+  const indexOfLast = currentPage * projectsPerPage;
+  const indexOfFirst = indexOfLast - projectsPerPage;
+  const currentProjects = projects.slice(indexOfFirst, indexOfLast);
+  const totalPages = Math.ceil(projects.length / projectsPerPage);
+
   return (
-    <div className={styles.meetingList}>
-      {meetings.map(meeting => (
-        <MeetingListItem key={meeting.id} meeting={meeting} />
-      ))}
-    </div>
+    <>
+      <div className={styles.meetingList}>
+        {currentProjects.map(project => (
+          <ProjectListItem project={project} key={project.id} />
+        ))}
+      </div>
+      {/* 페이지네이션 버튼 */}
+      <div className={styles.paginationContainer}>
+        {Array.from({ length: totalPages }, (_, i) => (
+          <button
+            key={i}
+            onClick={() => setCurrentPage(i + 1)}
+            className={
+              currentPage === i + 1
+                ? `${styles.pageButton} ${styles.activePageButton}`
+                : styles.pageButton
+            }
+          >
+            {i + 1}
+          </button>
+        ))}
+      </div>
+    </>
   );
 } 
