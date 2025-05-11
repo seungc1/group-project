@@ -1,4 +1,4 @@
-import { createMeetingPDF } from './createMeetingPDF';
+import { createMeetingPDF } from '@/lib/createMeetingPDF';
 
 // PDF Blob → base64 (줄바꿈 포함)
 function blobToBase64WithLineBreaks(blob) {
