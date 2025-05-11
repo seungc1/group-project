@@ -37,7 +37,7 @@ export default function MeetingSummary({ meeting }) {
         <div className={styles.downloadSection}>
           <DownloadButton url={meeting.summaryDownloadUrl} />
           <EditSummaryButton meetingId={meeting.id} />
-          <ShareButton meetingId={meeting.id} />
+          <ShareButton url={meeting.summaryDownloadUrl} />
         </div>
       )}
     </div>
