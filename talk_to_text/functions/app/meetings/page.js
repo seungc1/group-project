@@ -5,7 +5,7 @@
  */
 
 import styles from './meetings.module.css';
-import Header from '../components/ui/layout/Header';
+import Header from '../components/ui/layout/Header/index';
 import MeetingList from '../components/features/Meeting/MeetingList';
 
 /**

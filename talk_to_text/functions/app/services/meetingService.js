@@ -2,7 +2,7 @@
  * 회의 관련 데이터를 서버 사이드에서 가져오는 서비스
  */
 
-import { db, storage } from '@/lib/firebase';
+import { db, storage } from 'lib/firebase';
 import { doc, getDoc, collection, query, where, getDocs, setDoc, updateDoc, serverTimestamp } from 'firebase/firestore';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 
@@ -90,7 +90,7 @@ export async function createMeeting({ title, participants, participantNames, mee
     const audioUrl = await getDownloadURL(storageRef);
     
     // 음성 처리 API 호출
-    const response = await fetch('/api/process-audio', {
+    const response = await fetch('http://localhost:5000/api/process-audio', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

@@ -1,0 +1,11 @@
+flask
+flask-cors
+pydub
+openai
+openai-whisper
+pyannote.audio
+konlpy
+python-dotenv
+dateparser
+google-auth-oauthlib
+firebase-admin

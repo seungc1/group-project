@@ -17,3 +17,41 @@
 .no-meetings-message {
   color: #333;
 }
+
+.recentMeetings {
+  padding: 20px;
+}
+
+.projectCard {
+  background: white;
+  border-radius: 12px;
+  padding: 20px;
+  margin-bottom: 24px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.projectCard:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.projectCard h3 {
+  margin: 0 0 16px 0;
+  color: #333;
+  font-size: 18px;
+}
+
+.meetingList {
+  display: grid;
+  gap: 16px;
+}
+
+.recentMeetings h2 {
+  color: #111;
+}
+
+.projectCard p {
+  color: black;
+}

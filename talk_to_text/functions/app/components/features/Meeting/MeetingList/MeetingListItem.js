@@ -36,7 +36,8 @@ export default function MeetingListItem({ meeting }) {
   // 회의 상세 페이지로 이동하는 핸들러 함수
   const handleClick = () => {
     const encodedId = encodeURIComponent(meeting.id);
-    router.push(`/meetings/${encodedId}`);
+    const encodedProjectId = encodeURIComponent(meeting.projectId);
+    router.push(`/meetings/${encodedId}?projectId=${encodedProjectId}`);
   };
 
   return (
@@ -46,18 +47,23 @@ export default function MeetingListItem({ meeting }) {
         {/* 회의 제목 */}
         <h3>{meeting.title}</h3>
         
-        {/* 참석자 이름 목록 */}
-        <p>참석자: {meeting.participantName?.join(', ')}</p>
-        
-        {/* 참석자 수 */}
-        <p>참석자 수: {meeting.participants}명</p>
-        
-        {/* 회의 내용 요약 (첫 3개 세그먼트만 표시) */}
-        {meeting.textinfo && (
-          <p className={styles.summary}>
-            {meeting.textinfo.slice(0, 3).map(segment => segment.text).join(' ')}...
-          </p>
-        )}
+        {/* 참석자 이름 및 회의 날짜 */}
+        <p>
+          회의날짜: {meeting.meetingDate && (typeof meeting.meetingDate === 'string' ? meeting.meetingDate : meeting.meetingDate.toDate ? meeting.meetingDate.toDate().toLocaleDateString() : '')}
+        </p>
+        <p>
+          참석자: {
+            Array.isArray(meeting.participantNames)
+              ? meeting.participantNames.join(', ')
+              : typeof meeting.participantNames === 'string' && meeting.participantNames
+                ? (() => { try { return JSON.parse(meeting.participantNames).join(', '); } catch { return meeting.participantNames; } })()
+                : Array.isArray(meeting.participantName)
+                  ? meeting.participantName.join(', ')
+                  : typeof meeting.participantName === 'string' && meeting.participantName
+                    ? meeting.participantName
+                    : '정보 없음'
+          }
+        </p>
       </div>
       
       {/* 상세 페이지로 이동하는 버튼 */}

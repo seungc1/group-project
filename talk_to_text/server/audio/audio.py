@@ -3,6 +3,7 @@ import ssl
 import urllib3
 import requests
 import tempfile
+import subprocess
 from pydub import AudioSegment
 import whisper
 from utils.logger import configure_logger
@@ -40,6 +41,24 @@ def download_audio(url):
         logger.error(f"오디오 다운로드 실패: {e}")
         raise
 
+# 오디오 파일을 16kHz mono로 변환하는 전처리 함수
+def convert_to_16k_mono(input_path: str, output_path: str) -> str:
+    try:
+        command = [
+            'ffmpeg',
+            '-y',
+            '-i', input_path,
+            '-ac', '1',
+            '-ar', '16000',
+            output_path
+        ]
+        subprocess.run(command, check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        logger.info(f"[전처리 완료] {output_path} (16kHz mono)")
+        return output_path
+    except subprocess.CalledProcessError as e:
+        logger.error(f"오디오 전처리 실패: {e}")
+        raise
+
 # 오디오 파일을 1분 단위로 청크 분할
 def chunk_audio(audio_path, chunk_length_ms=60000):
     # 1. AudioSegment를 사용하여 오디오 파일 로드
@@ -64,6 +83,10 @@ def chunk_audio(audio_path, chunk_length_ms=60000):
 # Whisper 전용 처리 함수 (audio_path 기반, 병렬 처리용)
 def process_whisper_from_path(audio_path):
     try:
+        # 자동 전처리 수행 (16kHz mono 변환)
+        converted_path = "/tmp/converted_whisper.wav"
+        convert_to_16k_mono(audio_path, converted_path)
+        
         chunk_paths = chunk_audio(audio_path)
         logger.info(f"총 {len(chunk_paths)}개의 청크 생성됨")
 
@@ -97,35 +120,3 @@ def process_whisper_from_path(audio_path):
     finally:
         cleanup_chunks()
 
-# # 전체 오디오 처리 파이프라인 함수 (다운로드 + 청크 + Whisper + 반환)
-# def process_audio(audio_url):
-#     try:
-#         # 사용자가 보내준 오디오 URL에서 실제 파일을 다운로드
-#         audio_path = download_audio(audio_url)
-#         # 다운로드 받은 오디오 파일을 1분(60,000ms) 단위로 분할
-#         chunk_paths = chunk_audio(audio_path)
-#         logger.info(f"총 {len(chunk_paths)}개의 청크 생성됨")
-
-#         # 1. 초기화
-#         segments_all = []   # 모든 음성 세그먼트를 저장할 리스트
-#         full_text = ""      # 전체 텍스트를 저장할 변수
-
-#         # 3. 각 청크별 처리
-#         for chunk_path in chunk_paths:
-#             logger.info(f"Whisper 처리 진행 중: {chunk_path}")
-#             # Whisper 모델로 음성을 텍스트로 변환
-#             result = model.transcribe(chunk_path)
-#             # 세그먼트와 텍스트 저장
-#             segments_all.extend(result["segments"])
-#             full_text += result["text"].strip() + "\n"
-            
-#         return segments_all, full_text
-    
-#     # 2. 예외 처리
-#     except Exception as e:
-#         logger.error(f"오디오 처리 실패: {e}")
-#         raise
-#     finally:
-#         cleanup_chunks()
-#         if os.path.exists(audio_path):
-#             os.remove(audio_path)

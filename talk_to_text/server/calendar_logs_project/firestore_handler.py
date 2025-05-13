@@ -46,4 +46,3 @@ def update_calendar_log(log_id, event_url):
         "status": "success"  # 일정 등록 성공 시 상태 'success'로 변경
     })
     print(f"calendar_logs 문서 업데이트 성공: {log_id}")
-
