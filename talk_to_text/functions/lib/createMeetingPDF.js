@@ -1,16 +1,19 @@
 'use client';
 
 import { jsPDF } from 'jspdf';
-import nanumFont from './NanumGothic-Regular.js';
+import nanumFont from '../app/components/features/Meeting/MeetingDetail/NanumGothic-Regular.js';
 
 jsPDF.API.events.push(['addFonts', function () {
   this.addFileToVFS('NanumGothic-Regular.ttf', nanumFont);
   this.addFont('NanumGothic-Regular.ttf', 'NanumGothic', 'normal');
 }]);
 
-
 export function createMeetingPDF(textContent) {
   const doc = new jsPDF();
+
+  // ✅ 폰트 등록
+  doc.addFileToVFS('NanumGothic-Regular.ttf', nanumFont);
+  doc.addFont('NanumGothic-Regular.ttf', 'NanumGothic', 'normal');
   doc.setFont('NanumGothic');
 
   // 제목 페이지
@@ -23,6 +26,20 @@ export function createMeetingPDF(textContent) {
 
   doc.addPage();
 
+  // ✅ textContent 유효성 검사
+  if (!textContent || typeof textContent !== 'string' || textContent.trim() === '') {
+    doc.setFontSize(14);
+    doc.text('회의 요약 텍스트가 비어 있습니다.', 20, 30);
+    return doc;
+  }
+
+  if (textContent.includes('<html') || textContent.includes('<!DOCTYPE html>')) {
+    doc.setFontSize(14);
+    doc.text('잘못된 데이터 형식입니다. HTML이 감지되었습니다.', 20, 30);
+    return doc;
+  }
+
+  // 📄 줄 단위 분석
   const numberedItems = [];
   const bodyLines = [];
   const lines = textContent.split('\n');
@@ -47,47 +64,46 @@ export function createMeetingPDF(textContent) {
 
   if (currentItem) numberedItems.push(currentItem);
 
-  // 회의록 표 출력
+  // 회의 요약 표 출력
   if (numberedItems.length > 0) {
     doc.setFontSize(14);
     doc.text('회의록', 105, 20, { align: 'center' });
 
     const startY = 30;
     const cellPadding = 2;
-    const col1Width = 50;  // 카테고리 셀의 너비
-    const col2Width = 140; // 내용 셀의 너비
+    const col1Width = 40;
+    const col2Width = 150;
     const lineHeight = 8;
     let y = startY;
 
     numberedItems.forEach(({ number, content }) => {
-      const category = content.split(':')[0]; // 카테고리 (예: 주제, 결정사항)
-      const contentText = content.split(':').slice(1).join(':').trim(); // 내용
+      const category = content.split(':')[0];
+      const contentText = content.split(':').slice(1).join(':').trim();
 
-      // 내용 텍스트 줄 맞추기
+      const categoryLines = doc.splitTextToSize(category, col1Width - 2 * cellPadding);
       const contentLines = doc.splitTextToSize(contentText, col2Width - 2 * cellPadding);
-      const rowHeight = contentLines.length * lineHeight;
+      const maxLines = Math.max(categoryLines.length, contentLines.length);
+      const rowHeight = maxLines * lineHeight;
 
-      // 카테고리 셀 배경 색상 설정 (연한 회색)
-      doc.setFillColor(220, 220, 220);  // 연한 회색
-      doc.rect(10, y, col1Width, rowHeight, 'F'); // 카테고리 셀 배경 채우기
-
-      // 카테고리 셀 외곽선 다시 그리기
-      doc.setDrawColor(0, 0, 0); // 검정색 외곽선
-      doc.rect(10, y, col1Width, rowHeight, 'S'); // 외곽선만 그리기 (S = stroke)
-
-      // 카테고리 텍스트 삽입
+      // 카테고리 셀
+      doc.setFillColor(220, 220, 220);
+      doc.rect(10, y, col1Width, rowHeight, 'F');
+      doc.setDrawColor(0, 0, 0);
+      doc.rect(10, y, col1Width, rowHeight, 'S');
       doc.setFontSize(11);
-      doc.setTextColor(0, 0, 0); // 검정 색상
-      doc.text(category, 10 + cellPadding, y + lineHeight - 2);
+      doc.setTextColor(0, 0, 0);
+      categoryLines.forEach((line, index) => {
+        doc.text(line, 10 + cellPadding, y + lineHeight * (index + 1) - 2);
+      });
 
-      // 내용 셀 테두리 그리기
+      // 본문 셀
       doc.rect(10 + col1Width, y, col2Width, rowHeight);
-
-      // 내용 텍스트 삽입
-      doc.text(contentLines, 10 + col1Width + cellPadding, y + lineHeight - 2);
+      contentLines.forEach((line, index) => {
+        doc.text(line, 10 + col1Width + cellPadding, y + lineHeight * (index + 1) - 2);
+      });
 
       y += rowHeight;
-      if (y > 270) {  // 페이지가 넘어가면 새로운 페이지 추가
+      if (y > 270) {
         doc.addPage();
         y = 10;
       }
