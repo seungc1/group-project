@@ -8,7 +8,7 @@ export default function MeetingCreatePage() {
   // MeetingForm에 projectId를 prop으로 전달 (필요시 내부에서 활용)
   return (
     <main style={{ padding: 32 }}>
-      <h1>회의 생성</h1>
+      <h1 style={{ color: '#111' }}>회의 생성</h1>
       <MeetingForm projectId={projectId} />
     </main>
   );

@@ -11,7 +11,8 @@ import {
   getDoc,
   deleteDoc,
   limit,
-  writeBatch
+  writeBatch,
+  collectionGroup
 } from 'firebase/firestore';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 
@@ -22,6 +23,17 @@ export const submitMeeting = async (meetingData, audioFile, userId, projectId) =
       throw new Error('사용자 ID와 프로젝트 ID가 필요합니다.');
     }
 
+    // participantNames를 Firestore에 배열로 저장
+    let participantNames = meetingData.participantNames;
+    if (typeof participantNames === 'string') {
+      try {
+        participantNames = JSON.parse(participantNames);
+      } catch {
+        participantNames = [participantNames];
+      }
+    }
+    participantNames = Array.isArray(participantNames) ? participantNames.filter(n => n && n.trim()) : [];
+
     // 1. Firestore에 회의 문서 생성 (ERD 모든 필드 포함)
     const meetingRef = await addDoc(
       collection(db, 'users', userId, 'projects', projectId, 'meetings'),
@@ -30,7 +42,7 @@ export const submitMeeting = async (meetingData, audioFile, userId, projectId) =
         projectId: projectId ?? 0,
         title: meetingData.title ?? 0,
         participants: meetingData.participants ?? 0,
-        participantNames: meetingData.participantNames ?? 0,
+        participantNames, // 배열로 저장
         meetingDate: meetingData.meetingDate ?? 0,
         createdAt: new Date(),
         createdBy: userId ?? 0,
@@ -166,17 +178,17 @@ export const submitMeeting = async (meetingData, audioFile, userId, projectId) =
 };
 
 // 회의 목록 조회
-export const getMeetings = async (userId, projectId, count = 2) => {
+export const getMeetings = async (userId, projectId) => {
   try {
     if (!userId || !projectId) return [];
     const meetingsQuery = query(
       collection(db, 'users', userId, 'projects', projectId, 'meetings'),
-      orderBy('createdAt', 'desc'),
-      limit(count)
+      orderBy('createdAt', 'desc')
     );
     const querySnapshot = await getDocs(meetingsQuery);
     const meetings = querySnapshot.docs.map(doc => ({
       id: doc.id,
+      projectId,
       ...doc.data()
     }));
     return meetings;
@@ -197,25 +209,46 @@ export const getMeetingDetail = async (userId, projectId, meetingId) => {
     const meetingDoc = await getDoc(meetingRef);
     
     if (!meetingDoc.exists()) {
-      throw new Error('회의가 존재하지 않습니다.');
+      throw new Error('회의를 찾을 수 없습니다.');
     }
 
-    // textinfo 가져오기
+    const meetingData = {
+      id: meetingDoc.id,
+      ...meetingDoc.data()
+    };
+
+    // textinfo 데이터 가져오기
     const textinfoQuery = query(
       collection(db, 'users', userId, 'projects', projectId, 'meetings', meetingId, 'textinfo'),
       orderBy('startTime', 'asc')
     );
     const textinfoSnapshot = await getDocs(textinfoQuery);
-    const textinfo = textinfoSnapshot.docs.map(doc => ({
+    meetingData.textinfo = textinfoSnapshot.docs.map(doc => ({
       id: doc.id,
       ...doc.data()
     }));
 
-    return {
-      id: meetingDoc.id,
-      ...meetingDoc.data(),
-      textinfo
-    };
+    // tags 데이터 가져오기
+    const tagsQuery = query(
+      collection(db, 'users', userId, 'projects', projectId, 'meetings', meetingId, 'tags')
+    );
+    const tagsSnapshot = await getDocs(tagsQuery);
+    meetingData.tags = tagsSnapshot.docs.map(doc => ({
+      id: doc.id,
+      ...doc.data()
+    }));
+
+    // calendar_logs 데이터 가져오기
+    const calendarLogsQuery = query(
+      collection(db, 'users', userId, 'projects', projectId, 'meetings', meetingId, 'calendar_logs')
+    );
+    const calendarLogsSnapshot = await getDocs(calendarLogsQuery);
+    meetingData.calendar_logs = calendarLogsSnapshot.docs.map(doc => ({
+      id: doc.id,
+      ...doc.data()
+    }));
+
+    return meetingData;
   } catch (error) {
     console.error('회의 상세 조회 중 오류 발생:', error);
     throw error;
@@ -258,4 +291,39 @@ export const getProject = async (userId, projectId) => {
     console.error('프로젝트 정보 조회 중 오류 발생:', error);
     throw error;
   }
+};
+
+// 전체 회의록(모든 프로젝트의 meetings) 조회
+export const getAllMeetings = async (userId) => {
+  try {
+    if (!userId) return [];
+    const meetingsQuery = query(
+      collectionGroup(db, 'meetings'),
+      where('createdBy', '==', userId),
+      orderBy('createdAt', 'desc')
+    );
+    const querySnapshot = await getDocs(meetingsQuery);
+    return querySnapshot.docs.map(doc => ({
+      id: doc.id,
+      projectId: doc.data().projectId ?? null,
+      ...doc.data()
+    }));
+  } catch (error) {
+    console.error('전체 회의록 조회 중 오류 발생:', error);
+    throw error;
+  }
+};
+
+// 해당 계정의 모든 프로젝트만 불러오는 함수
+export const getAllProjects = async (userId) => {
+  if (!userId) return [];
+  const projectsQuery = query(
+    collection(db, 'users', userId, 'projects'),
+    orderBy('createdAt', 'desc')
+  );
+  const projectsSnap = await getDocs(projectsQuery);
+  return projectsSnap.docs.map(doc => ({
+    id: doc.id,
+    ...doc.data()
+  }));
 }; 

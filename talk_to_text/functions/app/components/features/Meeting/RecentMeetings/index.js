@@ -50,7 +50,7 @@ export default function RecentMeetings() {
           onClick={() => router.push(`/projects/${project.id}`)}
         >
           <h3>프로젝트: {project.name || project.id}</h3>
-          <p>생성일: {project.createdAt?.toDate().toLocaleDateString()}</p>
+          <p className={styles['project-date']}>생성일: {project.createdAt?.toDate().toLocaleDateString()}</p>
         </div>
       ))}
     </div>
