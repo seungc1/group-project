@@ -3,12 +3,15 @@ import ssl
 import urllib3
 import requests
 import re
-import openai
 from collections import Counter
 from utils.logger import configure_logger
-
+from openai import OpenAI
+from dotenv import load_dotenv
 from sklearn.feature_extraction.text import TfidfVectorizer
 from konlpy.tag import Okt
+
+env_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '.env.server'))
+load_dotenv(dotenv_path=env_path)
 
 # SSL 검증 완전 비활성화
 ssl._create_default_https_context = ssl._create_unverified_context
@@ -25,9 +28,9 @@ logger = configure_logger()
 
 # Upstage API 키는 환경 변수에서 불러옴
 UPSTAGE_API_KEY = os.getenv("UPSTAGE_API_KEY")
-print("[DEBUG] UPSTAGE_API_KEY:", str(UPSTAGE_API_KEY)[:6], "(length:", len(str(UPSTAGE_API_KEY)), ")")
+
 # OpenAI API 키 설정
-openai.api_key = os.getenv("OPENAI_API_KEY")
+# client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
 # TF-IDF 기반 키워드 추출 함수
 def extract_keywords_tfidf(text, top_n=5):
@@ -81,40 +84,43 @@ def extract_keywords(text, top_n=5):
         logger.error(f"키워드 추출 실패: {e}")
         return []
 
-# # OpenAI API를 활용한 요약 함수
-# def summarize_text(text):
-#     try:
-#         response = openai.ChatCompletion.create(
-#             model="gpt-4",
-#             messages=[
-#                 {
-#                     "role": "system",
-#                     "content": (
-#                         "다음 텍스트를 아래 양식에 맞춰 회의록 형태로 요약해줘. 반드시 아래 형식을 지켜야 해:\n"
-#                         "[회의 제목]:\n"
-#                         "[참여인원]:\n"
-#                         "[참여인원 수]:\n"
-#                         "[회의일시]:\n"
-#                         "[업무 회의록]:\n- 항목\n- 항목\n"
-#                         "[주요안건]:\n- 항목\n- 항목\n"
-#                         "[의결사항]:\n1. 항목\n2. 항목\n"
-#                         "[참고사항]:\n- 항목\n"
-#                         "[추후일정]:\n- 항목\n"
-#                         "형식을 반드시 지켜서 출력하고, 불필요한 설명 없이 이 형식 그대로 출력해."
-#                     )
-#                 },
-#                 {
-#                     "role": "user",
-#                     "content": text
-#                 }
-#             ],
-#             temperature=0.6
-#         )
-#         # return response["choices"][0]["message"]["content"]
-#         return response.choices[0].message.content.strip()
-#     except Exception as e:
-#         logger.error(f"요약 실패: {e}")
-#         return "요약 실패"
+client = OpenAI(api_key=os.getenv("OPENAI_API_KEY")) # OpenAI API 키 설정
+
+# OpenAI API를 활용한 요약 함수
+def summarize_text(text):
+    try:
+        response = client.chat.completions.create(
+            model="gpt-4o",
+            messages=[
+                {
+                    "role": "system",
+                    "content": (
+                        "다음 텍스트를 아래 양식에 맞춰 회의록 형태로 요약해줘. 반드시 아래 형식을 지켜야 해:\n"
+                        "[회의 제목]:\n"
+                        "[참여인원]:\n"
+                        "[참여인원 수]:\n"
+                        "[회의일시]:\n"
+                        "[업무 회의록]:\n- 항목\n- 항목\n"
+                        "[주요안건]:\n- 항목\n- 항목\n"
+                        "[의결사항]:\n1. 항목\n2. 항목\n"
+                        "[참고사항]:\n- 항목\n"
+                        "[추후일정]:\n- 항목\n"
+                        "형식을 반드시 지켜서 출력하고, 불필요한 설명 없이 이 형식 그대로 출력해."
+                    )
+                },
+                {
+                    "role": "user",
+                    "content": text
+                }
+            ],
+            temperature=0.6,
+        )
+
+        return response.choices[0].message.content.strip()
+
+    except Exception as e:
+        logger.error(f"요약 실패: {e}")
+        return "요약 실패"
 
 # Upstage API를 활용한 요약 함수
 def summarize_text(text):

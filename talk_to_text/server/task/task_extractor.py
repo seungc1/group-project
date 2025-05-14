@@ -1,3 +1,101 @@
+# import requests
+# import os
+# import ssl
+# import urllib3
+# from utils.logger import configure_logger
+
+# # ✅ SSL 인증 비활성화
+# ssl._create_default_https_context = ssl._create_unverified_context
+# urllib3.disable_warnings()
+# requests.packages.urllib3.disable_warnings()
+
+# # ✅ 환경 변수 설정
+# os.environ['HF_HUB_DISABLE_SSL_VERIFY'] = '1'
+# os.environ['CURL_CA_BUNDLE'] = ''
+# os.environ['REQUESTS_CA_BUNDLE'] = ''
+# os.environ['SSL_CERT_FILE'] = ''
+
+# logger = configure_logger()
+
+# # ✅ API 키 가져오기
+# UPSTAGE_API_KEY = os.getenv("UPSTAGE_API_KEY")
+
+# # ✅ 명령어 정제 함수: 불필요/중복 제거 및 구체성 기준 필터링
+
+# def is_valid_command(text: str) -> bool:
+#     text = text.strip()
+#     # 너무 짧거나, 응답 패턴이거나, 의미 없는 구절은 제외
+#     if len(text) <= 5:
+#         return False
+#     if text.startswith("물론입니다") or text.endswith("같습니다:"):
+#         return False
+
+#     suffixes = [
+#         "해주세요", "하세요", "하십시오", "해주십시오",
+#         "합니다", "진행합니다", "진행한다",
+#         "업로드합니다", "작성합니다", "정리합니다", "등록합니다",
+#         "업로드한다", "작성한다", "정리한다", "등록한다",
+#         "하기로 함", "결정함", "예정임", "예정이다"
+#     ]
+#     return any(text.endswith(suf) for suf in suffixes)
+
+# # ✅ 명령형 문장 추출 함수
+
+# def extract_task_commands_with_solar(text: str) -> list[str]:
+#     url = "https://api.upstage.ai/v1/chat/completions"
+#     headers = {
+#         "Authorization": f"Bearer {UPSTAGE_API_KEY}",
+#         "Content-Type": "application/json"
+#     }
+
+#     prompt = f"""다음 텍스트에서 '명령형 문장'만 추출해서 리스트 형태로 출력해줘. 반드시 아래 예시처럼 출력할 것:
+
+# 예시 출력 형식:
+# - 보고서를 작성해주세요
+# - 코드를 수정해주세요
+
+# 조건:
+# - 명령형 표현(예: ~해주세요, ~하십시오, ~합니다, ~진행한다 등)을 포함한 문장만 출력할 것
+# - 회의 요약이나 다른 형식 없이, 오직 명령형 문장 리스트만 출력할 것
+
+# 텍스트:
+# \"\"\"{text}\"\"\"
+# """
+
+#     data = {
+#         "model": "solar-pro",
+#         "messages": [
+#             {"role": "user", "content": prompt}
+#         ]
+#     }
+
+#     try:
+#         response = requests.post(url, headers=headers, json=data)
+#         response.raise_for_status()
+#         content = response.json()["choices"][0]["message"]["content"]
+
+#         print("\n[Upstage 응답 원문]")
+#         print(content)
+
+#         # ✅ 텍스트 전처리 및 중복 제거
+#         raw_tasks = [line.strip("-•● ").strip() for line in content.split('\n') if line.strip()]
+#         filtered_tasks = [task for task in raw_tasks if is_valid_command(task)]
+
+#         # ✅ 유사 명령어 병합을 위한 정렬 및 중복 제거
+#         final_tasks = sorted(set(filtered_tasks))
+
+#         print("\n[✅ 필터링 후 최종 명령형 문장]")
+#         for task in final_tasks:
+#             print(f"- {task}")
+
+#         return final_tasks
+
+#     except Exception as e:
+#         logger.exception(f"[명령형 문장 추출 실패] {e}")
+#         return []
+
+
+
 import requests
 import os
 import ssl
@@ -72,14 +170,14 @@ def extract_task_commands_with_solar(text: str) -> list[str]:
         response.raise_for_status()
         content = response.json()["choices"][0]["message"]["content"]
 
-        print("\n[🌞 Upstage 응답 원문]")
+        print("\n[Upstage 응답 원문]")
         print(content)
 
         raw_tasks = [line.strip("-•● ").strip() for line in content.split('\n') if line.strip()]
         filtered_tasks = [task for task in raw_tasks if is_valid_command(task)]
         unique_tasks = sorted(set(filtered_tasks))
 
-        print("\n[✅ 필터링 후 최종 명령형 문장]")
+        print("\n[필터링 후 최종 명령형 문장]")
         for task in unique_tasks:
             print(f"- {task}")
 

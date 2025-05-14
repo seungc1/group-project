@@ -1,0 +1,110 @@
+  /* record.module.css */
+
+.container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 95vh;
+    background-color: #f9f9f9;
+    font-family: 'Pretendard', sans-serif;
+    text-align: center;
+    padding: 40px;
+  }
+  
+  .title {
+    font-size: 36px;
+    font-weight: 800;
+    margin-bottom: 24px;
+    color: #111827;
+  }
+  
+  .container p {
+    font-size: 18px;
+    color: #374151;
+    margin-bottom: 12px;
+  }
+  
+  .container p:nth-of-type(2) {
+    margin-bottom: 32px;
+  }
+  
+  .controls {
+    margin-bottom: 24px;
+  }
+  
+  .button {
+    background-color: #10b981; /* green */
+    color: white;
+    border: none;
+    border-radius: 12px;
+    padding: 12px 24px;
+    font-size: 18px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.3s;
+  }
+  
+  .button:hover {
+    background-color: #059669;
+  }
+  
+  .buttonStop {
+    background-color: #ef4444; /* red */
+    color: white;
+    border: none;
+    border-radius: 12px;
+    padding: 12px 24px;
+    font-size: 18px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.3s;
+  }
+  
+  .buttonStop:hover {
+    background-color: #dc2626;
+  }
+  
+  .result {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+  }
+  
+  .downloadLink {
+    background-color: #3b82f6; /* blue */
+    color: white;
+    padding: 10px 20px;
+    border-radius: 10px;
+    text-decoration: none;
+    font-weight: 500;
+    transition: background-color 0.3s;
+  }
+  
+  .downloadLink:hover {
+    background-color: #2563eb;
+  }
+
+  .buttonWrapper {
+    display: flex;
+    justify-content: center;
+    gap: 16px;
+    margin-top: 16px;
+  }
+  
+  .createButton {
+    background-color: #e0e7ff;
+    color: #1d4ed8;
+    text-decoration: none;
+    padding: 10px 18px;
+    border-radius: 10px;
+    font-size: 15px;
+    font-weight: 500;
+    border: 1px solid #c7d2fe;
+    transition: background 0.2s ease;
+  }
+  
+  .createButton:hover {
+    background-color: #dbeafe;
+  }
