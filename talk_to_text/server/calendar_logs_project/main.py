@@ -8,7 +8,7 @@ from calendar_logs_project.firestore_handler import store_calendar_logs
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 # Firebase 인증 키 설정
-os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "/Users/nahyowon/Documents/go/group-project/talk_to_text/server/firebase/firebase_key.json"
+os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "/Users/jujihwan/Documents/talktotext_jihwan_v2/group-project/talk_to_text/server/firebase/firebase_key.json"
 
 # Firestore 연결
 db = firestore.client()

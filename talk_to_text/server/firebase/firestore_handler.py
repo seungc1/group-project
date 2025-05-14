@@ -4,43 +4,29 @@ import firebase_admin
 from firebase_admin import credentials, firestore
 from utils.logger import configure_logger
 
-# 현재 스크립트의 절대 경로를 기준으로 .env.server 파일 경로 설정
-current_dir = os.path.dirname(os.path.abspath(__file__))
-server_dir = os.path.dirname(current_dir)  # server 디렉토리
-dotenv_path = os.path.join(server_dir, ".env.server")
+env_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '.env.server'))
+load_dotenv(dotenv_path=env_path)
 
-# 환경 변수 파일 존재 여부 확인 및 로드
-if os.path.exists(dotenv_path):
-    load_dotenv(dotenv_path)
-else:
-    raise FileNotFoundError(f".env.server 파일을 찾을 수 없습니다. 경로: {dotenv_path}")
+# 디버깅 확인
+print("[DEBUG] FIREBASE 키 경로:", os.getenv("GOOGLE_APPLICATION_CREDENTIALS"))
+
+firebase_key_path = os.getenv("GOOGLE_APPLICATION_CREDENTIALS")
+firebase_storage = os.getenv("FIREBASE_STORAGE_BUCKET")
+firebase_project = os.getenv("FIREBASE_PROJECT_ID")
 
 # 로거 설정
 logger = configure_logger()
 
-# DNS 및 gRPC 관련 설정 (필요시)
-os.environ['GRPC_DNS_RESOLVER'] = 'native'
-os.environ['GRPC_ENABLE_FORK_SUPPORT'] = '1'
-os.environ['GRPC_VERBOSITY'] = 'DEBUG'
-os.environ['GRPC_TRACE'] = 'all'
-os.environ['GRPC_ENABLE_CHANNEL_Z'] = '0'
-
-# Firebase 관련 환경 변수 로드
-firebase_key_path = os.getenv("GOOGLE_APPLICATION_CREDENTIALS")
-if not firebase_key_path:
-    raise ValueError("GOOGLE_APPLICATION_CREDENTIALS 환경 변수가 설정되지 않았습니다.")
-
-firebase_storage = os.getenv("FIREBASE_STORAGE_BUCKET")
-firebase_project = os.getenv("FIREBASE_PROJECT_ID")
-
+# 디버깅용 출력
 logger.info(f"Firebase 키 파일 경로: {firebase_key_path}")
 logger.info(f"현재 작업 디렉토리: {os.getcwd()}")
-logger.info(f".env.server 파일 경로: {dotenv_path}")
 
-# Firebase 앱 초기화 (이미 초기화된 경우 중복 방지)
+# 필수 환경변수 검증
+if not firebase_key_path or not os.path.exists(firebase_key_path):
+    raise FileNotFoundError(f"Firebase 키 파일을 찾을 수 없습니다. 경로: {firebase_key_path}")
+
+# Firebase 앱 초기화 (중복 방지)
 if not firebase_admin._apps:
-    if not os.path.exists(firebase_key_path):
-        raise FileNotFoundError(f"Firebase 키 파일을 찾을 수 없습니다. 경로: {firebase_key_path}")
     try:
         logger.info("Firebase 초기화 시작...")
         cred = credentials.Certificate(firebase_key_path)
