@@ -48,10 +48,16 @@ export default function MeetingListItem({ meeting }) {
         <h3>{meeting.title}</h3>
         
         {/* 참석자 이름 및 회의 날짜 */}
-        <p>
-          회의날짜: {meeting.meetingDate && (typeof meeting.meetingDate === 'string' ? meeting.meetingDate : meeting.meetingDate.toDate ? meeting.meetingDate.toDate().toLocaleDateString() : '')}
+        <p style={{ color: '#111' }}>
+          회의날짜: {meeting.meetingDate
+            ? (typeof meeting.meetingDate === 'string'
+                ? meeting.meetingDate
+                : meeting.meetingDate.toDate
+                  ? meeting.meetingDate.toDate().toLocaleDateString()
+                  : String(meeting.meetingDate))
+            : '날짜 없음'}
         </p>
-        <p>
+        <p style={{ color: '#111' }}>
           참석자: {
             Array.isArray(meeting.participantNames)
               ? meeting.participantNames.join(', ')

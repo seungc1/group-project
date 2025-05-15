@@ -1,3 +1,122 @@
+.sidebar {
+  min-width: 240px;
+  padding: 16px;
+  border-right: 1px solid #eee;
+  background: #fafbfc;
+  height: 100vh;
+  overflow-y: auto;
+}
+
+.sidebarHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.sidebarHeader h3 {
+  font-size: 18px;
+  margin: 0;
+  color: #333;
+}
+
+.folderList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.folderItem {
+  margin-bottom: 4px;
+  position: relative;
+}
+
+.folderHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  position: relative;
+}
+
+.folderHeader:hover {
+  background-color: #f0f0f0;
+}
+
+.folderHeader.selected {
+  background-color: #e3e3e3;
+}
+
+.folderName {
+  font-size: 14px;
+  color: #333;
+  flex: 1;
+  margin-right: 8px;
+  display: flex;
+  align-items: center;
+}
+
+.folderName input {
+  width: 100%;
+  padding: 4px 8px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 14px;
+}
+
+.folderActions {
+  display: none;
+  gap: 4px;
+  position: absolute;
+  right: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: rgba(255, 255, 255, 0.9);
+  padding: 2px;
+  border-radius: 4px;
+}
+
+.folderHeader:hover .folderActions {
+  display: flex;
+}
+
+.addButton,
+.deleteButton {
+  width: 24px;
+  height: 24px;
+  border: none;
+  border-radius: 4px;
+  background: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  color: #666;
+  transition: all 0.2s;
+  padding: 0;
+}
+
+.addButton:hover {
+  background-color: #e3e3e3;
+  color: #333;
+}
+
+.deleteButton:hover {
+  background-color: #ffebee;
+  color: #d32f2f;
+}
+
+.folderContent {
+  padding: 8px 0 8px 24px;
+  border-left: 2px solid #eee;
+  margin-left: 12px;
+  margin-top: 4px;
+}
+
 .meetingsList {
   padding: 20px;
   display: flex;
