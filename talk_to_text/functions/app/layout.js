@@ -13,9 +13,6 @@
  * - LayoutWrapper를 통해 사이드바와 메인 콘텐츠 구조 제공
  */
 
-// Geist 폰트 임포트
-
-// 전역 스타일시트 임포트
 // 전역 스타일시트 임포트
 import "./globals.css";
 // 레이아웃 래퍼 컴포넌트 임포트
@@ -73,7 +70,6 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <html lang="ko">
-      {/* 폰트 변수를 body에 적용 */}
       {/* 폰트 변수를 body에 적용 */}
       <body className={inter.className}>
         <AuthProvider>
