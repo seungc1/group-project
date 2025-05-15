@@ -25,6 +25,13 @@ from task.google_task_register import register_tasks
 
 from calendar_logs_project.main import extract_and_store_schedule_logs
 
+# .env 파일 강제 로드
+from dotenv import load_dotenv
+
+# 루트 경로 기준으로 .env.server 위치 지정
+env_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '.env.server'))
+load_dotenv(dotenv_path=env_path)
+
 # SSL 검증 완전 비활성화
 ssl._create_default_https_context = ssl._create_unverified_context
 urllib3.disable_warnings()
@@ -49,6 +56,7 @@ CORS(app, resources={
     }
 })
 
+# 로거 설정
 logger = configure_logger()
 
 @app.before_request
@@ -60,6 +68,7 @@ def before_request():
         print("OPTIONS 요청 처리 중...")
     print("="*50)
 
+# 오디오 처리 엔드포인트
 @app.route('/process-audio', methods=['POST', 'OPTIONS'])
 def process_audio_endpoint():
     if request.method == 'OPTIONS':
@@ -92,7 +101,7 @@ def process_audio_endpoint():
         print(f"프로젝트 ID: {projectId}")
         print(f"회의 ID: {meetingId}")
 
-        # 1. 오디오 파일 다운로드 (공통 입력 기반)
+        # 1. 오디오 파일 다운로드
         audio_path = download_audio(audio_url)
 
         # 2. Whisper STT & 화자분리 병렬 처리
@@ -106,21 +115,22 @@ def process_audio_endpoint():
         # 3. 세그먼트와 화자 정보 결합
         transcript = merge_segments_with_speakers(segments, diarization)
 
-        # textinfo 생성 (빈 리스트로 초기화)
-        textinfo = []
-        for seg in transcript:
-            textinfo.append({
+        # textinfo 생성
+        textinfo = [
+            {
                 "speaker": seg.get("speaker", ""),
                 "text": seg.get("text", ""),
                 "startTime": seg.get("start", 0),
                 "endTime": seg.get("end", 0)
-            })
+            }
+            for seg in transcript
+        ]
 
         # 4. NLP 처리
-        keywords = extract_keywords_tfidf(full_text, top_n=5)   # 키워드 추출 (TF-IDF 기반)
+        keywords = extract_keywords_tfidf(full_text, top_n=5)
         summary = summarize_text(full_text)
         summary_text = summary
-        
+
         # calendar_logs 문서 업데이트 함수
         def update_calendar_log(log_id, event_url):
             db = firestore.client()
@@ -129,40 +139,23 @@ def process_audio_endpoint():
                 "calendarEventUrl": event_url,
                 "status": "success"
             })
-        
-        # 4-1. 회의 일정 추출 및 Firestore calendar_logs 저장
-        meeting_id = os.path.splitext(os.path.basename(audio_path))[0]
 
-        # 4-2. 추출된 datetimes를 즉시 캘린더 등록
+        # 4-1. 회의 일정 추출 및 저장
+        meeting_id = os.path.splitext(os.path.basename(audio_path))[0]
         datetimes = extract_and_store_schedule_logs(summary_text, meeting_id)
         event_links = []
-        
-        if datetimes:
-            for dt_info in datetimes:
-                logger.info(f"회의 일정으로 인식된 날짜: {dt_info}")
 
-                start_datetime = dt_info["datetime"]  # 여기서 datetime만 꺼낸다.
-                # 만약 datetime이 문자열이면 datetime 객체로 변환
-                if isinstance(start_datetime, str):
-                    start_datetime = datetime.fromisoformat(start_datetime)
+        for dt_info in datetimes:
+            logger.info(f"회의 일정으로 인식된 날짜: {dt_info}")
+            start_datetime = dt_info["datetime"]
+            if isinstance(start_datetime, str):
+                start_datetime = datetime.fromisoformat(start_datetime)
+            event_link = create_calendar_event("회의 있음", start_datetime)
+            if event_link:
+                event_links.append(event_link)
+                update_calendar_log(dt_info["logId"], event_link)
 
-                event_link = create_calendar_event("회의 있음", start_datetime)
-
-                if event_link:
-                    event_links.append(event_link)
-                    logger.info(f"Google Calendar 일정 등록 성공: {event_link}")
-                    
-                    # calendar_logs 문서 업데이트
-                    update_calendar_log(dt_info["logId"], event_link)
-
-                else:
-                    logger.warning("Google Calendar 일정 등록 실패")
-        else:
-            logger.info("요약에서 일정 관련 날짜를 찾지 못했음.")
-            
-        # 4-3. 작업 명령어 추출 및 Google Tasks 등록
-        summary_text = summary  # Whisper 결과 요약에서 가져옴
-
+        # 4-3. 명령형 문장 추출 및 Google Tasks 등록    
         # 1. 명령형 문장 추출
         commands = extract_task_commands_with_solar(summary_text)
         commands = [cmd for cmd in commands if cmd.strip()]  # 불필요한 공백 제거
@@ -171,10 +164,11 @@ def process_audio_endpoint():
         if commands:
             register_tasks(commands)
         
+
         # 5. 요약 파일 저장 및 Firebase 업로드
         summary_url = upload_summary_text(summary, audio_path, keywords)
-        
-        # participantNames를 Firestore에 배열로 변환
+
+        # 6. Firestore 저장
         participant_names = data.get('participantNames', [])
         if isinstance(participant_names, str):
             try:
@@ -183,7 +177,6 @@ def process_audio_endpoint():
                 participant_names = [participant_names]
         participant_names = [n for n in participant_names if n and str(n).strip()]
 
-        # 6. Firestore에 저장
         save_meeting_data(userId, projectId, meetingId, {
             'audioFileName': data.get('audioFileName', ''),
             'audioUrl': audio_url,
@@ -191,7 +184,7 @@ def process_audio_endpoint():
             'createdBy': userId,
             'meetingDate': data.get('meetingDate', ''),
             'meetingMinutesList': meetingMinutesList,
-            'participantNames': participant_names,  # 배열로 저장
+            'participantNames': participant_names,
             'participants': data.get('participants', 0),
             'projectId': projectId,
             'status': 'completed',
@@ -199,36 +192,19 @@ def process_audio_endpoint():
             'summary': summary,
             'keywords': keywords,
             'summaryFileUrl': summary_url,
-            'calendarEventUrls': event_links if event_links else None,
+            'calendarEventUrls': event_links or None,
             'calendarDateTimes': datetimes,
             'updatedAt': firestore.SERVER_TIMESTAMP
         })
 
-        # textinfo 저장
         if textinfo:
             save_textinfo(userId, projectId, meetingId, textinfo)
 
-        # tags 생성 (키워드 기반 태그, 실제 로직에 맞게 수정)
-        tags = []
-        for kw in keywords:
-            tags.append({
-                "label": kw,
-                "createdAt": datetime.now().isoformat()
-            })
-
-        # tags 저장
+        tags = [{"label": kw, "createdAt": datetime.now().isoformat()} for kw in keywords]
         if tags:
             save_tags(userId, projectId, meetingId, tags)
 
-        # calendar_logs 생성 (일정 추출/등록 로직에 맞게, 없으면 빈 리스트)
         calendar_logs = []
-        # 예시: 일정 추출/등록 로직에서 calendar_logs를 생성했다면 그 값을 사용
-        # calendar_logs = extract_and_store_schedule_logs(summary_text, meeting_id)
-        # 값이 없으면 빈 리스트로 처리
-        if not calendar_logs:
-            calendar_logs = []
-
-        # calendar_logs 저장
         if calendar_logs:
             save_calendar_logs(userId, projectId, meetingId, calendar_logs)
 
@@ -255,6 +231,7 @@ def get_all_transcripts_endpoint():
         logger.exception("/transcripts 조회 중 오류 발생")
         return jsonify({"success": False, "error": str(e)}), 500
 
+# 응답 후 처리 훅
 @app.after_request
 def after_request(response):
     return response
