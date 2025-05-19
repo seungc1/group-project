@@ -26,19 +26,27 @@ def upload_summary_text(summary_text, audio_filename, keywords, remote_folder="s
         logger.error(f"요약 텍스트 저장 및 업로드 실패: {e}")
         raise
 
-# Firebase Storage에 파일 업로드
+# Firebase Storage에 파일 업로드하고, 공개 URL을 반환하는 함수
 def upload_summary_file(local_path, remote_folder="summaries"):
     try:
+        # 로컬 파일 경로에서 파일명만 추출
         filename = os.path.basename(local_path)
+        # 저장 경로 생성: summaries/파일명 형태
         blob_path = f"{remote_folder}/{filename}"
 
+        # Firebase Storage 버킷 객체 가져오기
         bucket = storage.bucket()
         blob = bucket.blob(blob_path)
+        
+        # 로컬 파일을 지정된 blob 경로에 업로드
         blob.upload_from_filename(local_path)
+        # 파일을 공개로 설정하여 anyone-access 가능하도록 함
         blob.make_public()
-
+        
+        # 업로드 성공 로그 출력 및 공개 URL 반환
         logger.info(f"Storage 업로드 완료: {blob.public_url}")
         return blob.public_url
+    
     except Exception as e:
         logger.error(f"Storage 업로드 실패: {e}")
         raise

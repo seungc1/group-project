@@ -8,7 +8,6 @@ from pydub import AudioSegment
 import whisper
 from utils.logger import configure_logger
 from utils.cleaner import cleanup_chunks
-# 병렬처리를 위해 ThreadPoolExecutor와 as_completed를 사용
 from concurrent.futures import ThreadPoolExecutor, as_completed
 
 # SSL 검증 완전 비활성화
@@ -24,39 +23,65 @@ os.environ['SSL_CERT_FILE'] = ''
 
 logger = configure_logger()
 
-# Whisper 모델 로드 (기본 base 모델)
+# Whisper 모델 로드 (medium 모델)
 logger.info("Whisper 모델 로딩 중...")
-model = whisper.load_model("medium") # medium, large 사용하자
+model = whisper.load_model("medium") # 모델 로드
 logger.info("Whisper 모델 로드 완료")
 
-# 오디오 URL에서 다운로드 함수
+# 오디오 URL에서 오디오 파일을 다운로드하여 로컬 임시 파일로 저장하는 함수
 def download_audio(url):
     try:
+        # 지정된 URL로부터 오디오 파일 요청 (타임아웃: 30초, SSL 인증 무시)
         response = requests.get(url, timeout=30, verify=False)  # SSL 검증 비활성화
+        # 응답 코드가 성공(200번대)이 아닌 경우 예외 발생
         response.raise_for_status()
+        
+        # 임시 WAV 파일 생성 (delete=False: 파일 자동 삭제되지 않음)
         with tempfile.NamedTemporaryFile(delete=False, suffix='.wav') as temp_file:
+            # 응답 받은 오디오 바이너리 데이터를 임시 파일에 저장
             temp_file.write(response.content)
+            # 생성된 임시 파일 경로 반환
             return temp_file.name
     except Exception as e:
         logger.error(f"오디오 다운로드 실패: {e}")
         raise
 
-# 오디오 파일을 16kHz mono로 변환하는 전처리 함수
-def convert_to_16k_mono(input_path: str, output_path: str) -> str:
+# 오디오 파일을 16kHz mono WAV 파일로 변환하는 전처리 함수 (ffmpeg 사용, 이미 wav)
+"""
+    ffmpeg를 사용하여 입력 오디오 파일을 16kHz, mono 채널의 WAV 형식으로 변환합니다.
+    지원 형식: mp3, m4a, mp4, wav 등 대부분의 ffmpeg 지원 오디오 파일
+
+    Args:
+        input_path (str): 원본 오디오 파일 경로
+        output_path (str): 변환된 출력 경로 (.wav)
+
+    Returns:
+        str: 변환된 파일의 경로
+    """
+def convert_to_16k_mono(input_path: str, output_path: str = "/tmp/converted.wav") -> str:
     try:
+        # output_path가 .wav 확장자가 아니면 강제로 변경
+        if not output_path.lower().endswith(".wav"):
+            output_path = os.path.splitext(output_path)[0] + ".wav"
+
         command = [
-            'ffmpeg',
-            '-y',
-            '-i', input_path,
-            '-ac', '1',
-            '-ar', '16000',
+            "ffmpeg",
+            "-y",  # 덮어쓰기 허용
+            "-i", input_path,
+            "-ac", "1",          # mono
+            "-ar", "16000",      # 16kHz
             output_path
         ]
-        subprocess.run(command, check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        result = subprocess.run(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, check=True)
+
         logger.info(f"[전처리 완료] {output_path} (16kHz mono)")
         return output_path
+
     except subprocess.CalledProcessError as e:
-        logger.error(f"오디오 전처리 실패: {e}")
+        logger.error(f"[전처리 실패] ffmpeg 오류: {e.stderr.decode(errors='ignore')}")
+        raise
+    except Exception as e:
+        logger.exception(f"[전처리 실패] 알 수 없는 오류: {e}")
         raise
 
 # 오디오 파일을 1분 단위로 청크 분할
@@ -87,29 +112,34 @@ def process_whisper_from_path(audio_path):
         converted_path = "/tmp/converted_whisper.wav"
         convert_to_16k_mono(audio_path, converted_path)
         
-        chunk_paths = chunk_audio(audio_path)
+        # 청크 분할 수행
+        chunk_paths = chunk_audio(converted_path)
         logger.info(f"총 {len(chunk_paths)}개의 청크 생성됨")
 
-        segments_all = []
-        full_text_parts = []
+        segments_all = []   # 모든 청크의 세그먼트 결과 저장용 리스트  
+        full_text_parts = []    # 청크별 텍스트를 순차적으로 누적
 
+        # 각 청크에 대해 Whisper STT 수행 함수 정의
         def transcribe_chunk(chunk_path):
             logger.info(f"Whisper 처리 진행 중: {chunk_path}")
             result = model.transcribe(chunk_path)
             return result["segments"], result["text"].strip()
 
-        # 병렬 처리
+        # ThreadPoolExecutor를 활용한 병렬 처리 수행
         with ThreadPoolExecutor() as executor:
+            # 각 청크에 대해 STT 작업 제출
             futures = {executor.submit(transcribe_chunk, path): path for path in chunk_paths}
 
+            # 완료된 작업 순서대로 결과 수집
             for future in as_completed(futures):
                 try:
                     segments, text = future.result()
-                    segments_all.extend(segments)
-                    full_text_parts.append(text)
+                    segments_all.extend(segments)   # 세그먼트 누적
+                    full_text_parts.append(text)    # 텍스트 누적
                 except Exception as e:
                     logger.error(f"Whisper 청크 처리 중 오류 발생: {e}")
 
+        # 모든 청크 텍스트를 줄바꿈으로 연결하여 전체 텍스트 구성
         full_text = "\n".join(full_text_parts)
         return segments_all, full_text
 
@@ -119,4 +149,3 @@ def process_whisper_from_path(audio_path):
 
     finally:
         cleanup_chunks()
-

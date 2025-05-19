@@ -1,6 +1,4 @@
 import os
-os.environ["GRPC_VERBOSITY"] = "ERROR"
-os.environ["GRPC_TRACE"] = ""
 import ssl
 import urllib3
 import requests
@@ -42,6 +40,8 @@ os.environ['HF_HUB_DISABLE_SSL_VERIFY'] = '1'
 os.environ['CURL_CA_BUNDLE'] = ''
 os.environ['REQUESTS_CA_BUNDLE'] = ''
 os.environ['SSL_CERT_FILE'] = ''
+os.environ["GRPC_VERBOSITY"] = "ERROR"
+os.environ["GRPC_TRACE"] = ""
 
 # Flask 앱 초기화
 app = Flask(__name__)
@@ -59,6 +59,7 @@ CORS(app, resources={
 # 로거 설정
 logger = configure_logger()
 
+# 모든 HTTP 요청 전에 실행되는 Flask 훅 (전처리 로깅 용도)
 @app.before_request
 def before_request():
     print("="*50)
@@ -127,22 +128,48 @@ def process_audio_endpoint():
         ]
 
         # 4. NLP 처리
+        # 4-0. 키워드 추출
         keywords = extract_keywords_tfidf(full_text, top_n=5)
-        summary = summarize_text(full_text)
-        summary_text = summary
+        
+        # 4-1. 요약
+        meeting_date = data.get('meetingDate', '')  # 회의 날짜
+        title = data.get('title', '')   # 회의 제목
 
+        participant_names = data.get('participantNames', [])    # 참여자 이름 리스트
+        # 참여자 이름이 문자열인 경우 JSON으로 변환
+        if isinstance(participant_names, str):
+            try:
+                participant_names = json.loads(participant_names)
+            except Exception:
+                participant_names = [participant_names]
+
+        # 참여자 이름 리스트 정리 (문자열만 추출 + 공백 제거)
+        participant_names = [name.strip() for name in participant_names if isinstance(name, str) and name.strip()]
+
+        # 인원 수는 participantNames 길이로 자동 계산
+        participant_count = len(participant_names)
+
+        # Upstage 요약 생성 (회의제목, 참여자, 인원수, 날짜 포함)
+        summary = summarize_text(full_text, meeting_date, title, participant_names, participant_count)
+        summary_text = summary
+        
         # calendar_logs 문서 업데이트 함수
         def update_calendar_log(log_id, event_url):
-            db = firestore.client()
+            db = firestore.client()     # Firestore 클라이언트 초기화
+            # 지정된 log_id에 해당하는 calendar_logs 문서 참조
             log_ref = db.collection('calendar_logs').document(log_id)
+            # 문서 필드 업데이트: 이벤트 URL 추가, 상태를 'success'로 변경
             log_ref.update({
                 "calendarEventUrl": event_url,
                 "status": "success"
             })
 
         # 4-1. 회의 일정 추출 및 저장
+        # 오디오 파일 경로에서 확장자를 제외한 파일명을 추출하여 meeting_id로 사용
         meeting_id = os.path.splitext(os.path.basename(audio_path))[0]
+        # 회의 요약 텍스트로부터 자연어 기반의 일정(날짜/시간)을 추출하고 calendar_logs 컬렉션에 추출된 일정 데이터를 저장
         datetimes = extract_and_store_schedule_logs(summary_text, meeting_id)
+        # Google Calendar 이벤트 URL들을 저장할 리스트 (일정마다 생성된 URL 저장 예정)
         event_links = []
 
         for dt_info in datetimes:
