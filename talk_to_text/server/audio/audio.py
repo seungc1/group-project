@@ -46,7 +46,7 @@ def download_audio(url):
         logger.error(f"오디오 다운로드 실패: {e}")
         raise
 
-# 오디오 파일을 16kHz mono WAV 파일로 변환하는 전처리 함수 (ffmpeg 사용, 이미 wav)
+# 오디오 파일을 16kHz mono WAV 파일로 변환하는 전처리 함수 (ffmpeg 사용)
 """
     ffmpeg를 사용하여 입력 오디오 파일을 16kHz, mono 채널의 WAV 형식으로 변환합니다.
     지원 형식: mp3, m4a, mp4, wav 등 대부분의 ffmpeg 지원 오디오 파일

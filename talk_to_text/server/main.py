@@ -133,6 +133,7 @@ def process_audio_endpoint():
         
         # 4-1. 요약
         meeting_date = data.get('meetingDate', '')  # 회의 날짜
+        
         title = data.get('title', '')   # 회의 제목
 
         participant_names = data.get('participantNames', [])    # 참여자 이름 리스트
@@ -191,7 +192,6 @@ def process_audio_endpoint():
         if commands:
             register_tasks(commands)
         
-
         # 5. 요약 파일 저장 및 Firebase 업로드
         summary_url = upload_summary_text(summary, audio_path, keywords)
 
