@@ -1,0 +1,260 @@
+.container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 32px;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem;
+}
+
+.folderNameInput {
+  font-size: 24px;
+  font-weight: 700;
+  color: #222;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  padding: 4px 12px;
+  min-width: 180px;
+}
+
+.folderTitle {
+  font-size: 28px;
+  font-weight: 700;
+  color: #222;
+  margin: 0;
+}
+
+.menuWrap {
+  position: relative;
+}
+
+.menuButton {
+  background: none;
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
+  color: #6b7280;
+  padding: 8px;
+}
+
+.menuDropdown {
+  position: absolute;
+  right: 0;
+  top: 40px;
+  background: #fff;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+  border-radius: 8px;
+  min-width: 160px;
+  z-index: 10;
+}
+
+.menuItem {
+  width: 100%;
+  padding: 12px 16px;
+  background: none;
+  border: none;
+  text-align: left;
+  cursor: pointer;
+  font-size: 15px;
+  color: #222;
+}
+
+.menuItemDanger {
+  width: 100%;
+  padding: 12px 16px;
+  background: none;
+  border: none;
+  text-align: left;
+  cursor: pointer;
+  color: #d32f2f;
+  font-size: 15px;
+}
+
+.loading {
+  text-align: center;
+  padding: 48px;
+  color: #666;
+}
+
+.error {
+  color: #d32f2f;
+  font-weight: bold;
+  text-align: center;
+  padding: 48px;
+}
+
+.empty {
+  text-align: center;
+  padding: 48px;
+  color: #666;
+}
+
+.projectList {
+  display: grid;
+  gap: 16px;
+}
+
+.projectCard {
+  padding: 20px;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  cursor: pointer;
+  background: white;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  transition: all 0.2s ease;
+  position: relative;
+}
+
+.projectCard.expanded {
+  background: #f8fafc;
+}
+
+.cardHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.projectName {
+  margin: 0;
+  color: #111;
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.projectDesc {
+  margin: 8px 0 0;
+  color: #666;
+  font-size: 14px;
+}
+
+.arrow {
+  transition: transform 0.2s ease;
+}
+
+.arrow.expanded {
+  transform: rotate(180deg);
+}
+
+.meetingListWrap {
+  margin-top: 12px;
+  padding: 16px;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  background: white;
+}
+
+.meetingLoading, .meetingEmpty {
+  text-align: center;
+  padding: 20px;
+  color: #666;
+}
+
+.meetingList {
+  display: grid;
+  gap: 12px;
+}
+
+.sortRow {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 16px;
+}
+
+.sortButton {
+  padding: 8px 16px;
+  border-radius: 6px;
+  border: 1px solid #e5e7eb;
+  background: #fff;
+  color: #4f46e5;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+}
+
+/* 모달 */
+.overlay {
+  position: fixed;
+  left: 0;
+  top: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0,0,0,0.25);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.modal {
+  background: #fff;
+  border-radius: 12px;
+  padding: 32px;
+  min-width: 360px;
+  max-width: 480px;
+}
+
+.modalTitle {
+  font-size: 20px;
+  margin-bottom: 16px;
+}
+
+.modalEmpty {
+  color: #888;
+  margin-bottom: 16px;
+}
+
+.modalProjectList {
+  max-height: 300px;
+  overflow-y: auto;
+  margin-bottom: 16px;
+}
+
+.modalProjectItem {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+  cursor: pointer;
+}
+
+.modalButtonRow {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.cancelButton {
+  padding: 8px 16px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  background: #f8f9fa;
+  color: #333;
+  cursor: pointer;
+}
+
+.addButton {
+  padding: 8px 16px;
+  border-radius: 6px;
+  background: #4f46e5;
+  color: #fff;
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+}
+
+.addButtonDisabled {
+  padding: 8px 16px;
+  border-radius: 6px;
+  background: #ccc;
+  color: #fff;
+  font-weight: 600;
+  border: none;
+  cursor: not-allowed;
+} 

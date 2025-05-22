@@ -191,7 +191,7 @@ def process_audio_endpoint():
             'title': data.get('title', ''),
             'summary': summary,
             'keywords': keywords,
-            'summaryFileUrl': summary_url,
+            'summaryDownloadUrl': summary_url,
             'calendarEventUrls': event_links or None,
             'calendarDateTimes': datetimes,
             'updatedAt': firestore.SERVER_TIMESTAMP

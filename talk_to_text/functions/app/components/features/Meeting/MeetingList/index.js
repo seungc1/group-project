@@ -35,6 +35,7 @@ export default function ProjectList() {
   const [error, setError] = useState(null);
   const { user } = useAuth();
   const [currentPage, setCurrentPage] = useState(1);
+  const [sortOrder, setSortOrder] = useState('desc'); // 'asc' 또는 'desc'
   const projectsPerPage = 5;
 
   useEffect(() => {
@@ -52,6 +53,22 @@ export default function ProjectList() {
     };
     fetchProjects();
   }, [user]);
+
+  // 프로젝트 정렬 함수
+  const sortProjects = (projects, order) => {
+    return [...projects].sort((a, b) => {
+      const dateA = new Date(a.createdAt?.toDate?.() || 0);
+      const dateB = new Date(b.createdAt?.toDate?.() || 0);
+      return order === 'asc' ? dateA - dateB : dateB - dateA;
+    });
+  };
+
+  // 정렬 순서 변경
+  const toggleSortOrder = () => {
+    const newOrder = sortOrder === 'asc' ? 'desc' : 'asc';
+    setSortOrder(newOrder);
+    setProjects(prev => sortProjects(prev, newOrder));
+  };
 
   if (loading) {
     return <div className={styles.loading}>로딩 중...</div>;
@@ -73,6 +90,26 @@ export default function ProjectList() {
 
   return (
     <>
+      <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: 16 }}>
+        <button
+          onClick={toggleSortOrder}
+          style={{
+            padding: '8px 16px',
+            borderRadius: 6,
+            border: '1px solid #e5e7eb',
+            background: '#fff',
+            color: '#4f46e5',
+            cursor: 'pointer',
+            display: 'flex',
+            alignItems: 'center',
+            gap: 8,
+            fontSize: 14
+          }}
+        >
+          {sortOrder === 'asc' ? '오래된순' : '최신순'}
+          {sortOrder === 'asc' ? '↑' : '↓'}
+        </button>
+      </div>
       <div className={styles.meetingList}>
         {currentProjects.map(project => (
           <ProjectListItem project={project} key={project.id} />

@@ -10,6 +10,8 @@
 import CloseButton from '@/app/components/common/buttons/CloseButton';
 // 컴포넌트 스타일 임포트
 import styles from './styles.module.css';
+import { useEffect, useState } from 'react';
+import { fetchUserName } from '@/lib/userService';
 
 export default function MeetingHeader({ meeting }) {
   // 날짜 포맷팅 (meetingDate가 timestamp 객체일 경우)
@@ -23,6 +25,14 @@ export default function MeetingHeader({ meeting }) {
       displayDate = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
     }
   }
+
+  // 생성자 이름 상태
+  const [creatorName, setCreatorName] = useState('정보 없음');
+  useEffect(() => {
+    if (meeting.createdBy) {
+      fetchUserName(meeting.createdBy).then(setCreatorName);
+    }
+  }, [meeting.createdBy]);
 
   // 회의 헤더 UI 렌더링
   return (
@@ -38,7 +48,7 @@ export default function MeetingHeader({ meeting }) {
         {/* 생성일 표시 */}
         <span>회의날짜: {displayDate || '정보 없음'}</span>
         
-        {/* 참석자 이름 목록 표시 */}
+        {/* 참석자 이름 목록 표시 }
         <span>
           참석자: {
             Array.isArray(meeting.participantNames)
@@ -51,10 +61,8 @@ export default function MeetingHeader({ meeting }) {
                     ? meeting.participantName
                     : '정보 없음'
           }
-        </span>
-        
-        {/* 참석자 수 표시 */}
-        <span>참석자 수: {meeting.participants || 0}명</span>
+        </span>*/}
+        <span> 생성자 : {creatorName}</span>
       </div>
     </div>
   );

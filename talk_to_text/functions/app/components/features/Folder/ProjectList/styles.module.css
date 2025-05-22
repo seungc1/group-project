@@ -1,0 +1,71 @@
+.projectList {
+  display: grid;
+  gap: 16px;
+}
+
+.projectCard {
+  padding: 20px;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  cursor: pointer;
+  background: white;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  transition: all 0.2s ease;
+  position: relative;
+}
+
+.projectCard.expanded {
+  background: #f8fafc;
+}
+
+.cardHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.projectName {
+  margin: 0;
+  color: #222;
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.projectDesc {
+  margin: 8px 0 0;
+  color: #222;
+  font-size: 14px;
+}
+
+.arrow {
+  transition: transform 0.2s ease;
+}
+
+.arrow.expanded {
+  transform: rotate(180deg);
+}
+
+.meetingListWrap {
+  margin-top: 12px;
+  padding: 16px;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  background: white;
+}
+
+.meetingLoading, .meetingEmpty {
+  text-align: center;
+  padding: 20px;
+  color: #222;
+}
+
+.meetingList {
+  display: grid;
+  gap: 12px;
+}
+
+.empty {
+  text-align: center;
+  padding: 48px;
+  color: #222;
+} 
