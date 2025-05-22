@@ -1,7 +1,7 @@
 'use client';
 
 import { jsPDF } from 'jspdf';
-import nanumFont from './NanumGothic-Regular.js';
+import nanumFont from './fonts/NanumGothic-Regular.js';
 
 jsPDF.API.events.push(['addFonts', function () {
   this.addFileToVFS('NanumGothic-Regular.ttf', nanumFont);
