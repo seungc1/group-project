@@ -1,0 +1,21 @@
+.container {
+  text-align: center;
+  padding: 48px;
+  border-radius: 8px;
+  margin: 16px 0;
+}
+
+.loading {
+  color: #666;
+  background: #f5f5f5;
+}
+
+.error {
+  color: #dc2626;
+  background: #fee2e2;
+}
+
+.empty {
+  color: #666;
+  background: #f5f5f5;
+} 

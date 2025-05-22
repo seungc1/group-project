@@ -1,0 +1,29 @@
+.projectInfo {
+  padding: 24px;
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  margin-bottom: 24px;
+}
+
+.description {
+  color: #666;
+  margin: 8px 0;
+  line-height: 1.5;
+}
+
+.createButton {
+  margin-top: 16px;
+  padding: 8px 16px;
+  background: #4f46e5;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background-color 0.2s;
+}
+
+.createButton:hover {
+  background: #4338ca;
+} 
