@@ -1,5 +1,3 @@
-#calendar_sync.py       Google Calendar 연동 및 일정 등록 처리
-
 import os
 import datetime
 import json

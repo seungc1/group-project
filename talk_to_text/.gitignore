@@ -68,3 +68,5 @@ group-project/talk_to_text/server/task/credentials.json
 
 __pycache__/
 *.pyc
+
+node_modules/

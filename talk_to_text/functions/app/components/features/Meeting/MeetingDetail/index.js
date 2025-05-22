@@ -15,6 +15,8 @@ import MeetingAudio from './MeetingAudio';
 import MeetingError from './MeetingError';
 import styles from './styles.module.css';
 import { useState, useEffect } from 'react';
+import DownloadButton from './DownloadButton';
+import EditSummaryButton from './EditSummaryButton';
 
 export default function MeetingDetail({ id, projectId }) {
   const { user } = useAuth();
@@ -45,7 +47,7 @@ export default function MeetingDetail({ id, projectId }) {
 
   return (
     <div className={styles.meetingContent}>
-      <MeetingHeader meeting={meeting} />
+      <MeetingHeader meeting={meeting} />      
       <MeetingSummary meeting={meeting} />
       <MeetingKeywords meeting={meeting} />
       <MeetingTranscript meeting={meeting} />
