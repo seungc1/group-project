@@ -103,8 +103,21 @@
     font-weight: 500;
     border: 1px solid #c7d2fe;
     transition: background 0.2s ease;
+    margin-top: 10px;
   }
   
   .createButton:hover {
     background-color: #dbeafe;
   }
+
+  .inputField {
+  padding: 10px;
+  font-size: 14px;
+  margin-top: 8px;
+  margin-bottom: 12px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  width: 100%;
+  max-width: 400px;
+  box-sizing: border-box;
+}

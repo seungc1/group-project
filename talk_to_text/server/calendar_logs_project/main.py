@@ -1,7 +1,5 @@
-# main.py
 import sys
 import os
-
 from firebase_admin import firestore
 from cal_module.datetime_extractor import extract_datetimes_from_text
 from calendar_logs_project.firestore_handler import store_calendar_logs

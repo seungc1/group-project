@@ -220,15 +220,6 @@ export const NavigationRail = ({ isCollapsed, setIsCollapsed }) => {
           <div className={styles.icon}>🌹</div>
           <span>회의 음성 녹음</span>
         </div>
-
-        {/* 음성파일 형식 변환 메뉴 아이템 */}
-        <div 
-          className={styles['nav-item']}
-          onClick={() => router.push('/wav-convert')}
-        >
-          <div className={styles.icon}>🍖</div>
-          <span>오디오 변환</span>
-        </div>
         
         {/* 설정 메뉴 아이템 */}
         <div className={styles['nav-item']}>
