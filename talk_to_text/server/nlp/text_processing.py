@@ -29,8 +29,7 @@ logger = configure_logger()
 # Upstage API 키는 환경 변수에서 불러옴
 UPSTAGE_API_KEY = os.getenv("UPSTAGE_API_KEY")
 
-# OpenAI API 키 설정
-# client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
+# client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))  # OpenAI API 키 설정
 
 # TF-IDF 기반 키워드 추출 함수
 def extract_keywords_tfidf(text, top_n=5):
@@ -84,46 +83,8 @@ def extract_keywords(text, top_n=5):
         logger.error(f"키워드 추출 실패: {e}")
         return []
 
-client = OpenAI(api_key=os.getenv("OPENAI_API_KEY")) # OpenAI API 키 설정
-
-# OpenAI API를 활용한 요약 함수
-def summarize_text(text):
-    try:
-        response = client.chat.completions.create(
-            model="gpt-4o",
-            messages=[
-                {
-                    "role": "system",
-                    "content": (
-                        "다음 텍스트를 아래 양식에 맞춰 회의록 형태로 요약해줘. 반드시 아래 형식을 지켜야 해:\n"
-                        "[회의 제목]:\n"
-                        "[참여인원]:\n"
-                        "[참여인원 수]:\n"
-                        "[회의일시]:\n"
-                        "[업무 회의록]:\n- 항목\n- 항목\n"
-                        "[주요안건]:\n- 항목\n- 항목\n"
-                        "[의결사항]:\n1. 항목\n2. 항목\n"
-                        "[참고사항]:\n- 항목\n"
-                        "[추후일정]:\n- 항목\n"
-                        "형식을 반드시 지켜서 출력하고, 불필요한 설명 없이 이 형식 그대로 출력해."
-                    )
-                },
-                {
-                    "role": "user",
-                    "content": text
-                }
-            ],
-            temperature=0.6,
-        )
-
-        return response.choices[0].message.content.strip()
-
-    except Exception as e:
-        logger.error(f"요약 실패: {e}")
-        return "요약 실패"
-
 # Upstage API를 활용한 요약 함수
-def summarize_text(text):
+def summarize_text(text, meeting_date=None, title=None, participants=None, participant_count=None):
     try:
         response = requests.post(
             "https://api.upstage.ai/v1/chat/completions",
@@ -137,17 +98,16 @@ def summarize_text(text):
                     {
                         "role": "system",
                         "content": (
-                            "다음 텍스트를 아래 양식에 맞춰 회의록 형태로 요약해줘:\n"
-                            "[회의 제목]:\n"
-                            "[참여인원]:\n"
-                            "[참여인원 수]:\n"
-                            "[회의일시]:\n"
-                            "[업무 회의록]:\n- 항목\n- 항목\n"
+                            "다음 텍스트를 아래 양식에 맞춰 회의록 형태로 요약해줘. 항목명 그대로 유지해.:\n"
+                            f"[회의 제목]: {title if title else ''} (지정된 제목을 그대로 반영할 것)\n"
+                            f"[참여인원]: {', '.join(participants) if participants else ''}\n"
+                            f"[참여인원 수]: {participant_count if participant_count is not None else ''}명\n"
+                            f"[회의일시]: {meeting_date if meeting_date else ''} (본문에 중복 기재하지 말 것)\n"
                             "[주요안건]:\n- 항목\n- 항목\n"
                             "[의결사항]:\n1. 항목\n2. 항목\n"
                             "[참고사항]:\n- 항목\n"
                             "[추후일정]:\n- 항목\n"
-                            "형식을 반드시 지켜서 출력하고, 불필요한 설명 없이 이 형식 그대로 출력해."
+                            "형식을 반드시 지켜서 출력하고, 항목명은 변경하지 말고 그대로 유지할 것, 불필요한 설명 없이 이 형식 그대로 출력해!."
                         )
                     },
                     {"role": "user", "content": text}
@@ -155,8 +115,52 @@ def summarize_text(text):
             },
             verify=False  # SSL 검증 비활성화
         )
-        print("[DEBUG] Upstage API response:", response.json())  # 응답 전체 출력
-        return response.json()["choices"][0]["message"]["content"]
+        print("[DEBUG] Upstage API response:", response.json())  # 디버그용 응답 전체 출력
+        
+        # Upstage 응답에서 요약 텍스트 추출
+        summary_raw = response.json()["choices"][0]["message"]["content"]
+        # 줄바꿈('\n') 기준으로 분할한 뒤 줄 사이에 빈 줄('\n\n')을 추가하여 줄 간격 확장
+        summary_formatted = '\n\n'.join(summary_raw.strip().split('\n'))
+        # 포맷팅된 요약 텍스트 반환
+        return summary_formatted
+    
     except Exception as e:
         logger.error(f"요약 실패: {e}")
         return "요약 실패"
+
+
+# # OpenAI API를 활용한 요약 함수
+# def summarize_text(text):
+#     try:
+#         response = client.chat.completions.create(
+#             model="gpt-3.5-turbo",
+#             messages=[
+#                 {
+#                     "role": "system",
+#                     "content": (
+#                         "다음 텍스트를 아래 양식에 맞춰 회의록 형태로 요약해줘. 반드시 아래 형식을 지켜야 해:\n"
+#                         "[회의 제목]:\n"
+#                         "[참여인원]:\n"
+#                         "[참여인원 수]:\n"
+#                         "[회의일시]:\n"
+#                         "[업무 회의록]:\n- 항목\n- 항목\n"
+#                         "[주요안건]:\n- 항목\n- 항목\n"
+#                         "[의결사항]:\n1. 항목\n2. 항목\n"
+#                         "[참고사항]:\n- 항목\n"
+#                         "[추후일정]:\n- 항목\n"
+#                         "형식을 반드시 지켜서 출력하고, 불필요한 설명 없이 이 형식 그대로 출력해."
+#                     )
+#                 },
+#                 {
+#                     "role": "user",
+#                     "content": text
+#                 }
+#             ],
+#             temperature=0.6,
+#         )
+
+#         return response.choices[0].message.content.strip()
+
+#     except Exception as e:
+#         logger.error(f"요약 실패: {e}")
+#         return "요약 실패"

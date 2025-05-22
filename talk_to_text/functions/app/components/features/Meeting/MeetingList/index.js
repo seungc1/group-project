@@ -18,7 +18,7 @@ function ProjectListItem({ project }) {
   return (
     <div className={styles.meetingItem}>
       <div className={styles.meetingContent}>
-        <h3>{project.name}</h3>
+        <h3 style={{ color: '#111' }}>{project.name}</h3>
         <p>설명: {project.description || '-'}</p>
         <p>생성일: {project.createdAt?.toDate ? project.createdAt.toDate().toLocaleDateString() : '-'}</p>
       </div>

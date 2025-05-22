@@ -1,5 +1,3 @@
-# firestore_handler.py
-
 from google.cloud import firestore
 from datetime import datetime
 from cal_module.calendar_sync import create_calendar_event  # 추가
