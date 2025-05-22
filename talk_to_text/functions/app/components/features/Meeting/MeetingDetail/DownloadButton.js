@@ -8,9 +8,6 @@ import styles from './styles.module.css';
 export default function DownloadButton({ url }) {
   const handleDownload = async () => {
   try {
-    // 텍스트 파일을 새 탭에서 열기
-    //window.open(url, '_blank');
-    
     const textContent = await fetchTxtContent(url);
 
     const today = new Date();
