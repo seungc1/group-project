@@ -216,3 +216,50 @@
   .folderListInNav .addButton:hover {
     background: #e3e3e3;
   }
+
+  .nav-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    height: 56px;
+    padding: 0 20px;
+    margin-bottom: 16px;
+  }
+
+  .hamburger-button {
+    width: 36px;
+    height: 36px;
+    background: none;
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    padding: 0;
+  }
+
+  .hamburger-icon {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 5px;
+    width: 24px;
+    height: 24px;
+  }
+  .hamburger-icon span {
+    display: block;
+    height: 3px;
+    width: 100%;
+    background: #222;
+    border-radius: 2px;
+    transition: all 0.2s;
+  }
+
+  .logo-text {
+    font-size: 20px;
+    font-weight: bold;
+    color: #222;
+    letter-spacing: 1px;
+    margin-left: 4px;
+    transition: opacity 0.3s;
+  }

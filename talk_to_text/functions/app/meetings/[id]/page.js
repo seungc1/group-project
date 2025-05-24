@@ -19,13 +19,14 @@ export default function MeetingDetailPage() {
   const { id } = useParams();
   const searchParams = useSearchParams();
   const projectId = searchParams.get('projectId');
+  const page = searchParams.get('page');
 
   return (
     <>
       {/* 페이지 헤더 컴포넌트 */}
       <Header title="회의록 상세" />
       {/* 회의록 상세 정보 컴포넌트 */}
-      <MeetingDetail id={id} projectId={projectId} />
+      <MeetingDetail id={id} projectId={projectId} page={page} />
     </>
   );
 }
