@@ -274,12 +274,6 @@ export const NavigationRail = ({ isCollapsed, setIsCollapsed }) => {
                 >
                   로그인
                 </div>
-                <div
-                  className={styles.dropdownItem}
-                  onClick={() => { router.push('/signup'); setShowSettings(false); }}
-                >
-                  회원가입
-                </div>
               </>
             )}
           </div>
