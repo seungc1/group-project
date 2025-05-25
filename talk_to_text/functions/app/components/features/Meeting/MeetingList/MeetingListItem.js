@@ -12,6 +12,8 @@
  * @param {string[]} props.meeting.participantName - 참석자 이름 배열
  * @param {number} props.meeting.participants - 참석자 수
  * @param {Array} props.meeting.textinfo - 회의 내용 세그먼트 배열
+ * @param {string} props.currentPage - 현재 페이지
+ * @param {string} props.projectId - 프로젝트 ID
  * 
  * @example
  * <MeetingListItem meeting={{
@@ -20,7 +22,7 @@
  *   participantName: ["홍길동", "김철수"],
  *   participants: 2,
  *   textinfo: [{text: "회의 내용..."}]
- * }} />
+ * }} currentPage="1" projectId="456" />
  * 
  * @returns {JSX.Element} 회의 목록 항목 컴포넌트
  */
@@ -30,14 +32,18 @@
 import { useRouter } from 'next/navigation';
 import styles from './styles.module.css';
 
-export default function MeetingListItem({ meeting }) {
+export default function MeetingListItem({ meeting, currentPage, projectId }) {
   const router = useRouter();
 
   // 회의 상세 페이지로 이동하는 핸들러 함수
   const handleClick = () => {
     const encodedId = encodeURIComponent(meeting.id);
-    const encodedProjectId = encodeURIComponent(meeting.projectId);
-    router.push(`/meetings/${encodedId}?projectId=${encodedProjectId}`);
+    const encodedProjectId = encodeURIComponent(projectId || meeting.projectId);
+    let url = `/meetings/${encodedId}?projectId=${encodedProjectId}`;
+    if (currentPage) {
+      url += `&page=${currentPage}`;
+    }
+    router.push(url);
   };
 
   return (

@@ -93,14 +93,32 @@ export const NavigationRail = ({ isCollapsed, setIsCollapsed }) => {
   // 네비게이션 레일 UI 렌더링
   return (
     <nav className={`${styles['navigation-rail']} ${isCollapsed ? styles.collapsed : ''}`}>
-      {/* 사이드바 토글 버튼 */}
-      <button 
-        className={styles['toggle-button']} 
-        onClick={() => setIsCollapsed(!isCollapsed)}
-        aria-label={isCollapsed ? '사이드바 펼치기' : '사이드바 접기'}
-      >
-        {isCollapsed ? '→' : '←'}
-      </button>
+      {/* 상단 로고 + 햄버거 버튼 */}
+      <div className={styles['nav-header']}>
+        <button 
+          className={styles['hamburger-button']} 
+          onClick={() => setIsCollapsed(!isCollapsed)}
+          aria-label={isCollapsed ? '사이드바 펼치기' : '사이드바 접기'}
+        >
+          {/* 햄버거 아이콘 (줄 3개) */}
+          <span className={styles['hamburger-icon']}>
+            <span></span>
+            <span></span>
+            <span></span>
+          </span>
+        </button>
+        {/* TalkToText 로고 텍스트: 펼쳐졌을 때만 보임 */}
+        {!isCollapsed && (
+          <span 
+            className={styles['logo-text']} 
+            onClick={() => setIsCollapsed(!isCollapsed)}
+            role="button"
+            tabIndex={0}
+          >
+            TalkToText
+          </span>
+        )}
+      </div>
 
       {/* 네비게이션 메뉴 아이템들 */}
       <div className={styles['nav-items']}>

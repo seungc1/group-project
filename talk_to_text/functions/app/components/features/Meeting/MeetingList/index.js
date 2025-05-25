@@ -8,12 +8,13 @@ import { getAllProjects } from '@/lib/meetingsService';
 import styles from './styles.module.css';
 import { useState, useEffect } from 'react';
 import { useAuth } from '@/app/context/AuthContext';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
+import Pagination from '@/components/common/Pagination';
 
-function ProjectListItem({ project }) {
+function ProjectListItem({ project, currentPage }) {
   const router = useRouter();
   const handleClick = () => {
-    router.push(`/projects/${project.id}`);
+    router.push(`/projects/${project.id}?page=${currentPage}`);
   };
   return (
     <div className={styles.meetingItem}>
@@ -34,8 +35,16 @@ export default function ProjectList() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const { user } = useAuth();
-  const [currentPage, setCurrentPage] = useState(1);
+  const searchParams = useSearchParams();
+  const router = useRouter();
+  const pageParam = parseInt(searchParams.get('page') || '1', 10);
+  const [currentPage, setCurrentPage] = useState(pageParam);
+  const [sortOrder, setSortOrder] = useState('desc'); // 'asc' 또는 'desc'
   const projectsPerPage = 5;
+
+  useEffect(() => {
+    setCurrentPage(pageParam);
+  }, [pageParam]);
 
   useEffect(() => {
     const fetchProjects = async () => {
@@ -52,6 +61,27 @@ export default function ProjectList() {
     };
     fetchProjects();
   }, [user]);
+
+  // 프로젝트 정렬 함수
+  const sortProjects = (projects, order) => {
+    return [...projects].sort((a, b) => {
+      const dateA = new Date(a.createdAt?.toDate?.() || 0);
+      const dateB = new Date(b.createdAt?.toDate?.() || 0);
+      return order === 'asc' ? dateA - dateB : dateB - dateA;
+    });
+  };
+
+  // 정렬 순서 변경
+  const toggleSortOrder = () => {
+    const newOrder = sortOrder === 'asc' ? 'desc' : 'asc';
+    setSortOrder(newOrder);
+    setProjects(prev => sortProjects(prev, newOrder));
+  };
+
+  const handlePageChange = (page) => {
+    setCurrentPage(page);
+    router.push(`/meetings?page=${page}`);
+  };
 
   if (loading) {
     return <div className={styles.loading}>로딩 중...</div>;
@@ -73,27 +103,36 @@ export default function ProjectList() {
 
   return (
     <>
+      <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: 16 }}>
+        <button
+          onClick={toggleSortOrder}
+          style={{
+            padding: '8px 16px',
+            borderRadius: 6,
+            border: '1px solid #e5e7eb',
+            background: '#fff',
+            color: '#4f46e5',
+            cursor: 'pointer',
+            display: 'flex',
+            alignItems: 'center',
+            gap: 8,
+            fontSize: 14
+          }}
+        >
+          {sortOrder === 'asc' ? '오래된순' : '최신순'}
+          {sortOrder === 'asc' ? '↑' : '↓'}
+        </button>
+      </div>
       <div className={styles.meetingList}>
         {currentProjects.map(project => (
-          <ProjectListItem project={project} key={project.id} />
+          <ProjectListItem project={project} key={project.id} currentPage={currentPage} />
         ))}
       </div>
-      {/* 페이지네이션 버튼 */}
-      <div className={styles.paginationContainer}>
-        {Array.from({ length: totalPages }, (_, i) => (
-          <button
-            key={i}
-            onClick={() => setCurrentPage(i + 1)}
-            className={
-              currentPage === i + 1
-                ? `${styles.pageButton} ${styles.activePageButton}`
-                : styles.pageButton
-            }
-          >
-            {i + 1}
-          </button>
-        ))}
-      </div>
+      <Pagination
+        currentPage={currentPage}
+        totalPages={totalPages}
+        onPageChange={handlePageChange}
+      />
     </>
   );
 } 
