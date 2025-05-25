@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useParams, useRouter } from 'next/navigation';
+import { useParams, useRouter, useSearchParams } from 'next/navigation';
 import { useAuth } from '@/app/context/AuthContext';
 import { getMeetings, getProject } from '@/lib/meetingsService';
 import { useBookmarks } from '@/app/hooks/useBookmarks';
@@ -10,17 +10,20 @@ import ProjectHeader from '@/components/features/Project/ProjectHeader';
 import MeetingFilters from '@/components/features/Project/MeetingFilters';
 import MeetingListItem from '@/components/features/Meeting/MeetingList/MeetingListItem';
 import styles from './styles.module.css';
+import Pagination from '@/components/common/Pagination';
+import CloseButton from '@/components/common/buttons/CloseButton';
 
 export default function ProjectDetailPage() {
   const { projectId } = useParams();
   const { user } = useAuth();
   const router = useRouter();
+  const searchParams = useSearchParams();
   
   const [meetings, setMeetings] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [project, setProject] = useState(null);
-  const [currentPage, setCurrentPage] = useState(1);
+  const [currentPage, setCurrentPage] = useState(parseInt(searchParams.get('page') || '1', 10));
   const [sortOrder, setSortOrder] = useState('desc');
   const [showBookmarkedOnly, setShowBookmarkedOnly] = useState(false);
   
@@ -70,17 +73,30 @@ export default function ProjectDetailPage() {
   const currentMeetings = filteredMeetings.slice(indexOfFirst, indexOfLast);
   const totalPages = Math.ceil(filteredMeetings.length / meetingsPerPage);
 
+  // 페이지네이션 핸들러: 상태와 URL 동기화
+  const handlePageChange = (page) => {
+    setCurrentPage(page);
+    router.push(`/projects/${projectId}?page=${page}`);
+  };
+
   if (loading) return <div>로딩 중...</div>;
   if (error) return <div>에러 발생: {error}</div>;
   if (!project) return <div>프로젝트를 찾을 수 없습니다.</div>;
 
   return (
     <>
-      <Header title={`프로젝트: ${project.name}`} />
+      <Header title={`프로젝트: ${project.name}`} page={currentPage} />
       <div className={styles.container}>
         <ProjectHeader
           project={project}
           onCreateMeeting={() => router.push(`/projects/${projectId}/meetings/new`)}
+          onClose={() => {
+            if (currentPage && !isNaN(currentPage)) {
+              router.push(`/meetings?page=${currentPage}`);
+            } else {
+              router.push('/meetings');
+            }
+          }}
         />
         
         {meetings.length === 0 ? (
@@ -113,25 +129,17 @@ export default function ProjectDetailPage() {
                     >
                       {bookmarkedMeetings.has(meeting.id) ? '⭐' : '☆'}
                     </button>
-                    <MeetingListItem meeting={meeting} />
+                    <MeetingListItem meeting={meeting} currentPage={currentPage} projectId={projectId} />
                   </div>
                 ))}
               </div>
             )}
             
-            <div className={styles.paginationContainer}>
-              {Array.from({ length: totalPages }, (_, i) => (
-                <button
-                  key={i}
-                  onClick={() => setCurrentPage(i + 1)}
-                  className={`${styles.pageButton} ${
-                    currentPage === i + 1 ? styles.activePageButton : ''
-                  }`}
-                >
-                  {i + 1}
-                </button>
-              ))}
-            </div>
+            <Pagination
+              currentPage={currentPage}
+              totalPages={totalPages}
+              onPageChange={handlePageChange}
+            />
           </>
         )}
       </div>

@@ -204,12 +204,24 @@ def process_audio_endpoint():
                 participant_names = [participant_names]
         participant_names = [n for n in participant_names if n and str(n).strip()]
 
+        # meetingDate를 Timestamp로 변환
+        #meeting_date_str = data.get('meetingDate', '')
+        #if meeting_date_str:
+        #    try:
+        #        date_obj = datetime.fromisoformat(meeting_date_str)
+        #        meeting_date = firestore.Timestamp.from_datetime(date_obj)
+        #    except Exception:
+        #        meeting_date = None
+        #else:
+        #    meeting_date = None
+
         save_meeting_data(userId, projectId, meetingId, {
             'audioFileName': data.get('audioFileName', ''),
             'audioUrl': audio_url,
             'createdAt': firestore.SERVER_TIMESTAMP,
             'createdBy': userId,
             'meetingDate': data.get('meetingDate', ''),
+            #'meetingDate': meeting_date,
             'meetingMinutesList': meetingMinutesList,
             'participantNames': participant_names,
             'participants': data.get('participants', 0),

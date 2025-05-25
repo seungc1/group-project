@@ -18,7 +18,7 @@ import { useState, useEffect } from 'react';
 import DownloadButton from './DownloadButton';
 import EditSummaryButton from './EditSummaryButton';
 
-export default function MeetingDetail({ id, projectId }) {
+export default function MeetingDetail({ id, projectId, page }) {
   const { user } = useAuth();
   const [meeting, setMeeting] = useState(null);
   const [error, setError] = useState(null);
@@ -47,7 +47,7 @@ export default function MeetingDetail({ id, projectId }) {
 
   return (
     <div className={styles.meetingContent}>
-      <MeetingHeader meeting={meeting} />      
+      <MeetingHeader meeting={meeting} page={page} />
       <MeetingSummary meeting={meeting} />
       <MeetingKeywords meeting={meeting} />
       <MeetingTranscript meeting={meeting} />
