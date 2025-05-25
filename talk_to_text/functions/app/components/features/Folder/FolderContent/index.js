@@ -2,7 +2,7 @@ import FolderHeader from '../FolderHeader';
 import FolderFilters from '../FolderFilters';
 import ProjectList from '../ProjectList';
 import StatusMessage from '@/components/ui/StatusMessage';
-import styles from './styles.module.css';
+
 
 export default function FolderContent({
   selectedFolderId,
