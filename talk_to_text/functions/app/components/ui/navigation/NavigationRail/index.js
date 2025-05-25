@@ -243,16 +243,16 @@ export const NavigationRail = ({ isCollapsed, setIsCollapsed }) => {
                 className={styles['nav-item']}
                 onClick={() => router.push('/login')}
               >
-                <div className={styles.icon}>🔑</div>
+                <div className={styles.icon}>🔐</div>
                 <span>로그인</span>
               </div>
-              <div 
+              {/* <div 
                 className={styles['nav-item']}
                 onClick={() => router.push('/signup')}
               >
                 <div className={styles.icon}>📝</div>
                 <span>회원가입</span>
-              </div>
+              </div> */}
             </>
           )}
         </div>
