@@ -1,0 +1,68 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: calc(100vh - 64px);
+  text-align: center;
+  padding: 2rem;
+}
+
+.greeting {
+  font-size: 1.75rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.username {
+  color: #2563eb; /* 파랑: Tailwind blue-600 */
+}
+
+.message {
+  font-size: 1.125rem;
+  color: #374151; /* 회색: Tailwind gray-700 */
+  margin-bottom: 2rem;
+}
+
+.brand {
+  font-weight: 600;
+  color: #2563eb; /* TalkToText 강조 색 */
+}
+
+.buttonGroup {
+  display: flex;
+  gap: 1rem;
+}
+
+/* 🔴 회의 녹음 버튼 - 빨간색 */
+.recordButton {
+  padding: 0.75rem 1.5rem;
+  background-color: #ef6565; /* red-500 */
+  color: white;
+  border: none;
+  border-radius: 0.5rem;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.recordButton:hover {
+  background-color: #dc2626; /* red-600 */
+}
+
+/* 🟢 회의록 생성 버튼 - 연두색 */
+.createButton {
+  padding: 0.75rem 1.5rem;
+  background-color: #3a51fffb; /* green-300 */
+  color: white;
+  border: none;
+  border-radius: 0.5rem;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.createButton:hover {
+  background-color: #4727e5; /* green-400 */
+}

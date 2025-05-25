@@ -3,6 +3,7 @@
 import { useAuth } from '@/app/context/AuthContext';
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
+import styles from './dashboard.module.css';
 
 export default function DashboardPage() {
   const { user } = useAuth();
@@ -16,5 +17,23 @@ export default function DashboardPage() {
 
   if (!user) return <div>로그인 확인 중...</div>;
 
-  return <div>안녕하세요, {user.displayName} 님</div>;
+  return (
+    <div className={styles.container}>
+      <h1 className={styles.greeting}>
+        안녕하세요, <span className={styles.username}>{user?.displayName || 'OOO'}</span> 님
+      </h1>
+      <p className={styles.message}>
+        모든 회의, 하나의 회의록으로. <span className={styles.brand}>TalkToText</span>에서 시작하세요.
+      </p>
+
+      <div className={styles.buttonGroup}>
+        <button onClick={() => router.push('/record')} className={styles.recordButton}>
+          회의 녹음하러 가기
+        </button>
+        <button onClick={() => router.push('/create')} className={styles.createButton}>
+          회의록 생성하러 가기
+        </button>
+      </div>
+    </div>
+  );
 }
