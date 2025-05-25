@@ -1,27 +1,24 @@
-/**
- * 사이드바 네비게이션 컴포넌트
- * - 접기/펼치기 기능과 주요 페이지 이동 메뉴 제공
- * - 반응형 디자인 지원
- */
-
 'use client';
 
-// React 훅과 라우터 임포트
+import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/app/context/AuthContext';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { getFolders, createFolder, updateFolder, deleteFolder } from '@/lib/folderService';
-// 컴포넌트 스타일 임포트
 import styles from './styles.module.css';
 
 export const NavigationRail = ({ isCollapsed, setIsCollapsed }) => {
   const router = useRouter();
   const { user, logout } = useAuth();
+
   const [folders, setFolders] = useState([]);
   const [showFolders, setShowFolders] = useState(false);
   const [isEditMode, setIsEditMode] = useState(false);
   const [editingId, setEditingId] = useState(null);
   const [editingName, setEditingName] = useState('');
+  const [showSettings, setShowSettings] = useState(false);
+
+  const settingsRef = useRef(null);
 
   useEffect(() => {
     if (user) {
@@ -29,15 +26,28 @@ export const NavigationRail = ({ isCollapsed, setIsCollapsed }) => {
     }
   }, [user]);
 
-  // 폴더 영역 클릭 시 펼침/접힘
+  // 드롭다운 외부 클릭 시 닫기
+  useEffect(() => {
+    function handleClickOutside(e) {
+      if (settingsRef.current && !settingsRef.current.contains(e.target)) {
+        setShowSettings(false);
+      }
+    }
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
+  const toggleCollapse = () => {
+    setIsCollapsed(v => !v);
+  };
+
   const handleFolderAreaClick = () => {
     setShowFolders(v => !v);
     setIsEditMode(false);
     setEditingId(null);
   };
 
-  // 편집 버튼 클릭 시 편집모드 진입
-  const handleEditClick = (e) => {
+  const handleEditClick = e => {
     e.stopPropagation();
     setShowFolders(true);
     setIsEditMode(v => !v);
@@ -54,7 +64,7 @@ export const NavigationRail = ({ isCollapsed, setIsCollapsed }) => {
     setIsEditMode(true);
   };
 
-  const handleDeleteFolder = async (folderId) => {
+  const handleDeleteFolder = async folderId => {
     if (!user) return;
     await deleteFolder(user.uid, folderId);
     setFolders(folders.filter(f => f.id !== folderId));
@@ -66,17 +76,21 @@ export const NavigationRail = ({ isCollapsed, setIsCollapsed }) => {
     setEditingName(name);
   };
 
-  const handleNameChange = (e) => {
+  const handleNameChange = e => {
     setEditingName(e.target.value);
   };
 
-  const handleNameBlur = async (folderId) => {
+  const handleNameBlur = async folderId => {
     if (!user || !editingName.trim()) {
       setEditingId(null);
       return;
     }
     await updateFolder(user.uid, folderId, editingName.trim());
-    setFolders(folders.map(f => f.id === folderId ? { ...f, name: editingName.trim() } : f));
+    setFolders(folders.map(f =>
+      f.id === folderId
+        ? { ...f, name: editingName.trim() }
+        : f
+    ));
     setEditingId(null);
   };
 
@@ -86,73 +100,65 @@ export const NavigationRail = ({ isCollapsed, setIsCollapsed }) => {
     }
   };
 
-  const handleLogout = async () => {
-    await logout();
+  const handleSettingsClick = () => {
+    setShowSettings(v => !v);
   };
 
-  // 네비게이션 레일 UI 렌더링
+  const handleLogoutClick = async () => {
+    await logout();
+    setShowSettings(false);
+  };
+
   return (
     <nav className={`${styles['navigation-rail']} ${isCollapsed ? styles.collapsed : ''}`}>
-      {/* 상단 로고 + 햄버거 버튼 */}
+      {/* 헤더: 햄버거 + 로고 */}
       <div className={styles['nav-header']}>
-        <button 
-          className={styles['hamburger-button']} 
-          onClick={() => setIsCollapsed(!isCollapsed)}
+        <button
+          className={styles['hamburger-button']}
+          onClick={toggleCollapse}
           aria-label={isCollapsed ? '사이드바 펼치기' : '사이드바 접기'}
         >
-          {/* 햄버거 아이콘 (줄 3개) */}
           <span className={styles['hamburger-icon']}>
             <span></span>
             <span></span>
             <span></span>
           </span>
         </button>
-        {/* TalkToText 로고 텍스트: 펼쳐졌을 때만 보임 */}
         {!isCollapsed && (
-          <span 
-            className={styles['logo-text']} 
-            onClick={() => setIsCollapsed(!isCollapsed)}
+          <span
+            className={styles['logo-text']}
             role="button"
             tabIndex={0}
+            onClick={toggleCollapse}
           >
             TalkToText
           </span>
         )}
       </div>
 
-      {/* 네비게이션 메뉴 아이템들 */}
+      {/* 네비게이션 메뉴 */}
       <div className={styles['nav-items']}>
-        {/* 홈 메뉴 아이템 */}
-        <div 
-          className={styles['nav-item']} 
-          onClick={() => router.push('/')}
-        >
+        <div className={styles['nav-item']} onClick={() => router.push('/')}>
           <div className={styles.icon}>🏠</div>
           <span>홈</span>
         </div>
 
-        {/* 회의 생성 메뉴 아이템 */}
-        <div 
-          className={styles['nav-item']} 
-          onClick={() => router.push('/create')}
-        >
+        <div className={styles['nav-item']} onClick={() => router.push('/create')}>
           <div className={styles.icon}>🎙️</div>
           <span>프로젝트 생성</span>
         </div>
 
-        {/* 전체 회의록 메뉴 아이템 */}
-        <div 
-          className={styles['nav-item']}
-          onClick={() => router.push('/meetings')}
-        >
+        <div className={styles['nav-item']} onClick={() => router.push('/meetings')}>
           <div className={styles.icon}>📋</div>
           <span>전체 프로젝트</span>
         </div>
 
-        {/* 폴더 메뉴 아이템 */}
-        <div className={styles['nav-item']} style={{ position: 'relative', flexDirection: 'column', alignItems: 'stretch', padding: 0 }}>
+        <div
+          className={styles['nav-item']}
+          style={{ position: 'relative', flexDirection: 'column', alignItems: 'stretch', padding: 0 }}
+        >
           <div
-            style={{ display: 'flex', alignItems: 'center', padding: '12px 20px', cursor: 'pointer', position: 'relative' }}
+            style={{ display: 'flex', alignItems: 'center', padding: '12px 20px', cursor: 'pointer' }}
             onClick={handleFolderAreaClick}
           >
             <div className={styles.icon}>📁</div>
@@ -168,10 +174,9 @@ export const NavigationRail = ({ isCollapsed, setIsCollapsed }) => {
           </div>
           {showFolders && (
             <div className={styles['folderListInNav']}>
-              {folders.length === 0 ? (
-                <div className={styles['folderDropdownItem']} style={{ color: '#888' }}>폴더 없음</div>
-              ) : (
-                folders.map(folder => (
+              {folders.length === 0
+                ? <div className={styles['folderDropdownItem']} style={{ color: '#888' }}>폴더 없음</div>
+                : folders.map(folder => (
                   <div
                     key={folder.id}
                     className={styles['folderDropdownItem']}
@@ -216,7 +221,7 @@ export const NavigationRail = ({ isCollapsed, setIsCollapsed }) => {
                     )}
                   </div>
                 ))
-              )}
+              }
               {isEditMode && (
                 <button
                   className={styles['addButton']}
@@ -230,50 +235,55 @@ export const NavigationRail = ({ isCollapsed, setIsCollapsed }) => {
           )}
         </div>
 
-        {/* 음성 녹음 메뉴 아이템 */}
-        <div 
-          className={styles['nav-item']}
-          onClick={() => router.push('/record')}
-          >
+        <div className={styles['nav-item']} onClick={() => router.push('/record')}>
           <div className={styles.icon}>🌹</div>
           <span>회의 음성 녹음</span>
         </div>
-        
-        {/* 설정 메뉴 아이템 */}
-        <div className={styles['nav-item']}>
-          <div className={styles.icon}>⚙️</div>
+      </div>
+
+      {/* 하단 설정 및 인증 */}
+      <div ref={settingsRef} className={styles.settings}>
+        <div
+          className={styles['nav-item']}
+          onClick={handleSettingsClick}
+        >
+          <div className={styles.icon}>
+            <Image
+              src="/images/setting.png"
+              alt="설정"
+              width={24}
+              height={24}
+            />
+          </div>
           <span>설정</span>
         </div>
-
-        {/* 인증 관련 버튼들 */}
-        <div className={styles['auth-buttons']}>
-          {user ? (
-            <div 
-              className={styles['nav-item']}
-              onClick={handleLogout}
-            >
-              <div className={styles.icon}>🚪</div>
-              <span>로그아웃</span>
-            </div>
-          ) : (
-            <>
-              <div 
-                className={styles['nav-item']}
-                onClick={() => router.push('/login')}
+        {showSettings && (
+          <div className={styles.settingsDropdown}>
+            {user ? (
+              <div
+                className={styles.dropdownItem}
+                onClick={handleLogoutClick}
               >
-                <div className={styles.icon}>🔑</div>
-                <span>로그인</span>
+                로그아웃
               </div>
-              <div 
-                className={styles['nav-item']}
-                onClick={() => router.push('/signup')}
-              >
-                <div className={styles.icon}>📝</div>
-                <span>회원가입</span>
-              </div>
-            </>
-          )}
-        </div>
+            ) : (
+              <>
+                <div
+                  className={styles.dropdownItem}
+                  onClick={() => { router.push('/login'); setShowSettings(false); }}
+                >
+                  로그인
+                </div>
+                <div
+                  className={styles.dropdownItem}
+                  onClick={() => { router.push('/signup'); setShowSettings(false); }}
+                >
+                  회원가입
+                </div>
+              </>
+            )}
+          </div>
+        )}
       </div>
     </nav>
   );
