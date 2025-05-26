@@ -120,6 +120,7 @@ export default function MeetingForm({ projectId }) {
           audioUrl: result.audioUrl,
           audioFileName: result.audioFileName || '',
           userId: user.uid,
+          // accessToken,
           meetingId: result.docId,
           projectId: result.projectId,
           meetingMinutesList: formData.get('meetingMinutesList') || '',

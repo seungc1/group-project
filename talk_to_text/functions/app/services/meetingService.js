@@ -136,3 +136,8 @@ export async function createMeeting({ title, participants, participantNames, mee
     throw error;
   }
 } 
+
+export async function markCalendarLogAsSynced(userId, projectId, meetingId, logId) {
+  const logRef = doc(db, 'users', userId, 'projects', projectId, 'meetings', meetingId, 'calendar_logs', logId);
+  await updateDoc(logRef, { synced: true });
+}
