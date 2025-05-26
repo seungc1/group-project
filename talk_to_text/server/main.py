@@ -165,6 +165,8 @@ def process_audio_endpoint():
                 "status": "success"
             })
 
+        access_token = data.get('accessToken')  # ✅ 추가로 받아오기
+        
         # 4-1. 회의 일정 추출 및 저장
         # 오디오 파일 경로에서 확장자를 제외한 파일명을 추출하여 meeting_id로 사용
         meeting_id = os.path.splitext(os.path.basename(audio_path))[0]
@@ -178,6 +180,7 @@ def process_audio_endpoint():
             start_datetime = dt_info["datetime"]
             if isinstance(start_datetime, str):
                 start_datetime = datetime.fromisoformat(start_datetime)
+            #event_link = create_calendar_event_with_token(access_token, "회의 있음", start_datetime)    
             event_link = create_calendar_event("회의 있음", start_datetime)
             if event_link:
                 event_links.append(event_link)
