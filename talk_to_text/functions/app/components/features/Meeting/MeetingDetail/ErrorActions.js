@@ -11,7 +11,7 @@ export default function ErrorActions() {
       {/* 회의록 목록으로 돌아가는 버튼 */}
       <button
         className={styles.navigationButton}
-        onClick={() => router.push('/meetings')}
+        onClick={() => router.push('/projects')}
       >
         회의록 목록으로 돌아가기
       </button>

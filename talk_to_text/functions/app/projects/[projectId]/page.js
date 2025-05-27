@@ -65,7 +65,7 @@ export default function ProjectDetailPage() {
   };
 
   const filteredMeetings = showBookmarkedOnly
-    ? meetings.filter(meeting => bookmarkedMeetings.has(meeting.id))
+    ? meetings.filter(meeting => bookmarkedMeetings.some(b => b.meetingId === meeting.id))
     : meetings;
 
   const indexOfLast = currentPage * meetingsPerPage;
@@ -85,63 +85,52 @@ export default function ProjectDetailPage() {
 
   return (
     <>
-      <Header title={`프로젝트: ${project.name}`} page={currentPage} />
+      <Header title={`프로젝트: ${project.name}`} />
       <div className={styles.container}>
         <ProjectHeader
           project={project}
           onCreateMeeting={() => router.push(`/projects/${projectId}/meetings/new`)}
-          onClose={() => {
-            if (currentPage && !isNaN(currentPage)) {
-              router.push(`/meetings?page=${currentPage}`);
-            } else {
-              router.push('/meetings');
-            }
-          }}
+          onClose={() => router.push('/projects')}
         />
-        
-        {meetings.length === 0 ? (
-          <div className={styles.empty}>등록된 회의가 없습니다.</div>
+      </div>
+      {/* 회의 목록 바로 렌더링 */}
+      <div className={styles.container}>
+        <h2>회의 목록</h2>
+        <MeetingFilters
+          showBookmarkedOnly={showBookmarkedOnly}
+          onFilterChange={setShowBookmarkedOnly}
+          bookmarkedCount={meetings.filter(meeting => bookmarkedMeetings.some(b => b.meetingId === meeting.id)).length}
+          sortOrder={sortOrder}
+          onSortChange={handleSortChange}
+        />ㅁ
+        {filteredMeetings.length === 0 ? (
+          <div className={styles.empty}>
+            {showBookmarkedOnly ? '북마크된 회의가 없습니다.' : '등록된 회의가 없습니다.'}
+          </div>
         ) : (
-          <>
-            <MeetingFilters
-              showBookmarkedOnly={showBookmarkedOnly}
-              onFilterChange={setShowBookmarkedOnly}
-              bookmarkedCount={bookmarkedMeetings.size}
-              sortOrder={sortOrder}
-              onSortChange={handleSortChange}
-            />
-            
-            {filteredMeetings.length === 0 ? (
-              <div className={styles.empty}>
-                {showBookmarkedOnly ? '북마크된 회의가 없습니다.' : '등록된 회의가 없습니다.'}
+          <div className={styles.meetingList}>
+            {currentMeetings.map(meeting => (
+              <div key={meeting.id} className={styles.meetingItem}>
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    toggleBookmark(meeting.id, projectId, project?.name);
+                  }}
+                  className={styles.bookmarkButton}
+                  title={bookmarkedMeetings.some(b => b.meetingId === meeting.id) ? '북마크 해제' : '북마크 추가'}
+                >
+                  {bookmarkedMeetings.some(b => b.meetingId === meeting.id) ? '⭐' : '☆'}
+                </button>
+                <MeetingListItem meeting={meeting} currentPage={currentPage} projectId={projectId} />
               </div>
-            ) : (
-              <div className={styles.meetingList}>
-                {currentMeetings.map(meeting => (
-                  <div key={meeting.id} className={styles.meetingItem}>
-                    <button
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        toggleBookmark(meeting.id);
-                      }}
-                      className={styles.bookmarkButton}
-                      title={bookmarkedMeetings.has(meeting.id) ? '북마크 해제' : '북마크 추가'}
-                    >
-                      {bookmarkedMeetings.has(meeting.id) ? '⭐' : '☆'}
-                    </button>
-                    <MeetingListItem meeting={meeting} currentPage={currentPage} projectId={projectId} />
-                  </div>
-                ))}
-              </div>
-            )}
-            
-            <Pagination
-              currentPage={currentPage}
-              totalPages={totalPages}
-              onPageChange={handlePageChange}
-            />
-          </>
+            ))}
+          </div>
         )}
+        <Pagination
+          currentPage={currentPage}
+          totalPages={totalPages}
+          onPageChange={handlePageChange}
+        />
       </div>
     </>
   );

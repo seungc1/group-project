@@ -39,15 +39,15 @@ export default function MeetingListItem({ meeting, currentPage, projectId }) {
   const handleClick = () => {
     const encodedId = encodeURIComponent(meeting.id);
     const encodedProjectId = encodeURIComponent(projectId || meeting.projectId);
-    let url = `/meetings/${encodedId}?projectId=${encodedProjectId}`;
+    let url = `/projects/${encodedProjectId}/meetings/${encodedId}`;
     if (currentPage) {
-      url += `&page=${currentPage}`;
+      url += `?page=${currentPage}`;
     }
     router.push(url);
   };
 
   return (
-    <div className={styles.meetingItem}>
+    <div className={styles.meetingItem} onClick={handleClick} style={{ cursor: 'pointer' }}>
       {/* 회의 내용 컨테이너 */}
       <div className={styles.meetingContent}>
         {/* 회의 제목 */}
@@ -81,7 +81,7 @@ export default function MeetingListItem({ meeting, currentPage, projectId }) {
       {/* 상세 페이지로 이동하는 버튼 */}
       <button 
         className={styles.viewButton}
-        onClick={handleClick}
+        onClick={e => { e.stopPropagation(); handleClick(); }}
       >
         보기
       </button>

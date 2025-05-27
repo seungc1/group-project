@@ -1,8 +1,11 @@
 'use client';
 
 import { createContext, useContext, useEffect, useState } from 'react';
-import { onAuthStateChanged, signOut, signInWithPopup, GoogleAuthProvider} from 'firebase/auth';
-import { auth } from '@/lib/firebase';
+import { auth, db } from '@/lib/firebase';
+import { onAuthStateChanged, signOut, createUserWithEmailAndPassword, updateProfile, signInWithEmailAndPassword, signInWithPopup, GoogleAuthProvider } from 'firebase/auth';
+import { doc, setDoc, serverTimestamp } from 'firebase/firestore';
+{/*import { onAuthStateChanged, signOut, signInWithPopup, GoogleAuthProvider} from 'firebase/auth';*/}
+{/*import { auth } from '@/lib/firebase';*/}
 
 const AuthContext = createContext();
 
@@ -22,6 +25,25 @@ export function AuthProvider({ children }) {
     setAccessToken(null);
   };
 
+  const signup = async (email, password, name) => {
+    if (!auth) throw new Error('Firebase Auth가 초기화되지 않았습니다.');
+    const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+    const user = userCredential.user;
+    if (name) {
+      await updateProfile(user, { displayName: name });
+    }
+    // Firestore에 사용자 정보 저장
+    await setDoc(doc(db, 'users', user.uid), {
+      email: user.email,
+      name: name,
+      createdAt: serverTimestamp(),
+      lastLoginAt: serverTimestamp(),
+      role: 'user',
+      settings: { notifications: true, theme: 'light' },
+      userId: user.uid
+    });
+    return user;
+  };
   // 구글 로그인 함수 (accessToken 포함)
   const loginWithGoogle = async () => {
     const provider = new GoogleAuthProvider();

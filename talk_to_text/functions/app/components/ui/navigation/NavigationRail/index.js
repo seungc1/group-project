@@ -148,19 +148,14 @@ export const NavigationRail = ({ isCollapsed, setIsCollapsed }) => {
           <span>프로젝트 생성</span>
         </div>
 
-        <div className={styles['nav-item']} onClick={() => router.push('/meetings')}>
+        {/* 전체 프로젝트 메뉴 아이템 */}
+        <div className={styles['nav-item']} onClick={() => router.push('/projects')}>
           <div className={styles.icon}>📋</div>
           <span>전체 프로젝트</span>
         </div>
 
-        <div
-          className={styles['nav-item']}
-          style={{ position: 'relative', flexDirection: 'column', alignItems: 'stretch', padding: 0 }}
-        >
-          <div
-            style={{ display: 'flex', alignItems: 'center', padding: '12px 20px', cursor: 'pointer' }}
-            onClick={handleFolderAreaClick}
-          >
+        <div className={styles['nav-item']} style={{ position: 'relative', flexDirection: 'column', alignItems: 'stretch', padding: 0 }}>
+          <div style={{ display: 'flex', alignItems: 'center', padding: '12px 20px', cursor: 'pointer' }} onClick={handleFolderAreaClick}>
             <div className={styles.icon}>📁</div>
             <span>폴더</span>
             <button
@@ -235,7 +230,21 @@ export const NavigationRail = ({ isCollapsed, setIsCollapsed }) => {
           )}
         </div>
 
-        <div className={styles['nav-item']} onClick={() => router.push('/record')}>
+        {/* 전체 북마크 메뉴를 폴더 메뉴 바로 아래에 위치 */}
+        <div
+          className={styles['nav-item']}
+          style={{ cursor: 'pointer' }}
+          onClick={() => router.push('/bookmarks')}
+        >
+          <div className={styles.icon}>⭐</div>
+          <span>전체 북마크</span>
+        </div>
+
+        {/* 음성 녹음 메뉴 아이템 */}
+        <div 
+          className={styles['nav-item']}
+          onClick={() => router.push('/record')}
+        >
           <div className={styles.icon}>🌹</div>
           <span>회의 음성 녹음</span>
         </div>
