@@ -2,42 +2,27 @@
 
 import { createContext, useContext, useEffect, useState } from 'react';
 import { auth, db } from '@/lib/firebase';
-import { onAuthStateChanged, signOut, createUserWithEmailAndPassword, updateProfile, signInWithEmailAndPassword } from 'firebase/auth';
+import { onAuthStateChanged, signOut, createUserWithEmailAndPassword, updateProfile, signInWithEmailAndPassword, signInWithPopup, GoogleAuthProvider } from 'firebase/auth';
 import { doc, setDoc, serverTimestamp } from 'firebase/firestore';
+{/*import { onAuthStateChanged, signOut, signInWithPopup, GoogleAuthProvider} from 'firebase/auth';*/}
+{/*import { auth } from '@/lib/firebase';*/}
 
 const AuthContext = createContext();
 
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const [accessToken, setAccessToken] = useState(null);
 
   useEffect(() => {
-    if (!auth) {
-      console.error('Firebase Auth is not initialized');
-      setLoading(false);
-      return;
-    }
-
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
-      setUser(user);
-      setLoading(false);
+    return onAuthStateChanged(auth, (currentUser) => {
+      setUser(currentUser);
     });
-
-    return () => {
-      if (unsubscribe) {
-        unsubscribe();
-      }
-    };
   }, []);
 
   const logout = async () => {
-    try {
-      if (auth) {
-        await signOut(auth);
-      }
-    } catch (error) {
-      console.error('Error signing out:', error);
-    }
+    await signOut(auth); // Firebase에서 세션 제거
+    setUser(null);       // 상태도 초기화
+    setAccessToken(null);
   };
 
   const signup = async (email, password, name) => {
@@ -59,32 +44,24 @@ export function AuthProvider({ children }) {
     });
     return user;
   };
+  // 구글 로그인 함수 (accessToken 포함)
+  const loginWithGoogle = async () => {
+    const provider = new GoogleAuthProvider();
+    provider.addScope('https://www.googleapis.com/auth/calendar'); // 🔧 추가: Calendar 권한
 
-  const login = async (email, password) => {
-    if (!auth) throw new Error('Firebase Auth가 초기화되지 않았습니다.');
-    const userCredential = await signInWithEmailAndPassword(auth, email, password);
-    return userCredential.user;
-  };
+    const result = await signInWithPopup(auth, provider);
+    const credential = GoogleAuthProvider.credentialFromResult(result);
+    const token = credential.accessToken;
 
-  const value = {
-    user,
-    loading,
-    logout,
-    signup,
-    login
+    setUser(result.user);
+    setAccessToken(token); // 🔧 추가: 토큰 저장
   };
 
   return (
-    <AuthContext.Provider value={value}>
-      {!loading && children}
+    <AuthContext.Provider value={{ user, logout,loginWithGoogle, accessToken }}>
+      {children}
     </AuthContext.Provider>
   );
 }
 
-export function useAuth() {
-  const context = useContext(AuthContext);
-  if (context === undefined) {
-    throw new Error('useAuth must be used within an AuthProvider');
-  }
-  return context;
-} 
+export const useAuth = () => useContext(AuthContext);

@@ -1,8 +1,10 @@
 from google_auth_oauthlib.flow import InstalledAppFlow
 import pickle
+import os
 
 # 1. credentials.json 파일 경로 설정
-CLIENT_SECRET_FILE = 'credentials.json'
+# CLIENT_SECRET_FILE = 'credentials.json'
+CLIENT_SECRET_FILE = os.path.join(os.path.dirname(__file__), "credentials.json")
 
 # 2. Google Tasks API scope
 SCOPES = ['https://www.googleapis.com/auth/tasks']
