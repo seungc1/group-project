@@ -21,37 +21,51 @@ logger = configure_logger()
 
 UPSTAGE_API_KEY = os.getenv("UPSTAGE_API_KEY")
 
-# 명령형 문장 필터 함수
+# 개선된 명령형 문장 정규식 기반 필터
+COMMAND_PATTERNS = [
+    # 기본 명령 표현
+    r".+해주세요$", r".+하세요$", r".+하십시오$", r".+해주십시오$",
+    r".+해주시기 바랍니다$", r".+해주면 좋겠습니다$",
+
+    # 요청·지시 어미
+    r".+바랍니다$", r".+바람$", r".+부탁드립니다$", r".+해주세요$",
+
+    # 정리·작성·업로드 요청
+    r".+정리해주기 바랍니다$", r".+정리 부탁드립니다$", r".+정리 바랍니다$",
+    r".+작성해주세요$", r".+작성 바랍니다$", r".+작성해$",
+    r".+업로드 바랍니다$", r".+올려주세요$",
+
+    # 공유·검토 요청
+    r".+공유 바랍니다$", r".+공유 부탁드립니다$", r".+검토 바랍니다$", r".+확인 바랍니다$",
+
+    # 기타 행위 지시
+    r".+처리해$", r".+진행해$", r".+조치 바랍니다$",
+
+    # 완곡한 지시
+    r".+필요합니다$"
+]
+
+# 정밀도 개선된 명령형 문장 필터 함수
 def is_valid_command(text: str) -> bool:
-    text = text.strip() # 앞뒤 공백 제거
+    text = text.strip()
     
     # 너무 짧은 문장은 명령문으로 보기 어려우므로 제외
     if len(text) < 6:
         return False
-    
-    # 특정 시작 문구는 명령문이 아닌 일반 응답일 가능성이 높음 (예외 처리)
-    invalid_starts = ["물론입니다"]
-    # 특정 종료 문구는 명령문의 일부가 아니라 설명형일 가능성 있음
-    invalid_ends = ["같습니다:"]
 
-    # 명령형 또는 업무 지시 스타일 어미 목록
-    imperative_suffixes = [
-        "해주세요", "하세요", "하십시오", "해주십시오",
-        "합니다", "진행합니다", "진행한다", "업로드합니다", "작성합니다", "정리합니다", "등록합니다",
-        "업로드한다", "작성한다", "정리한다", "등록한다",
-        "하기로 함", "결정함", "예정임", "예정이다"
-    ]
-    
-    # 제외 조건: 특정 시작 문구
+    invalid_starts = ["물론입니다"]
+    invalid_ends = ["같습니다:", "기대됩니다."]
+
+    # 특정 시작 문구는 명령문이 아닌 일반 응답일 가능성이 높음
     if any(text.startswith(s) for s in invalid_starts):
         return False
-    # 제외 조건: 특정 종료 문구
+    # 특정 종료 문구는 명령문의 일부가 아니라 설명형일 가능성이 있음
     if any(text.endswith(s) for s in invalid_ends):
         return False
-    # 포함 조건: 명령형 어미로 끝나는 문장
-    if any(text.endswith(suffix) for suffix in imperative_suffixes):
-        return True
-    # 그 외에는 명령문이 아니라고 간주
+    # 명령형 문장 패턴이 포함되어 있는지 확인
+    for pattern in COMMAND_PATTERNS:
+        if re.search(pattern, text):
+            return True
     return False
 
 # 명령형 문장 추출용 프롬프트 생성
@@ -70,7 +84,7 @@ def make_prompt(text: str) -> str:
 \"\"\"{text}\"\"\"
 """
 
-# Solar 모델로 명령형 문장 추출
+# Solar-pro-2 모델로 명령형 문장 추출
 def extract_task_commands_with_solar(text: str) -> list[str]:
     url = "https://api.upstage.ai/v1/chat/completions"
     headers = {
@@ -78,12 +92,13 @@ def extract_task_commands_with_solar(text: str) -> list[str]:
         "Content-Type": "application/json"
     }
     data = {
-        "model": "solar-pro",
-        "messages": [{"role": "user", "content": make_prompt(text)}]
+        "model": "solar-pro2-preview",
+        "messages": [{"role": "user", "content": make_prompt(text)}],
+        "reasoning_effort": "high"
     }
 
     try:
-        # Upstage Solar-Pro 모델에 POST 요청을 보내 명령형 문장 생성 요청
+        # Upstage Solar-Pro2-priview 모델에 POST 요청을 보내 명령형 문장 생성 요청
         response = requests.post(url, headers=headers, json=data)
         response.raise_for_status()
         result = response.json()
@@ -93,8 +108,8 @@ def extract_task_commands_with_solar(text: str) -> list[str]:
         print("\n[Upstage 응답 원문]")
         print(content)
 
-        # 각 줄을 리스트로 분리하고 앞쪽 불릿 기호(-, •, ● 등) 제거
-        raw_lines = [line.strip("-•● ").strip() for line in content.splitlines() if line.strip()]
+        # 각 줄을 리스트로 분리하고 앞쪽 불릿 기호(-, •, ● 등) 제거 숫자 포함
+        raw_lines = [re.sub(r"^[-•●\d\)\.\s]+", "", line.strip()) for line in content.splitlines() if line.strip()]
         # 유효한 명령문인지 확인 후 필터링 (예: "해주세요", "하시기 바랍니다" 등)
         filtered = [line for line in raw_lines if is_valid_command(line)]
 

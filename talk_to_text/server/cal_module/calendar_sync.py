@@ -4,6 +4,9 @@ import json
 from google.oauth2 import service_account
 from googleapiclient.discovery import build
 from utils.logger import configure_logger
+from googleapiclient.discovery import build
+from google.oauth2.credentials import Credentials
+
 
 logger = configure_logger()
 
@@ -23,6 +26,31 @@ def get_calendar_service():
     except Exception as e:
         logger.exception("Google Calendar 인증 실패")
         raise
+
+def create_calendar_event_with_token(access_token, summary_text, start_datetime, duration_minutes=60):
+    try:
+        creds = Credentials(token=access_token)
+        service = build("calendar", "v3", credentials=creds)
+
+        event = {
+            "summary": summary_text,
+            "start": {
+                "dateTime": start_datetime.isoformat(),
+                "timeZone": "Asia/Seoul"
+            },
+            "end": {
+                "dateTime": (start_datetime + datetime.timedelta(minutes=duration_minutes)).isoformat(),
+                "timeZone": "Asia/Seoul"
+            },
+            "description": "자동 등록된 회의 일정입니다"
+        }
+
+        created_event = service.events().insert(calendarId="primary", body=event).execute()
+        return created_event.get("htmlLink")
+
+    except Exception as e:
+        print("❌ Google Calendar 등록 실패:", e)
+        return None
 
 # 일정 등록 함수
 def create_calendar_event(summary_text: str, start_datetime: datetime.datetime, duration_minutes: int = 60):

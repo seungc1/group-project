@@ -17,6 +17,19 @@ import { useAuth } from '@/app/context/AuthContext';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 
+// 간단한 성공 모달 컴포넌트
+function SuccessModal({ onConfirm }) {
+  return (
+    <div className={styles.successModalOverlay}>
+      <div className={styles.successModalBox}>
+        <h2 className={styles.successModalTitle}>회의 생성 완료</h2>
+        <div className={styles.successModalText}>회의록이 성공적으로 생성되었습니다.</div>
+        <button onClick={onConfirm} className={styles.successModalButton}>확인</button>
+      </div>
+    </div>
+  );
+}
+
 export default function MeetingForm({ projectId }) {
   const router = useRouter();
   const { user } = useAuth();
@@ -26,6 +39,8 @@ export default function MeetingForm({ projectId }) {
   const [submitError, setSubmitError] = useState(null);
   const [meetingDate, setMeetingDate] = useState(null);
   const [participantNames, setParticipantNames] = useState(['']);
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
+  const [createdMeetingId, setCreatedMeetingId] = useState(null);
 
   const handleFileSelect = (file) => {
     // 파일 유효성 검사
@@ -120,6 +135,7 @@ export default function MeetingForm({ projectId }) {
           audioUrl: result.audioUrl,
           audioFileName: result.audioFileName || '',
           userId: user.uid,
+          // accessToken,
           meetingId: result.docId,
           projectId: result.projectId,
           meetingMinutesList: formData.get('meetingMinutesList') || '',
@@ -151,8 +167,8 @@ export default function MeetingForm({ projectId }) {
         members: [userId]
       }, { merge: true });
 
-      alert('회의록이 성공적으로 생성되었습니다.');
-      router.push('/meetings');
+      setCreatedMeetingId(result.docId);
+      setShowSuccessModal(true);
     } catch (error) {
       console.error('Form submission error:', error);
       alert(error.message || '회의록 생성 중 오류가 발생했습니다.');
@@ -247,6 +263,16 @@ export default function MeetingForm({ projectId }) {
         text={isSubmitting ? "처리 중..." : "회의록 저장"} 
         disabled={isSubmitting || submitError}
       />
+      {showSuccessModal && (
+        <SuccessModal onConfirm={() => {
+          setShowSuccessModal(false);
+          if (createdMeetingId) {
+            router.push(`/projects/${projectId}/meetings/${createdMeetingId}`);
+          } else {
+            router.push('/meetings');
+          }
+        }} />
+      )}
     </form>
   );
 } 

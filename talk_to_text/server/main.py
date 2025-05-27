@@ -165,6 +165,8 @@ def process_audio_endpoint():
                 "status": "success"
             })
 
+        access_token = data.get('accessToken')  # ✅ 추가로 받아오기
+        
         # 4-1. 회의 일정 추출 및 저장
         # 오디오 파일 경로에서 확장자를 제외한 파일명을 추출하여 meeting_id로 사용
         meeting_id = os.path.splitext(os.path.basename(audio_path))[0]
@@ -178,6 +180,7 @@ def process_audio_endpoint():
             start_datetime = dt_info["datetime"]
             if isinstance(start_datetime, str):
                 start_datetime = datetime.fromisoformat(start_datetime)
+            #event_link = create_calendar_event_with_token(access_token, "회의 있음", start_datetime)    
             event_link = create_calendar_event("회의 있음", start_datetime)
             if event_link:
                 event_links.append(event_link)
@@ -204,12 +207,24 @@ def process_audio_endpoint():
                 participant_names = [participant_names]
         participant_names = [n for n in participant_names if n and str(n).strip()]
 
+        # meetingDate를 Timestamp로 변환
+        #meeting_date_str = data.get('meetingDate', '')
+        #if meeting_date_str:
+        #    try:
+        #        date_obj = datetime.fromisoformat(meeting_date_str)
+        #        meeting_date = firestore.Timestamp.from_datetime(date_obj)
+        #    except Exception:
+        #        meeting_date = None
+        #else:
+        #    meeting_date = None
+
         save_meeting_data(userId, projectId, meetingId, {
             'audioFileName': data.get('audioFileName', ''),
             'audioUrl': audio_url,
             'createdAt': firestore.SERVER_TIMESTAMP,
             'createdBy': userId,
             'meetingDate': data.get('meetingDate', ''),
+            #'meetingDate': meeting_date,
             'meetingMinutesList': meetingMinutesList,
             'participantNames': participant_names,
             'participants': data.get('participants', 0),
