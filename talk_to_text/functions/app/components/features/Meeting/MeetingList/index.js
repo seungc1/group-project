@@ -14,16 +14,16 @@ import Pagination from '@/components/common/Pagination';
 function ProjectListItem({ project, currentPage }) {
   const router = useRouter();
   const handleClick = () => {
-    router.push(`/projects/${project.id}?page=${currentPage}`);
+    router.push(`/projects/${project.id}`);
   };
   return (
-    <div className={styles.meetingItem}>
+    <div className={styles.meetingItem} onClick={handleClick} style={{ cursor: 'pointer' }}>
       <div className={styles.meetingContent}>
         <h3 style={{ color: '#111' }}>{project.name}</h3>
         <p>설명: {project.description || '-'}</p>
         <p>생성일: {project.createdAt?.toDate ? project.createdAt.toDate().toLocaleDateString() : '-'}</p>
       </div>
-      <button className={styles.viewButton} onClick={handleClick}>
+      <button className={styles.viewButton} onClick={e => { e.stopPropagation(); handleClick(); }}>
         보기
       </button>
     </div>
@@ -80,7 +80,7 @@ export default function ProjectList() {
 
   const handlePageChange = (page) => {
     setCurrentPage(page);
-    router.push(`/meetings?page=${page}`);
+    router.push(`/projects?page=${page}`);
   };
 
   if (loading) {

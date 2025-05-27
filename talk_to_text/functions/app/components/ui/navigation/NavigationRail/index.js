@@ -143,7 +143,7 @@ export const NavigationRail = ({ isCollapsed, setIsCollapsed }) => {
         {/* 전체 회의록 메뉴 아이템 */}
         <div 
           className={styles['nav-item']}
-          onClick={() => router.push('/meetings')}
+          onClick={() => router.push('/projects')}
         >
           <div className={styles.icon}>📋</div>
           <span>전체 프로젝트</span>
@@ -228,6 +228,16 @@ export const NavigationRail = ({ isCollapsed, setIsCollapsed }) => {
               )}
             </div>
           )}
+        </div>
+
+        {/* 전체 북마크 메뉴를 폴더 메뉴 바로 아래에 위치 */}
+        <div
+          className={styles['nav-item']}
+          style={{ cursor: 'pointer' }}
+          onClick={() => router.push('/bookmarks')}
+        >
+          <div className={styles.icon}>⭐</div>
+          <span>전체 북마크</span>
         </div>
 
         {/* 음성 녹음 메뉴 아이템 */}

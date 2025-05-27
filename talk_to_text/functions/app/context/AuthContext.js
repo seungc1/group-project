@@ -1,8 +1,9 @@
 'use client';
 
 import { createContext, useContext, useEffect, useState } from 'react';
-import { auth } from '@/lib/firebase';
+import { auth, db } from '@/lib/firebase';
 import { onAuthStateChanged, signOut, createUserWithEmailAndPassword, updateProfile, signInWithEmailAndPassword } from 'firebase/auth';
+import { doc, setDoc, serverTimestamp } from 'firebase/firestore';
 
 const AuthContext = createContext();
 
@@ -42,10 +43,21 @@ export function AuthProvider({ children }) {
   const signup = async (email, password, name) => {
     if (!auth) throw new Error('Firebase Auth가 초기화되지 않았습니다.');
     const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+    const user = userCredential.user;
     if (name) {
-      await updateProfile(userCredential.user, { displayName: name });
+      await updateProfile(user, { displayName: name });
     }
-    return userCredential.user;
+    // Firestore에 사용자 정보 저장
+    await setDoc(doc(db, 'users', user.uid), {
+      email: user.email,
+      name: name,
+      createdAt: serverTimestamp(),
+      lastLoginAt: serverTimestamp(),
+      role: 'user',
+      settings: { notifications: true, theme: 'light' },
+      userId: user.uid
+    });
+    return user;
   };
 
   const login = async (email, password) => {
