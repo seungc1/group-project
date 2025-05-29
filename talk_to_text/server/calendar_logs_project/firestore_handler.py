@@ -1,11 +1,11 @@
 from google.cloud import firestore
 from datetime import datetime
-from cal_module.calendar_sync import create_calendar_event  # 추가
+from cal_module.calendar_api import create_calendar_event_with_token # 토큰 기반 함수만 사용
 
 # Firestore 연결
 db = firestore.Client()
 
-def store_calendar_logs(meeting_id: str, parsed_results: list):
+def store_calendar_logs(meeting_id: str, parsed_results: list, access_token: str):
     for item in parsed_results:
         # Firestore에서 자동으로 ID 생성
         doc_ref = db.collection("calendar_logs").document()  # 문서 ID 자동 생성
@@ -24,11 +24,11 @@ def store_calendar_logs(meeting_id: str, parsed_results: list):
         
         # Firestore에 일정 저장
         doc_ref.set(log_data)
-        # db.collection("calendar_logs").document(log_id).set(log_data)
         print(f"저장 완료: {doc_ref.id}")
 
+        # 토큰 기반 일정 등록
         # 일정 등록 후 calendarEventUrl을 업데이트
-        event_link = create_calendar_event("회의 있음", item["datetime"])
+        event_link = create_calendar_event_with_token(access_token, "회의 있음", item["datetime"])
         if event_link:
             # calendarEventUrl 업데이트
             update_calendar_log(log_id, event_link)
