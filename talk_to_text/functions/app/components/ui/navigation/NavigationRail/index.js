@@ -139,24 +139,44 @@ export const NavigationRail = ({ isCollapsed, setIsCollapsed }) => {
       {/* 네비게이션 메뉴 */}
       <div className={styles['nav-items']}>
         <div className={styles['nav-item']} onClick={() => router.push('/')}>
-          <div className={styles.icon}>🏠</div>
+          <div className={styles.icon}><Image
+            src="/images/home.png"
+            alt="설정"
+            width={22}
+            height={22}
+          /></div>
           <span>홈</span>
         </div>
 
         <div className={styles['nav-item']} onClick={() => router.push('/create')}>
-          <div className={styles.icon}>🎙️</div>
+          <div className={styles.icon}><Image
+            src="/images/edit.png"
+            alt="설정"
+            width={21}
+            height={21}
+          /></div>
           <span>프로젝트 생성</span>
         </div>
 
         {/* 전체 프로젝트 메뉴 아이템 */}
         <div className={styles['nav-item']} onClick={() => router.push('/projects')}>
-          <div className={styles.icon}>📋</div>
+          <div className={styles.icon}><Image
+            src="/images/page.png"
+            alt="설정"
+            width={24}
+            height={24}
+          /></div>
           <span>전체 프로젝트</span>
         </div>
 
         <div className={styles['nav-item']} style={{ position: 'relative', flexDirection: 'column', alignItems: 'stretch', padding: 0 }}>
-          <div style={{ display: 'flex', alignItems: 'center', padding: '1px 20px', cursor: 'pointer' }} onClick={handleFolderAreaClick}>
-            <div className={styles.icon}>📁</div>
+          <div style={{ display: 'flex', alignItems: 'center', padding: '12px 20px', cursor: 'pointer' }} onClick={handleFolderAreaClick}>
+            <div className={styles.icon}><Image
+              src="/images/folder.png"
+              alt="설정"
+              width={24}
+              height={24}
+            /></div>
             <span>폴더</span>
             <button
               className={styles['editButton']}
@@ -164,7 +184,12 @@ export const NavigationRail = ({ isCollapsed, setIsCollapsed }) => {
               onClick={handleEditClick}
               title="폴더 편집"
             >
-              ✏️
+              <Image
+                src="/images/plus.png"
+                alt="설정"
+                width={12}
+                height={12}
+              />
             </button>
           </div>
           {showFolders && (
@@ -203,14 +228,24 @@ export const NavigationRail = ({ isCollapsed, setIsCollapsed }) => {
                           title="이름 수정"
                           onClick={() => handleEditName(folder.id, folder.name)}
                         >
-                          ✏️
+                          <div className={styles.icon}><Image
+                            src="/images/editName.png"
+                            alt="설정"
+                            width={18}
+                            height={18}
+                          /></div>
                         </button>
                         <button
                           className={styles['iconButton']}
                           title="폴더 삭제"
                           onClick={() => handleDeleteFolder(folder.id)}
                         >
-                          🗑
+                          <div className={styles.icon}><Image
+                            src="/images/trashcan.png"
+                            alt="설정"
+                            width={18}
+                            height={18}
+                          /></div>
                         </button>
                       </>
                     )}
@@ -236,16 +271,28 @@ export const NavigationRail = ({ isCollapsed, setIsCollapsed }) => {
           style={{ cursor: 'pointer' }}
           onClick={() => router.push('/bookmarks')}
         >
-          <div className={styles.icon}>⭐</div>
+          <div className={styles.icon}>
+            <div className={styles.icon}><Image
+            src="/images/bookmark.png"
+            alt="북마크"
+            width={22}
+            height={20}
+          /></div>
+          </div>
           <span>전체 북마크</span>
         </div>
 
         {/* 음성 녹음 메뉴 아이템 */}
-        <div 
+        <div
           className={styles['nav-item']}
           onClick={() => router.push('/record')}
         >
-          <div className={styles.icon}>🌹</div>
+          <div className={styles.icon}><Image
+            src="/images/mic.png"
+            alt="설정"
+            width={24}
+            height={24}
+          /></div>
           <span>회의 음성 녹음</span>
         </div>
       </div>
@@ -260,8 +307,8 @@ export const NavigationRail = ({ isCollapsed, setIsCollapsed }) => {
             <Image
               src="/images/setting.png"
               alt="설정"
-              width={24}
-              height={24}
+              width={20}
+              height={20}
             />
           </div>
           <span>설정</span>

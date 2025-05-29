@@ -3,6 +3,7 @@
 import { jsPDF } from 'jspdf';
 import nanumFont from './fonts/NanumGothic-Regular.js';
 
+// 폰트 등록
 jsPDF.API.events.push(['addFonts', function () {
   this.addFileToVFS('NanumGothic-Regular.ttf', nanumFont);
   this.addFont('NanumGothic-Regular.ttf', 'NanumGothic', 'normal');
@@ -47,79 +48,64 @@ export function createMeetingPDF(textContent) {
   });
   if (currentItem) groupedItems.push(currentItem);
 
-  const startY = 30;
+  // 테이블 레이아웃 설정
+  const startY = 20;
   const cellPadding = 2;
-  const col1Width = 30;
-  const col2Width = 150;
-  const tableWidth = col1Width + col2Width;
+  const tableWidth = 180;  // 기존 200 → 180
+  const col1Width = tableWidth * 1 / 6;  // 30
+  const col2Width = tableWidth * 5 / 6;  // 150
   const lineHeight = 10;
+  const headerHeight = lineHeight * 1.5;
+  const pageWidth = doc.internal.pageSize.getWidth();
+  const marginX = (pageWidth - tableWidth) / 2;
+
   let y = startY;
   const tableTopY = y;
 
-  const headerHeight = lineHeight * 1.5;
+  // 제목 박스
   doc.setFontSize(16);
-  doc.rect(10, y, tableWidth, headerHeight);
-  doc.text('업무 회의록', 10 + tableWidth / 2, y + lineHeight, { align: 'center' });
+  // 제목 박스
+  doc.setFontSize(16);
+  doc.setFillColor(230, 230, 230);  // 연한 회색 배경
+  doc.rect(marginX, y, tableWidth, headerHeight, 'F'); // 'F'로 채움
+  doc.setTextColor(0, 0, 0);  // 글자색은 검정색 유지
+  doc.text('업무 회의록', marginX + tableWidth / 2, y + lineHeight, { align: 'center' });
   y += headerHeight;
   doc.setFontSize(12);
 
   for (let i = 0; i < groupedItems.length; i++) {
     const item = groupedItems[i];
-    const next = groupedItems[i + 1];
-    const isMerged = next && item.category.slice(0, 2) === next.category.slice(0, 2);
 
-    if (isMerged) {
-      const leftCatLines = doc.splitTextToSize(item.category, col1Width - 2 * cellPadding);
-      const leftContentLines = doc.splitTextToSize(item.content, (col2Width / 2) - 2 * cellPadding);
-      const rightCatLines = doc.splitTextToSize(next.category, col1Width - 2 * cellPadding);
-      const rightContentLines = doc.splitTextToSize(next.content, (col2Width / 2) - 2 * cellPadding);
-      const maxLines = Math.max(leftCatLines.length, leftContentLines.length, rightCatLines.length, rightContentLines.length);
-      const rowHeight = maxLines * lineHeight;
-
-      doc.setFillColor(220, 220, 220);
-      doc.rect(10, y, col1Width, rowHeight, 'F');
-      doc.rect(10, y, col1Width, rowHeight, 'S');
-      leftCatLines.forEach((line, idx) => {
-        doc.text(line, 10 + col1Width / 2, y + lineHeight * (idx + 1) - 2, { align: 'center' });
-      });
-
-      doc.rect(10 + col1Width, y, (col2Width / 2), rowHeight);
-      leftContentLines.forEach((line, idx) => {
-        doc.text(line, 10 + col1Width + cellPadding, y + lineHeight * (idx + 1) - 2);
-      });
-
-      doc.setFillColor(220, 220, 220);
-      doc.rect(10 + col1Width + (col2Width / 2), y, col1Width, rowHeight, 'F');
-      doc.rect(10 + col1Width + (col2Width / 2), y, col1Width, rowHeight, 'S');
-      rightCatLines.forEach((line, idx) => {
-        doc.text(line, 10 + col1Width + (col2Width / 2) + col1Width / 2, y + lineHeight * (idx + 1) - 2, { align: 'center' });
-      });
-
-      doc.rect(10 + col1Width * 2 + (col2Width / 2), y, (col2Width / 2 - col1Width), rowHeight);
-      rightContentLines.forEach((line, idx) => {
-        doc.text(line, 10 + col1Width * 2 + (col2Width / 2) + cellPadding, y + lineHeight * (idx + 1) - 2);
-      });
-
-      y += rowHeight;
-      i++;
+    if (item.category.trim() === '키워드') {
       continue;
     }
 
+    const next = groupedItems[i + 1];
+    const isMerged = next &&
+      next.category.trim() !== '키워드' &&
+      item.category.slice(0, 2) === next.category.slice(0, 2);
+
+    const contentText = item.category.trim() === '키워드'
+      ? item.content.replace(/\n/g, '  ')
+      : item.content;
+
     const categoryLines = doc.splitTextToSize(item.category, col1Width - 2 * cellPadding);
-    const contentLines = doc.splitTextToSize(item.content, col2Width - 2 * cellPadding);
+    const contentLines = doc.splitTextToSize(contentText, col2Width - 2 * cellPadding);
     const maxLines = Math.max(categoryLines.length, contentLines.length);
     const rowHeight = maxLines * lineHeight;
 
+    // 좌측 셀 (카테고리)
     doc.setFillColor(220, 220, 220);
-    doc.rect(10, y, col1Width, rowHeight, 'F');
-    doc.rect(10, y, col1Width, rowHeight, 'S');
+    doc.rect(marginX, y, col1Width, rowHeight, 'F');
+    doc.rect(marginX, y, col1Width, rowHeight, 'S');
     categoryLines.forEach((line, idx) => {
-      doc.text(line, 10 + col1Width / 2, y + lineHeight * (idx + 1) - 2, { align: 'center' });
+      doc.text(line, marginX + col1Width / 2, y + lineHeight * (idx + 1) - 2, { align: 'center' });
     });
 
-    doc.rect(10 + col1Width, y, col2Width, rowHeight);
+    // 우측 셀 (내용)
+    doc.rect(marginX + col1Width, y, col2Width, rowHeight);
     contentLines.forEach((line, idx) => {
-      doc.text(line, 10 + col1Width + cellPadding, y + lineHeight * (idx + 1) - 2);
+      doc.text(line, marginX + col1Width + cellPadding, y + lineHeight * (idx + 1) - 2);
     });
 
     y += rowHeight;
@@ -133,14 +119,14 @@ export function createMeetingPDF(textContent) {
 
   const totalTableHeight = y - tableTopY;
   doc.setLineWidth(0.5);
-  doc.rect(10, tableTopY, tableWidth, totalTableHeight);
+  doc.rect(marginX, tableTopY, tableWidth, totalTableHeight);
   doc.setLineWidth(0.2);
 
   if (bodyLines.length > 0) {
     doc.addPage();
     doc.setFontSize(12);
     const bodyText = bodyLines.join('\n');
-    const fullBodyLines = doc.splitTextToSize(bodyText, 180);
+    const fullBodyLines = doc.splitTextToSize(bodyText, pageWidth - 20);  // 10 좌우 여백
     doc.text(fullBodyLines, 10, 10);
   }
 
