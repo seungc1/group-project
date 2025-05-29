@@ -4,9 +4,15 @@ from firebase_admin import firestore
 from cal_module.datetime_extractor import extract_datetimes_from_text
 from calendar_logs_project.firestore_handler import store_calendar_logs
 
-sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-# Firebase 인증 키 설정
-os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "/Users/nahyowon/Documents/go/group-project/talk_to_text/server/firebase/firebase_key.json"
+import dotenv
+
+dotenv_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '.env.server'))
+dotenv.load_dotenv(dotenv_path=dotenv_path)
+
+# Firebase 인증 키 설정 (.env.server에서 읽어오기)
+GOOGLE_APPLICATION_CREDENTIALS = os.environ.get("GOOGLE_APPLICATION_CREDENTIALS")
+if GOOGLE_APPLICATION_CREDENTIALS:
+    os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = GOOGLE_APPLICATION_CREDENTIALS
 
 # Firestore 연결
 db = firestore.client()
