@@ -23,6 +23,8 @@ from task.google_task_register import register_tasks
 
 from calendar_logs_project.main import extract_and_store_schedule_logs
 
+from cal_module.calendar_api import create_calendar_event_with_token
+
 # .env 파일 강제 로드
 from dotenv import load_dotenv
 
@@ -180,8 +182,9 @@ def process_audio_endpoint():
             start_datetime = dt_info["datetime"]
             if isinstance(start_datetime, str):
                 start_datetime = datetime.fromisoformat(start_datetime)
-            #event_link = create_calendar_event_with_token(access_token, "회의 있음", start_datetime)    
+            # Google Calendar에 이벤트 등록
             event_link = create_calendar_event("회의 있음", start_datetime)
+            # event_link = create_calendar_event_with_token(access_token, "회의 있음", start_datetime)
             if event_link:
                 event_links.append(event_link)
                 update_calendar_log(dt_info["logId"], event_link)
