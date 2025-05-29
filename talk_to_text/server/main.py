@@ -168,6 +168,11 @@ def process_audio_endpoint():
             })
 
         access_token = data.get('accessToken')  # ✅ 추가로 받아오기
+        if not access_token:
+            return jsonify({
+                "success": False,
+                "error": "Google access token이 전달되지 않았습니다. 프론트엔드에서 accessToken을 body에 포함해서 보내야 합니다."
+            }), 400
         
         # 4-1. 회의 일정 추출 및 저장
         # 오디오 파일 경로에서 확장자를 제외한 파일명을 추출하여 meeting_id로 사용
@@ -183,8 +188,8 @@ def process_audio_endpoint():
             if isinstance(start_datetime, str):
                 start_datetime = datetime.fromisoformat(start_datetime)
             # Google Calendar에 이벤트 등록
-            event_link = create_calendar_event("회의 있음", start_datetime)
-            # event_link = create_calendar_event_with_token(access_token, "회의 있음", start_datetime)
+            #event_link = create_calendar_event("회의 있음", start_datetime)
+            event_link = create_calendar_event_with_token(access_token, "회의 있음", start_datetime)
             if event_link:
                 event_links.append(event_link)
                 update_calendar_log(dt_info["logId"], event_link)

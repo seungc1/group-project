@@ -126,6 +126,12 @@ export default function MeetingForm({ projectId }) {
       }
 
       // Python 서버에 음성 처리 요청
+      const accessToken = localStorage.getItem('googleAccessToken');
+      if (!accessToken) {
+        alert('구글 인증이 필요합니다. 다시 로그인 해주세요.');
+        setIsSubmitting(false);
+        return;
+      }
       const pythonResponse = await fetch('http://localhost:5001/process-audio', {
         method: 'POST',
         headers: {
@@ -135,7 +141,7 @@ export default function MeetingForm({ projectId }) {
           audioUrl: result.audioUrl,
           audioFileName: result.audioFileName || '',
           userId: user.uid,
-          // accessToken,
+          accessToken,
           meetingId: result.docId,
           projectId: result.projectId,
           meetingMinutesList: formData.get('meetingMinutesList') || '',
