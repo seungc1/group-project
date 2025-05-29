@@ -1,3 +1,5 @@
+// functions/app/lib/googleCalendar.js 실제 Google API 호출 코드
+
 export async function addEventToGoogleCalendar(accessToken, eventData) {
   const res = await fetch('https://www.googleapis.com/calendar/v3/calendars/primary/events', {
     method: 'POST',
