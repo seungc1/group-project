@@ -1,8 +1,6 @@
 "use client"
 
 import { useAuth } from '@/app/context/AuthContext';
-import { useFolders } from '@/app/hooks/useFolders';
-import { useFolderSelection } from '@/app/hooks/useFolderSelection';
 import FolderSidebar from '@/components/features/Meeting/MeetingList/FolderSidebar';
 import FolderLayout from '@/components/layout/FolderLayout';
 import FolderContent from '@/components/features/Folder/FolderContent';
@@ -14,17 +12,6 @@ export default function FoldersPage() {
   const { user } = useAuth();
   const handleError = useErrorHandler();
   
-  const {
-    selectedFolderId,
-    setSelectedFolderId,
-    projects,
-    loading,
-    folders,
-    error
-  } = useFolders(user);
-
-  const { handleFolderSelect } = useFolderSelection(setSelectedFolderId);
-
   if (!user) {
     return (
       <ErrorBoundary>

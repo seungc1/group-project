@@ -155,7 +155,7 @@ export const NavigationRail = ({ isCollapsed, setIsCollapsed }) => {
         </div>
 
         <div className={styles['nav-item']} style={{ position: 'relative', flexDirection: 'column', alignItems: 'stretch', padding: 0 }}>
-          <div style={{ display: 'flex', alignItems: 'center', padding: '12px 20px', cursor: 'pointer' }} onClick={handleFolderAreaClick}>
+          <div style={{ display: 'flex', alignItems: 'center', padding: '1px 20px', cursor: 'pointer' }} onClick={handleFolderAreaClick}>
             <div className={styles.icon}>📁</div>
             <span>폴더</span>
             <button
