@@ -15,6 +15,7 @@ import {
   collectionGroup
 } from 'firebase/firestore';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
+import { markCalendarLogAsSynced } from '../services/meetingService';
 
 // 회의 생성 및 저장
 export const submitMeeting = async (meetingData, audioFile, userId, projectId) => {
@@ -326,4 +327,6 @@ export const getAllProjects = async (userId) => {
     id: doc.id,
     ...doc.data()
   }));
-}; 
+};
+
+export { markCalendarLogAsSynced }; 
