@@ -9,7 +9,7 @@ import styles from './styles.module.css';
 
 export const NavigationRail = ({ isCollapsed, setIsCollapsed }) => {
   const router = useRouter();
-  const { user, logout } = useAuth();
+  const { user, logout, loginWithGoogle } = useAuth();
 
   const [folders, setFolders] = useState([]);
   const [showFolders, setShowFolders] = useState(false);
@@ -23,6 +23,8 @@ export const NavigationRail = ({ isCollapsed, setIsCollapsed }) => {
   useEffect(() => {
     if (user) {
       getFolders(user.uid).then(setFolders);
+    } else {
+      setFolders([]);
     }
   }, [user]);
 
@@ -42,6 +44,10 @@ export const NavigationRail = ({ isCollapsed, setIsCollapsed }) => {
   };
 
   const handleFolderAreaClick = () => {
+    if (!user) {
+      router.push('/login');
+      return;
+    }
     setShowFolders(v => !v);
     setIsEditMode(false);
     setEditingId(null);
@@ -55,7 +61,10 @@ export const NavigationRail = ({ isCollapsed, setIsCollapsed }) => {
   };
 
   const handleAddFolder = async () => {
-    if (!user) return;
+    if (!user) {
+      loginWithGoogle();
+      return;
+    }
     const id = await createFolder(user.uid, '새 폴더');
     setFolders([...folders, { id, name: '새 폴더' }]);
     setEditingId(id);
@@ -107,6 +116,39 @@ export const NavigationRail = ({ isCollapsed, setIsCollapsed }) => {
   const handleLogoutClick = async () => {
     await logout();
     setShowSettings(false);
+    router.push('/login');
+  };
+
+  const handleCreateProjectClick = () => {
+    if (!user) {
+      router.push('/login');
+      return;
+    }
+    router.push('/projects/new');
+  };
+
+  const handleProjectsClick = () => {
+    if (!user) {
+      router.push('/login');
+      return;
+    }
+    router.push('/projects');
+  };
+
+  const handleBookmarksClick = () => {
+    if (!user) {
+      router.push('/login');
+      return;
+    }
+    router.push('/bookmarks');
+  };
+
+  const handleRecordClick = () => {
+    if (!user) {
+      router.push('/login');
+      return;
+    }
+    router.push('/record');
   };
 
   return (
@@ -148,7 +190,7 @@ export const NavigationRail = ({ isCollapsed, setIsCollapsed }) => {
           <span>홈</span>
         </div>
 
-        <div className={styles['nav-item']} onClick={() => router.push('/create')}>
+        <div className={styles['nav-item']} onClick={handleCreateProjectClick}>
           <div className={styles.icon}><Image
             src="/images/edit.png"
             alt="설정"
@@ -159,7 +201,7 @@ export const NavigationRail = ({ isCollapsed, setIsCollapsed }) => {
         </div>
 
         {/* 전체 프로젝트 메뉴 아이템 */}
-        <div className={styles['nav-item']} onClick={() => router.push('/projects')}>
+        <div className={styles['nav-item']} onClick={handleProjectsClick}>
           <div className={styles.icon}><Image
             src="/images/page.png"
             alt="설정"
@@ -269,7 +311,7 @@ export const NavigationRail = ({ isCollapsed, setIsCollapsed }) => {
         <div
           className={styles['nav-item']}
           style={{ cursor: 'pointer' }}
-          onClick={() => router.push('/bookmarks')}
+          onClick={handleBookmarksClick}
         >
           <div className={styles.icon}>
             <div className={styles.icon}><Image
@@ -285,7 +327,7 @@ export const NavigationRail = ({ isCollapsed, setIsCollapsed }) => {
         {/* 음성 녹음 메뉴 아이템 */}
         <div
           className={styles['nav-item']}
-          onClick={() => router.push('/record')}
+          onClick={handleRecordClick}
         >
           <div className={styles.icon}><Image
             src="/images/mic.png"

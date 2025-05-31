@@ -327,6 +327,6 @@ export const getAllProjects = async (userId) => {
     id: doc.id,
     ...doc.data()
   }));
-};
+}; 
 
 export { markCalendarLogAsSynced }; 

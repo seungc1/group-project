@@ -11,7 +11,7 @@ import { useErrorHandler } from '@/app/hooks/useErrorHandler';
 export default function FoldersPage() {
   const { user } = useAuth();
   const handleError = useErrorHandler();
-  
+
   if (!user) {
     return (
       <ErrorBoundary>

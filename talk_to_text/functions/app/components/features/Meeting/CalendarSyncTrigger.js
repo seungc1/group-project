@@ -27,7 +27,7 @@ export default function CalendarSyncTrigger({ start, end, title, description }) 
         },
         body: JSON.stringify({
           ...eventData,
-          accessToken, // ✅ 서버에 전달
+          accessToken, // 서버에 전달
           userId,
           projectId,
           meetingId,
