@@ -10,6 +10,7 @@ import { useState, useEffect } from 'react';
 import { useAuth } from '@/app/context/AuthContext';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Pagination from '@/components/common/Pagination';
+import RequireLogin from '@/components/common/RequireLogin';
 
 function ProjectListItem({ project, currentPage }) {
   const router = useRouter();
@@ -61,6 +62,10 @@ export default function ProjectList() {
     };
     fetchProjects();
   }, [user]);
+
+  if (!user) {
+    return <RequireLogin />;
+  }
 
   // 프로젝트 정렬 함수
   const sortProjects = (projects, order) => {

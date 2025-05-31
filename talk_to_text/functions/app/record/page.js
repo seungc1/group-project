@@ -3,8 +3,13 @@
 import React, { useRef, useState } from 'react';
 import styles from './record.module.css';
 import Link from 'next/link'
+import { useAuth } from '@/app/context/AuthContext';
+import Header from '@/components/ui/layout/Header';
 
 export default function RecordPage() {
+  const { user } = useAuth();
+  if (!user) return null;
+
   const [isRecording, setIsRecording] = useState(false);
   const [audioUrl, setAudioUrl] = useState(null);
   const mediaRecorderRef = useRef(null);
@@ -95,66 +100,68 @@ export default function RecordPage() {
   };
 
   return (
-    <div className={styles.container}>
-      <h1 className={styles.title}>음성 녹음기</h1>
-      {isRecording ? (
-        <p className={styles.description}>🎙️ 열심히 회의내용 녹음 중...</p>
-      ) : (
-        <>
-          <p className={styles.description}>회의중 음성을 녹음하고 재생해보세요.</p>
-          <p className={styles.description}>음성 파일은 WAV 파일 형식으로 다운로드됩니다.</p>
-        </>
-      )}
-      <div className={styles.controls}>
-        {!isRecording ? (
-          <button onClick={handleStartRecording} className={styles.button}>
-            녹음 시작
-          </button>
+    <>
+      <Header title="회의 음성 녹음" />
+      <div className={styles.container}>
+        <h1 className={styles.title}>음성 녹음기</h1>
+        {isRecording ? (
+          <p className={styles.description}>🎙️ 열심히 회의내용 녹음 중...</p>
         ) : (
-          <button onClick={handleStopRecording} className={styles.buttonStop}>
-            녹음 종료
-          </button>
+          <>
+            <p className={styles.description}>회의중 음성을 녹음하고 재생해보세요.</p>
+            <p className={styles.description}>음성 파일은 WAV 파일 형식으로 다운로드됩니다.</p>
+          </>
+        )}
+        <div className={styles.controls}>
+          {!isRecording ? (
+            <button onClick={handleStartRecording} className={styles.button}>
+              녹음 시작
+            </button>
+          ) : (
+            <button onClick={handleStopRecording} className={styles.buttonStop}>
+              녹음 종료
+            </button>
+          )}
+        </div>
+
+        {audioUrl && (
+          <div className={styles.result}>
+            <audio src={audioUrl} controls />
+
+            {/* 녹음 파일명 입력 필드 */}
+            <input
+              type="text"
+              placeholder="저장할 음성 파일 이름을 입력하세요!"
+              value={fileName}
+              onChange={(e) => setFileName(e.target.value)}
+              className={styles.inputField}
+            />
+
+            {/* 다운로드 버튼 */}
+            <button
+              onClick={async () => {
+                const response = await fetch(audioUrl);
+                const blob = await response.blob();
+                const filename = fileName?.trim() ? `${fileName}.wav` : 'recording.wav';
+
+                const link = document.createElement('a');
+                link.href = URL.createObjectURL(blob);
+                link.download = filename;
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                URL.revokeObjectURL(link.href);
+              }}
+              className={styles.downloadLink}
+            >
+              WAV 파일 다운로드
+            </button>
+
+            <Link href="/create" className={styles.createButton}>회의록 생성하러가기!</Link>
+          </div>
         )}
       </div>
-
-      {audioUrl && (
-        <div className={styles.result}>
-          <audio src={audioUrl} controls />
-
-          {/* 녹음 파일명 입력 필드 */}
-          <input
-            type="text"
-            placeholder="저장할 음성 파일 이름을 입력하세요!"
-            value={fileName}
-            onChange={(e) => setFileName(e.target.value)}
-            className={styles.inputField}
-          />
-
-          {/* 다운로드 버튼 */}
-          <button
-            onClick={async () => {
-              const response = await fetch(audioUrl);
-              const blob = await response.blob();
-              const filename = fileName?.trim() ? `${fileName}.wav` : 'recording.wav';
-
-              const link = document.createElement('a');
-              link.href = URL.createObjectURL(blob);
-              link.download = filename;
-              document.body.appendChild(link);
-              link.click();
-              document.body.removeChild(link);
-              URL.revokeObjectURL(link.href);
-            }}
-            className={styles.downloadLink}
-          >
-            WAV 파일 다운로드
-          </button>
-
-          <Link href="/create" className={styles.createButton}>회의록 생성하러가기!</Link>
-        </div>
-      )}
-
-    </div>
+    </>
   );
 }
 

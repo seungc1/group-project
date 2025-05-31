@@ -17,7 +17,7 @@ from firebase.storage_handler import upload_summary_text
 from firebase.firestore_handler import save_meeting_data, save_textinfo, save_tags, save_calendar_logs, get_meeting_data, get_all_transcripts
 from cal_module.datetime_extractor import extract_datetimes_from_text
 from task.task_extractor import extract_task_commands_with_solar
-from task.google_task_register import register_tasks
+from task.google_task_register import register_tasks, register_tasks_with_token
 
 from calendar_logs_project.main import extract_and_store_schedule_logs
 from cal_module.calendar_api import create_calendar_event_with_token
@@ -33,6 +33,10 @@ load_dotenv(dotenv_path=env_path)
 ssl._create_default_https_context = ssl._create_unverified_context
 urllib3.disable_warnings()
 requests.packages.urllib3.disable_warnings()
+
+# Google OAuth 2.0 클라이언트 ID와 시크릿 키 설정 테스트용
+CLIENT_ID = os.environ.get('GOOGLE_CLIENT_ID', '')
+CLIENT_SECRET = os.environ.get('GOOGLE_CLIENT_SECRET', '')
 
 # 환경 변수 설정
 os.environ['HF_HUB_DISABLE_SSL_VERIFY'] = '1'
@@ -170,7 +174,7 @@ def process_audio_endpoint():
                 "success": False,
                 "error": "Google access token이 전달되지 않았습니다. 프론트엔드에서 accessToken을 body에 포함해서 보내야 합니다."
             }), 400
-        
+
         # 4-1. 회의 일정 추출 및 저장
         # 오디오 파일 경로에서 확장자를 제외한 파일명을 추출하여 meeting_id로 사용
         meeting_id = os.path.splitext(os.path.basename(audio_path))[0]
@@ -196,9 +200,9 @@ def process_audio_endpoint():
         commands = extract_task_commands_with_solar(summary_text)
         commands = [cmd for cmd in commands if cmd.strip()]  # 불필요한 공백 제거
 
-        # 2. Google Tasks 등록
+        # 2. Google Tasks 등록 (사용자별 accessToken 사용)
         if commands:
-            register_tasks(commands)
+            register_tasks_with_token(commands, access_token, CLIENT_ID, CLIENT_SECRET)
         
         # 5. 요약 파일 저장 및 Firebase 업로드
         summary_url = upload_summary_text(summary, audio_path, keywords)
@@ -212,12 +216,30 @@ def process_audio_endpoint():
                 participant_names = [participant_names]
         participant_names = [n for n in participant_names if n and str(n).strip()]
 
+        # meetingDate를 Timestamp로 변환 (포맷 보완)
+        meeting_date_str = data.get('meetingDate', '')
+        print('프론트에서 넘어온 meetingDate:', repr(meeting_date_str))  # 디버깅용 로그
+        meeting_date = None
+        if meeting_date_str:
+            try:
+                # 날짜만 넘어오면
+                if len(meeting_date_str) == 10:
+                    date_obj = datetime.strptime(meeting_date_str, '%Y-%m-%d')
+                else:
+                    date_obj = datetime.fromisoformat(meeting_date_str)
+                meeting_date = date_obj  # datetime 객체 그대로 저장
+            except Exception as e:
+                print('meetingDate 파싱 실패:', meeting_date_str, e)
+                meeting_date = None
+        else:
+            meeting_date = None
+
         save_meeting_data(userId, projectId, meetingId, {
             'audioFileName': data.get('audioFileName', ''),
             'audioUrl': audio_url,
             'createdAt': firestore.SERVER_TIMESTAMP,
             'createdBy': userId,
-            'meetingDate': data.get('meetingDate', ''),
+            'meetingDate': meeting_date,  # Timestamp로 저장
             'meetingMinutesList': meetingMinutesList,
             'participantNames': participant_names,
             'participants': data.get('participants', 0),

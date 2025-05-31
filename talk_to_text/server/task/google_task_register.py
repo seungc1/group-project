@@ -53,3 +53,29 @@ def register_tasks(task_list: list[str]):
     except Exception as e:
         logger.exception(f"[Google Task 등록 실패] {e}")
 
+def register_tasks_with_token(task_list, access_token, client_id, client_secret):
+    try:
+        logger.info(f"[사용자별 Task 등록] {len(task_list)}개, accessToken 전달받음")
+        creds = Credentials(
+            token=access_token,
+            refresh_token=None,
+            token_uri='https://oauth2.googleapis.com/token',
+            client_id=client_id,
+            client_secret=client_secret,
+            scopes=SCOPES
+        )
+        service = build('tasks', 'v1', credentials=creds)
+        tasklists = service.tasklists().list(maxResults=1).execute()
+        logger.info(f"[사용 중 Task 목록] {tasklists}")
+        tasklist_id = tasklists['items'][0]['id']
+        for task_content in task_list:
+            logger.info(f"[등록 시도 중] {task_content}")
+            task = {
+                'title': task_content,
+                'due': (datetime.datetime.utcnow() + datetime.timedelta(days=1)).isoformat() + 'Z'
+            }
+            result = service.tasks().insert(tasklist=tasklist_id, body=task).execute()
+            logger.info(f"[등록 성공] {result['title']}")
+    except Exception as e:
+        logger.exception(f"[Google Task 사용자별 등록 실패] {e}")
+

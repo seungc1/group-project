@@ -7,6 +7,7 @@ import { useBookmarks } from '@/app/hooks/useBookmarks';
 import { getMeetingDetail, getProject } from '@/lib/meetingsService';
 import { useRouter } from 'next/navigation';
 import styles from './styles.module.css';
+import Header from '@/components/ui/layout/Header';
 
 export default function BookmarksPage() {
   const { user } = useAuth();
@@ -43,36 +44,37 @@ export default function BookmarksPage() {
     fetchData();
   }, [user, bookmarkedMeetings]);
 
-  if (!user) return <div style={{ padding: 32 }}>로그인이 필요합니다.</div>;
-  if (loading) return <div style={{ padding: 32 }}>로딩 중...</div>;
-
   return (
-    <div className={styles.bookmarksContainer}>
-      <h2 className={styles.bookmarksTitle}>⭐ 전체 북마크</h2>
-      {bookmarkedList.length === 0 ? (
-        <div className={styles.empty}>북마크한 회의가 없습니다.</div>
-      ) : (
-        <ul className={styles.bookmarksList}>
-          {bookmarkedList.map(meeting => (
-            <li
-              key={meeting.id}
-              className={styles.bookmarkItem}
-              onClick={() => router.push(`/projects/${meeting.projectId}/meetings/${meeting.id}`)}
-            >
-              <div className={styles.projectName}>
-                프로젝트: {bookmarkMap.get(meeting.id) || meeting.projectId}
-              </div>
-              <div className={styles.meetingTitle}>{meeting.title}</div>
-              <div className={styles.meetingDate}>
-                날짜: {meeting.meetingDate ? (typeof meeting.meetingDate === 'string' ? meeting.meetingDate : meeting.meetingDate.toDate ? meeting.meetingDate.toDate().toLocaleDateString() : String(meeting.meetingDate)) : '-'}
-              </div>
-              {/*<div style={{ color: '#888', fontSize: 14 }}>
-                참석자: {Array.isArray(meeting.participantNames) ? meeting.participantNames.join(', ') : meeting.participantNames}
-              </div>*/}
-            </li>
-          ))}
-        </ul>
-      )}
-    </div>
+    <>
+      <Header title="전체 북마크" />
+      <div className={styles.bookmarksContainer}>
+        {loading ? (
+          <div style={{ padding: 32 }}>로딩 중...</div>
+        ) : bookmarkedList.length === 0 ? (
+          <div className={styles.empty}>북마크한 회의가 없습니다.</div>
+        ) : (
+          <ul className={styles.bookmarksList}>
+            {bookmarkedList.map(meeting => (
+              <li
+                key={meeting.id}
+                className={styles.bookmarkItem}
+                onClick={() => router.push(`/projects/${meeting.projectId}/meetings/${meeting.id}`)}
+              >
+                <div className={styles.projectName}>
+                  프로젝트: {bookmarkMap.get(meeting.id) || meeting.projectId}
+                </div>
+                <div className={styles.meetingTitle}>{meeting.title}</div>
+                <div className={styles.meetingDate}>
+                  날짜: {meeting.meetingDate ? (typeof meeting.meetingDate === 'string' ? meeting.meetingDate : meeting.meetingDate.toDate ? meeting.meetingDate.toDate().toLocaleDateString() : String(meeting.meetingDate)) : '-'}
+                </div>
+                {/*<div style={{ color: '#888', fontSize: 14 }}>
+                  참석자: {Array.isArray(meeting.participantNames) ? meeting.participantNames.join(', ') : meeting.participantNames}
+                </div>*/}
+              </li>
+            ))}
+          </ul>
+        )}
+      </div>
+    </>
   );
 } 
