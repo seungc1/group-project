@@ -15,14 +15,11 @@ from diarization.diarization import apply_diarization, merge_segments_with_speak
 from nlp.text_processing import extract_keywords, extract_keywords_tfidf, summarize_text
 from firebase.storage_handler import upload_summary_text
 from firebase.firestore_handler import save_meeting_data, save_textinfo, save_tags, save_calendar_logs, get_meeting_data, get_all_transcripts
-from cal_module.calendar_sync import create_calendar_event
 from cal_module.datetime_extractor import extract_datetimes_from_text
-
 from task.task_extractor import extract_task_commands_with_solar
 from task.google_task_register import register_tasks, register_tasks_with_token
 
 from calendar_logs_project.main import extract_and_store_schedule_logs
-
 from cal_module.calendar_api import create_calendar_event_with_token
 
 # .env 파일 강제 로드
@@ -171,7 +168,7 @@ def process_audio_endpoint():
                 "status": "success"
             })
 
-        access_token = data.get('accessToken')  # ✅ 추가로 받아오기
+        access_token = data.get('accessToken')  # 추가로 받아오기
         if not access_token:
             return jsonify({
                 "success": False,
@@ -191,8 +188,8 @@ def process_audio_endpoint():
             start_datetime = dt_info["datetime"]
             if isinstance(start_datetime, str):
                 start_datetime = datetime.fromisoformat(start_datetime)
+            
             # Google Calendar에 이벤트 등록
-            #event_link = create_calendar_event("회의 있음", start_datetime)
             event_link = create_calendar_event_with_token(access_token, "회의 있음", start_datetime)
             if event_link:
                 event_links.append(event_link)
