@@ -30,7 +30,7 @@ export default function DashboardPage() {
         <button onClick={() => router.push('/record')} className={styles.recordButton}>
           회의 녹음하러 가기
         </button>
-        <button onClick={() => router.push('/create')} className={styles.createButton}>
+        <button onClick={() => router.push('/projects/new')} className={styles.createButton}>
           회의록 생성하러 가기
         </button>
       </div>
