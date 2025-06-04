@@ -48,7 +48,7 @@ export default function MeetingEditor({ meeting, meetingId }) {
     <div className={styles.container}>
       {/* 왼쪽: 직접 수정 가능한 요약 */}
       <div className={`${styles.leftPane} ${styles.summarySection}`}>
-        <h3>현재 요약 (수정 가능)</h3>
+        <h3>현재 요약</h3>
 
         {/* 스크롤이 필요한 부분만 감싸기 */}
         <div className={styles.scrollContainer}>
@@ -85,8 +85,8 @@ export default function MeetingEditor({ meeting, meetingId }) {
               </div>
             ) : (
               <div className={styles.placeholderText}>
-              GPT가 제안한 수정 요약이 여기에 표시됩니다.
-            </div>
+                GPT가 제안한 수정 요약이 여기에 표시됩니다.
+              </div>
             )}
           </div>
 
@@ -96,7 +96,7 @@ export default function MeetingEditor({ meeting, meetingId }) {
               className={styles.chatInput}
               value={input}
               onChange={e => setInput(e.target.value)}
-              placeholder="예: 더 구체적으로 작성해줘"
+              placeholder="GPT에게 요청할 내용을 입력하세요"
               rows={1}
             />
             <button

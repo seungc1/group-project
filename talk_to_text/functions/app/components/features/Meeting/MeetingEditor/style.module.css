@@ -8,20 +8,20 @@
   padding: 1.5rem;
   display: flex;
   flex-direction: column;
-  gap: 1rem;
+  gap: 0rem;
 }
 
 /* ─────────────────────────────────────────────
-   2단 레이아웃
+   2단 레이아웃 (여백 ↓)
 ───────────────────────────────────────────── */
 .container {
   display: flex;
-  gap: 24px;
-  margin-top: 20px;
+  gap: 5px;
+  margin-top: 0;    /* ← 여기서 20px → 0으로 변경했습니다. */
   width: 100%;
-  height: 100vh;         /* 전체 화면 높이 */
+  height: 90vh;     /* 전체 화면 높이 */
   box-sizing: border-box;
-  padding: 1rem;         /* 양 옆 여유 주기 */
+  padding: 0rem;    /* 양 옆 여유 주기 */
 }
 
 /* ─────────────────────────────────────────────
@@ -31,7 +31,7 @@
 .rightPane {
   flex: 1;
   background: #f9f9f9;
-  padding: 24px;
+  padding: 10px;       /* 필요하면 padding 값도 조정하세요 */
   border-radius: 8px;
   box-shadow: 0 1px 3px rgba(0,0,0,0.05);
   display: flex;
@@ -39,14 +39,23 @@
 }
 
 /* ─────────────────────────────────────────────
+   패널 내부 h3(소제목) 여백 ↓
+───────────────────────────────────────────── */
+.leftPane > h3,
+.rightPane > h3 {
+  margin-top: 0;         /* 위쪽 여백 0제거 */
+  margin-bottom: 0.5rem; /* 아래쪽 여백 축소 */
+}
+
+/* ─────────────────────────────────────────────
    스크롤 컨테이너 (SaveBtn / ChatRow 고정)
 ───────────────────────────────────────────── */
 .scrollContainer {
   flex: 1;
-  display: flex;           /* 여기를 추가했습니다 */
-  flex-direction: column;  /* 세로로 쌓이도록 */
-  overflow-y: auto;        /* 스크롤도 살려놓습니다 */
-  margin-bottom: 1rem;
+  display: flex;           
+  flex-direction: column;  
+  overflow-y: auto;        
+  margin-bottom: 1rem;     
 }
 
 /* ─────────────────────────────────────────────
@@ -55,14 +64,13 @@
 .textarea {
   width: 100%;
   height: 100%;
-  resize:   none;        /* 크기 조절 불가 */
+  resize: none;        /* 크기 조절 불가 */
   padding: 12px;
   font-size: 14px;
   border: 1px solid #ccc;
   border-radius: 4px;
   box-sizing: border-box;
-  min-height: 200px;
-
+  min-height: 140px;
   overflow-y: auto;
 }
 
@@ -75,16 +83,22 @@
   flex: 1;
 }
 
+/* GPT 결과가 없을 때 보여줄 안내문구 */
 .placeholderText {
-  flex: 1;                    /* 부모 flex-container 가 꽉 채우도록 */
-  display: flex;              /* 가운데 정렬을 위해 flex 사용 */
-  align-items: center;        /* 수직 중앙 정렬 */
-  justify-content: center;    /* 수평 중앙 정렬 */
+  flex: 1;                 
+  display: flex;           
+  align-items: center;     
+  justify-content: center; 
   color: #999;
   font-size: 14px;
   text-align: center;
+  padding: 16px;      
+  border: 1px dashed #ccc;      
 }
-/* GPT 제안 결과 박스 */
+
+/* ─────────────────────────────────────────────
+   GPT 제안 결과 박스
+───────────────────────────────────────────── */
 .gptResultBox {
   background: #f0faff;
   border: 1px solid #bbe1ff;
@@ -92,7 +106,7 @@
   padding: 12px;
   overflow-y: auto;
   box-sizing: border-box;
-  height: 100%;
+  height: 100%;  /* scrollContainer 높이에 맞춰 꽉 차도록 */
 }
 
 .generatedPreview {
@@ -123,7 +137,7 @@
   font-size: 14px;
   border: 2px solid #0070f3;
   border-radius: 9999px;
-  resize: none;        /* 자동으로 2줄까진 늘어나려면 auto 로 바꿔주세요 */
+  resize: none;
   line-height: 1.4;
   max-height: 5rem;
   overflow-y: auto;
@@ -146,19 +160,21 @@
   cursor: not-allowed;
 }
 
-/* 공통 버튼 스타일 */
+/* ─────────────────────────────────────────────
+   공통 버튼 스타일 (필요시 사용)
+───────────────────────────────────────────── */
 .commonButton {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  background-color: #2563eb;       /* 파란색 배경 */
-  color: #fff;                     /* 흰 글씨 */
+  background-color: #2563eb;
+  color: #fff;
   border: none;
-  border-radius: 9999px;           /* pill 모양 */
-  padding: 0 16px;                 /* 좌우 여백 */
+  border-radius: 9999px;
+  padding: 0 16px;
   font-size: 14px;
   font-weight: 500;
-  height: 40px;                    /* 고정 높이 */
+  height: 40px;
   cursor: pointer;
   transition: background-color 0.2s;
 }
@@ -167,65 +183,10 @@
   background-color: #1d4ed8;
 }
 
-
-/* 왼쪽 요약 저장 버튼 컨테이너 스타일 */
+/* ─────────────────────────────────────────────
+   왼쪽 요약 저장 버튼 컨테이너 스타일
+───────────────────────────────────────────── */
 .saveButtonContainer {
-  text-align: right;    /* 오른쪽 끝 정렬 (원하시면 가운데 정렬로 바꾸셔도 됩니다) */
-  margin-top: 12px;     /* textarea 아래 여백 */
-}
-.gptResultBox {
-  flex: 1;
-  border: 1px dashed #ccc;
-  border-radius: 8px;
-  padding: 16px;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  min-height: 200px; /* 원하는 최소 높이 */
-  margin-bottom: 16px;
-  background: #fafafa;
-}
-
-/* GPT 결과가 없을 때 보여줄 안내문구 */
-.placeholderText {
-  flex: 1;                    /* 빈 박스도 flex 영역을 채우게 */
-  display: flex;
-  align-items: center;        /* 세로 중앙 정렬 */
-  justify-content: center;    /* 가로 중앙 정렬 */
-  color: #999;
-  font-size: 14px;
-  text-align: center;
-}
-
-/* 채팅 입력 + 버튼을 한 줄에 배치 */
-.chatRow {
-  display: flex;
-  gap: 8px;
-  align-items: center;
-}
-
-.chatInput {
-  flex: 1;
-  padding: 8px 12px;
-  font-size: 14px;
-  border: 1px solid #ccc;
-  border-radius: 24px;
-  resize: none;
-  min-height: 40px;
-}
-
-.requestButton {
-  padding: 8px 16px;
-  background-color: #2065d1;
-  color: white;
-  border: none;
-  border-radius: 24px;
-  cursor: pointer;
-  white-space: nowrap;
-}
-
-.requestButton:disabled {
-  opacity: 0.6;
-  cursor: default;
+  text-align: right;
+  margin-top: 12px;
 }
