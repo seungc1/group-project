@@ -1,3 +1,4 @@
+// 파일: app/components/meeting/MeetingEditor/index.js
 'use client';
 
 import { useState } from 'react';
@@ -19,7 +20,7 @@ export default function MeetingEditor({ meeting, meetingId }) {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           original: meeting.summary,
-          userRequest: input
+          userRequest: input,
         }),
       });
       const { result, error } = await res.json();
@@ -50,18 +51,23 @@ export default function MeetingEditor({ meeting, meetingId }) {
       <div className={`${styles.leftPane} ${styles.summarySection}`}>
         <h3>현재 요약</h3>
 
-        {/* 스크롤이 필요한 부분만 감싸기 */}
         <div className={styles.scrollContainer}>
           <textarea
             className={styles.textarea}
             value={editableSummary}
-            onChange={e => setEditableSummary(e.target.value)}
+            onChange={(e) => setEditableSummary(e.target.value)}
           />
         </div>
 
-        {/* 언제나 보이는 저장 버튼 */}
+        {/* 
+          SaveButton에 projectId와 userId(createdBy)를 넘겨줍니다. 
+          meeting 객체 안에 projectId, createdBy 필드가 반드시 있어야 합니다.
+        */}
         <SaveButton
+          className={styles.saveButton}
           meetingId={meetingId}
+          projectId={meeting.projectId}     // 추가
+          userId={meeting.createdBy}        // 추가
           newSummary={editableSummary}
           onSuccess={() => console.log('수정 저장 완료')}
         />
@@ -72,7 +78,6 @@ export default function MeetingEditor({ meeting, meetingId }) {
         <h3>GPT 요약 수정 요청</h3>
 
         <div className={styles.gptArea}>
-          {/* 결과 영역만 스크롤! */}
           <div className={styles.scrollContainer}>
             {generated ? (
               <div className={styles.gptResultBox}>
@@ -90,12 +95,11 @@ export default function MeetingEditor({ meeting, meetingId }) {
             )}
           </div>
 
-          {/* 항상 보이는 채팅 입력 행 */}
           <div className={styles.chatRow}>
             <textarea
               className={styles.chatInput}
               value={input}
-              onChange={e => setInput(e.target.value)}
+              onChange={(e) => setInput(e.target.value)}
               placeholder="GPT에게 요청할 내용을 입력하세요"
               rows={1}
             />

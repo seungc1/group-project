@@ -17,11 +17,11 @@
 .container {
   display: flex;
   gap: 5px;
-  margin-top: 0;    /* ← 여기서 20px → 0으로 변경했습니다. */
+  margin-top: 0;
   width: 100%;
-  height: 90vh;     /* 전체 화면 높이 */
+  height: 90vh;
   box-sizing: border-box;
-  padding: 0rem;    /* 양 옆 여유 주기 */
+  padding: 0rem;
 }
 
 /* ─────────────────────────────────────────────
@@ -31,7 +31,7 @@
 .rightPane {
   flex: 1;
   background: #f9f9f9;
-  padding: 10px;       /* 필요하면 padding 값도 조정하세요 */
+  padding: 10px;
   border-radius: 8px;
   box-shadow: 0 1px 3px rgba(0,0,0,0.05);
   display: flex;
@@ -43,8 +43,8 @@
 ───────────────────────────────────────────── */
 .leftPane > h3,
 .rightPane > h3 {
-  margin-top: 0;         /* 위쪽 여백 0제거 */
-  margin-bottom: 0.5rem; /* 아래쪽 여백 축소 */
+  margin-top: 0;
+  margin-bottom: 0.5rem;
 }
 
 /* ─────────────────────────────────────────────
@@ -52,10 +52,10 @@
 ───────────────────────────────────────────── */
 .scrollContainer {
   flex: 1;
-  display: flex;           
-  flex-direction: column;  
-  overflow-y: auto;        
-  margin-bottom: 1rem;     
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  margin-bottom: 1rem;
 }
 
 /* ─────────────────────────────────────────────
@@ -64,7 +64,7 @@
 .textarea {
   width: 100%;
   height: 100%;
-  resize: none;        /* 크기 조절 불가 */
+  resize: none;
   padding: 12px;
   font-size: 14px;
   border: 1px solid #ccc;
@@ -85,15 +85,15 @@
 
 /* GPT 결과가 없을 때 보여줄 안내문구 */
 .placeholderText {
-  flex: 1;                 
-  display: flex;           
-  align-items: center;     
-  justify-content: center; 
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   color: #999;
   font-size: 14px;
   text-align: center;
-  padding: 16px;      
-  border: 1px dashed #ccc;      
+  padding: 16px;
+  border: 1px dashed #ccc;  
 }
 
 /* ─────────────────────────────────────────────
@@ -106,7 +106,7 @@
   padding: 12px;
   overflow-y: auto;
   box-sizing: border-box;
-  height: 100%;  /* scrollContainer 높이에 맞춰 꽉 차도록 */
+  height: 100%;
 }
 
 .generatedPreview {
@@ -114,7 +114,6 @@
   word-break: keep-all;
 }
 
-/* 수정/취소 버튼 라인 */
 .actionRow {
   display: flex;
   gap: 8px;
@@ -122,7 +121,7 @@
 }
 
 /* ─────────────────────────────────────────────
-   채팅 입력 행
+   채팅 입력 행 (항상 보이는 하단 고정)
 ───────────────────────────────────────────── */
 .chatRow {
   display: flex;
@@ -130,7 +129,6 @@
   gap: 8px;
 }
 
-/* 채팅 입력창 */
 .chatInput {
   flex: 1;
   padding: 0.5rem 0.75rem;
@@ -144,7 +142,6 @@
   box-sizing: border-box;
 }
 
-/* 요청 버튼 */
 .chatButton {
   padding: 0.6rem 1rem;
   background-color: #0070f3;
@@ -189,4 +186,32 @@
 .saveButtonContainer {
   text-align: right;
   margin-top: 12px;
+}
+
+/* ─────────────────────────────────────────────
+   요약 저장 버튼 (SaveButton) 스타일
+───────────────────────────────────────────── */
+.saveButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #0070f3;   /* chatButton과 같은 파란색 배경 */
+  color: #fff;                 /* 흰 글씨 */
+  border: none;
+  border-radius: 9999px;       /* pill 모양 */
+  padding: 0.6rem 1rem;        /* chatButton과 유사한 여백 */
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background-color 0.2s;
+}
+
+.saveButton:hover {
+  background-color: #005bb5;   /* hover 시 살짝 진해지도록 */
+}
+
+.saveButton:disabled {
+  background-color: #aaa;      /* 비활성화 시 회색 */
+  cursor: not-allowed;
 }
