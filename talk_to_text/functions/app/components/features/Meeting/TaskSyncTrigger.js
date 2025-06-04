@@ -1,5 +1,4 @@
 // functions/app/components/features/Meeting/TaskSyncTrigger.js
-
 'use client';
 
 import { useEffect } from 'react';
