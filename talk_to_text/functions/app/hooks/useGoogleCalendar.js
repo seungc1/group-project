@@ -1,4 +1,4 @@
-// useGoogleCalendar.js
+// talk_to_text/functions/app/hooks/useGoogleCalendar.js
 
 'use client';
 
@@ -26,7 +26,7 @@ export function useAutoCalendarSync(eventData) {
     onError: (error) => {
       console.error('❌ Google 로그인 실패:', error);
     },
-    scope: 'https://www.googleapis.com/auth/calendar',
+    scope: 'https://www.googleapis.com/auth/calendar https://www.googleapis.com/auth/tasks',
     flow: 'implicit',
   });
 

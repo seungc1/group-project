@@ -1,6 +1,6 @@
 'use client';
 
-import { initGapiAuth } from './auth';
+import { initGapiAuth } from '@/lib/auth';
 import { sendPDFViaGmail } from './SendPDFViaGmail';
 import { fetchTxtContent } from '@/lib/fetchTxtContent';
 import styles from './styles.module.css';

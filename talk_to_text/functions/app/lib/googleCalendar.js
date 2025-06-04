@@ -22,11 +22,11 @@ export async function addEventToGoogleCalendar(accessToken, eventData) {
   });
 
   if (!res.ok) {
-    console.error('❌ 캘린더 등록 실패:', await res.text());
+    console.error('캘린더 등록 실패:', await res.text());
     throw new Error('Google Calendar 등록 실패');
   }
 
   const data = await res.json();
-  console.log('✅ 등록 성공:', data.htmlLink);
+  console.log('등록 성공:', data.htmlLink);
   return data;
 }

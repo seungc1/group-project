@@ -1,13 +1,11 @@
 // functions/app/components/features/Meeting/CalendarSyncTrigger.js (자동 로그인 후 일정 등록 트리거)
-
 'use client';
 
 import { useAutoGoogleLogin } from '@/hooks/useGoogleAccessToken'; // accessToken 받아오는 훅
 import { useEffect } from 'react';
 
 /**
- * Google OAuth로 자동 로그인 후 accessToken을 받아
- * 서버로 일정 등록 요청을 트리거하는 컴포넌트
+ * Google OAuth로 자동 로그인 후 accessToken을 받아 서버로 일정 등록 요청을 트리거하는 컴포넌트
  */
 export default function CalendarSyncTrigger({ start, end, title, description }) {
   const eventData = {
@@ -27,7 +25,7 @@ export default function CalendarSyncTrigger({ start, end, title, description }) 
         },
         body: JSON.stringify({
           ...eventData,
-          accessToken, // ✅ 서버에 전달
+          accessToken, // 서버에 전달
           userId,
           projectId,
           meetingId,

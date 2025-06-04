@@ -125,7 +125,13 @@ export default function MeetingForm({ projectId }) {
         throw new Error(result.error || '회의록 생성 중 오류가 발생했습니다.');
       }
 
-      // Python 서버에 음성 처리 요청
+      // Python 서버에 음성 처리 요청 (캘린더 등록 위한 액세스 토큰)
+      const accessToken = localStorage.getItem('googleAccessToken');
+      if (!accessToken) {
+        alert('구글 인증이 필요합니다. 다시 로그인 해주세요.');
+        setIsSubmitting(false);
+        return;
+      }
       const pythonResponse = await fetch('http://localhost:5001/process-audio', {
         method: 'POST',
         headers: {
@@ -135,7 +141,7 @@ export default function MeetingForm({ projectId }) {
           audioUrl: result.audioUrl,
           audioFileName: result.audioFileName || '',
           userId: user.uid,
-          // accessToken,
+          accessToken,  // 구글 캘린더 등록을 위한 액세스 토큰 변수
           meetingId: result.docId,
           projectId: result.projectId,
           meetingMinutesList: formData.get('meetingMinutesList') || '',
