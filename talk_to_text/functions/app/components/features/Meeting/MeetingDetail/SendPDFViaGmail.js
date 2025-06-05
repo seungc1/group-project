@@ -62,6 +62,11 @@ export async function sendPDFViaGmail(textContent) {
     const arrayBuffer = pdfDoc.output('arraybuffer');
     const pdfBlob = new Blob([arrayBuffer], { type: 'application/pdf' });
 
+    // ▶ 생성일자 구하기 (형식: YYYY-MM-DD)
+    const now = new Date();
+    const formattedDate = now.toISOString().split('T')[0]; // "YYYY-MM-DD"
+    const filename = `meeting-summary-${formattedDate}.pdf`;
+
     // 2. base64 변환 (76자 줄바꿈 포함)
     const base64PDF = await blobToBase64WithLineBreaks(pdfBlob);
 
@@ -71,7 +76,7 @@ export async function sendPDFViaGmail(textContent) {
       from: 'me',
       subject: '회의 요약 보고서',
       message: '첨부된 PDF 파일을 확인해주세요.',
-      filename: 'meeting-summary.pdf',
+      filename, // ← 생성일 포함된 파일명
       base64PDF,
     });
 

@@ -24,8 +24,9 @@ export default function LoginPage() {
     try {
       const provider = new GoogleAuthProvider();
 
-      // Google Calendar 권한 추가
+      // Google Calendar & Google Tasks 권한 추가
       provider.addScope('https://www.googleapis.com/auth/calendar.events');
+      provider.addScope('https://www.googleapis.com/auth/tasks');
 
       // 항상 계정 선택창을 띄우기
       provider.setCustomParameters({

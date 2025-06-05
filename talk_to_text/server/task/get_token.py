@@ -20,3 +20,5 @@ with open('token.json', 'w') as token:
     token.write(creds.to_json())
 
 print("새 token.json 파일이 생성되었습니다.")
+
+# 안쓰는 코드 일단 나둠

@@ -17,7 +17,8 @@ from firebase.storage_handler import upload_summary_text
 from firebase.firestore_handler import save_meeting_data, save_textinfo, save_tags, save_calendar_logs, get_meeting_data, get_all_transcripts
 from cal_module.datetime_extractor import extract_datetimes_from_text
 from task.task_extractor import extract_task_commands_with_solar
-from task.google_task_register import register_tasks, register_tasks_with_token
+# from task.google_task_register import register_tasks, register_tasks_with_token
+from task.tasks_api import register_tasks_with_token
 
 from calendar_logs_project.main import extract_and_store_schedule_logs
 from cal_module.calendar_api import create_calendar_event_with_token
@@ -198,11 +199,15 @@ def process_audio_endpoint():
         # 4-3. 명령형 문장 추출 및 Google Tasks 등록    
         # 1. 명령형 문장 추출
         commands = extract_task_commands_with_solar(summary_text)
-        commands = [cmd for cmd in commands if cmd.strip()]  # 불필요한 공백 제거
+        # commands = [cmd for cmd in commands if cmd.strip()]  # 불필요한 공백 제거
+        print("추출된 명령형 문장:", commands)
+        print("access_token:", access_token)
 
         # 2. Google Tasks 등록 (사용자별 accessToken 사용)
-        if commands:
-            register_tasks_with_token(commands, access_token, CLIENT_ID, CLIENT_SECRET)
+        if commands and access_token:
+            register_tasks_with_token(commands, access_token)
+        else:
+            print("명령형 문장 없음 또는 access_token 없음으로 등록 생략")
         
         # 5. 요약 파일 저장 및 Firebase 업로드
         summary_url = upload_summary_text(summary, audio_path, keywords)
