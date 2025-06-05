@@ -1,49 +1,75 @@
-// 파일 경로: project-root/app/components/common/buttons/SaveButton/index.js
 'use client';
 
-import { doc, getDoc, updateDoc } from "firebase/firestore";
-import { db } from "@/lib/firebase"; // 루트 경로에서 lib/firebase.js를 가져옵니다
+import { doc, getDoc, updateDoc } from 'firebase/firestore';
+import { db } from 'lib/firebase';
 
 /**
  * 저장 버튼 컴포넌트
+ *
  * props:
- *  - className  (string)  : 외부에서 전달된 CSS 클래스
- *  - meetingId  (string)  : URL-safe 인코딩된 회의 문서 ID
- *  - newSummary (string)  : 사용자가 입력한 최신 요약 내용
- *  - onSuccess  (function, optional) : 저장 성공 후 호출될 콜백
+ *  - className  (string): 외부에서 전달된 CSS 클래스
+ *  - userId     (string): Firestore 경로상의 사용자 UID
+ *  - projectId  (string): Firestore 경로상의 프로젝트 ID
+ *  - meetingId  (string): Firestore 경로상의 meeting 문서 ID
+ *  - newSummary (string): 사용자가 입력한 최신 요약
+ *  - onSuccess  (function, optional): 저장 성공 후 호출할 콜백
+ *  - disabled   (boolean, optional): 버튼 활성화/비활성화를 제어
  */
-export default function SaveButton({ className, meetingId, newSummary, onSuccess }) {
+export default function SaveButton({
+  className,
+  userId,
+  projectId,
+  meetingId,
+  newSummary,
+  onSuccess,
+  disabled = false,
+}) {
   const handleSave = async () => {
+    if (disabled) return;
+
     try {
-      // 1) URL-safe 인코딩 해제
-      const decodedId = decodeURIComponent(meetingId);
+      // 필수 식별자가 모두 전달되었는지 검증
+      if (!userId || !projectId || !meetingId) {
+        throw new Error('저장에 필요한 userId, projectId, meetingId 중 하나가 누락되었습니다.');
+      }
 
-      // 2) Firestore 내의 'meetings' 컬렉션에서 해당 문서를 찾습니다.
-      //    (프로젝트 구조에 따라 경로가 다를 수 있습니다. 
-      //     현재는 최상위 컬렉션 'meetings'를 사용한다고 가정합니다.)
-      const docRef = doc(db, "meetings", decodedId);
+      // Firestore 문서 레퍼런스 생성
+      const docRef = doc(
+        db,
+        'users',
+        userId,
+        'projects',
+        projectId,
+        'meetings',
+        meetingId
+      );
+
+      // 문서 존재 여부 확인
       const docSnap = await getDoc(docRef);
-
       if (!docSnap.exists()) {
-        alert("저장 실패: 회의 문서를 찾을 수 없습니다.");
+        alert('저장 실패: 해당 회의 문서를 찾을 수 없습니다.');
         return;
       }
 
-      // 3) Firestore 문서 업데이트 (summary 필드만 교체)
+      // summary 필드 업데이트
       await updateDoc(docRef, { summary: newSummary });
-      alert("수정된 요약이 저장되었습니다.");
+      alert('수정된 요약이 저장되었습니다.');
 
-      // 4) 저장 성공 시 호출되는 콜백 (선택적)
-      onSuccess?.();
+      // onSuccess 콜백 호출 (선택)
+      if (typeof onSuccess === 'function') {
+        onSuccess();
+      }
     } catch (error) {
-      alert("저장 실패: " + error.message);
+      console.error('❌ [SaveButton] 저장 중 에러 발생:', error);
+      alert('저장 실패: ' + error.message);
     }
   };
 
   return (
     <button
-      className={className}
+      className={`${className ?? ''} ${disabled ? 'opacity-50 cursor-not-allowed' : ''}`}
       onClick={handleSave}
+      disabled={disabled}
     >
       요약 저장
     </button>
