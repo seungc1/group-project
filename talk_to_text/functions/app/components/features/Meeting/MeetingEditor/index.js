@@ -1,4 +1,5 @@
-// 파일: app/components/meeting/MeetingEditor/index.js
+// project-root/app/components/features/MeetingEditor/index.js
+
 'use client';
 
 import { useState } from 'react';
@@ -7,17 +8,17 @@ import SaveButton from '@/components/common/buttons/SaveButton';
 
 export default function MeetingEditor({ meeting, meetingId }) {
   const [editableSummary, setEditableSummary] = useState(meeting.summary || '');
-  const [input, setInput] = useState('');
-  const [generated, setGenerated] = useState('');
+  const [input, setInput] = useState("");
+  const [generated, setGenerated] = useState("");
   const [isGenerating, setIsGenerating] = useState(false);
 
   const handleGenerate = async () => {
     if (!input.trim()) return;
     setIsGenerating(true);
     try {
-      const res = await fetch('/api/gpt-edit-summary', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+      const res = await fetch("/api/gpt-edit-summary", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           original: meeting.summary,
           userRequest: input,
@@ -28,7 +29,7 @@ export default function MeetingEditor({ meeting, meetingId }) {
       setGenerated(result);
     } catch (err) {
       console.error(err);
-      setGenerated('GPT 요청 중 오류가 발생했습니다.');
+      setGenerated("GPT 요청 중 오류가 발생했습니다.");
     } finally {
       setIsGenerating(false);
     }
@@ -36,13 +37,13 @@ export default function MeetingEditor({ meeting, meetingId }) {
 
   const handleApply = () => {
     setEditableSummary(generated);
-    setGenerated('');
-    setInput('');
+    setGenerated("");
+    setInput("");
   };
 
   const handleCancel = () => {
-    setGenerated('');
-    setInput('');
+    setGenerated("");
+    setInput("");
   };
 
   return (
@@ -50,7 +51,6 @@ export default function MeetingEditor({ meeting, meetingId }) {
       {/* 왼쪽: 직접 수정 가능한 요약 */}
       <div className={`${styles.leftPane} ${styles.summarySection}`}>
         <h3>현재 요약</h3>
-
         <div className={styles.scrollContainer}>
           <textarea
             className={styles.textarea}
@@ -58,25 +58,17 @@ export default function MeetingEditor({ meeting, meetingId }) {
             onChange={(e) => setEditableSummary(e.target.value)}
           />
         </div>
-
-        {/* 
-          SaveButton에 projectId와 userId(createdBy)를 넘겨줍니다. 
-          meeting 객체 안에 projectId, createdBy 필드가 반드시 있어야 합니다.
-        */}
         <SaveButton
           className={styles.saveButton}
           meetingId={meetingId}
-          projectId={meeting.projectId}     // 추가
-          userId={meeting.createdBy}        // 추가
           newSummary={editableSummary}
-          onSuccess={() => console.log('수정 저장 완료')}
+          onSuccess={() => console.log("수정 저장 완료")}
         />
       </div>
 
       {/* 오른쪽: GPT 수정 요청 */}
       <div className={`${styles.rightPane} ${styles.summarySection}`}>
         <h3>GPT 요약 수정 요청</h3>
-
         <div className={styles.gptArea}>
           <div className={styles.scrollContainer}>
             {generated ? (
@@ -94,7 +86,6 @@ export default function MeetingEditor({ meeting, meetingId }) {
               </div>
             )}
           </div>
-
           <div className={styles.chatRow}>
             <textarea
               className={styles.chatInput}
@@ -108,7 +99,7 @@ export default function MeetingEditor({ meeting, meetingId }) {
               onClick={handleGenerate}
               disabled={isGenerating}
             >
-              {isGenerating ? '요청 중…' : '요청'}
+              {isGenerating ? "요청 중…" : "요청"}
             </button>
           </div>
         </div>
