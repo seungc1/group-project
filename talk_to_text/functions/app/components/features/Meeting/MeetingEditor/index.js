@@ -93,7 +93,7 @@ export default function MeetingEditor({
     <div className={styles.container}>
       {/* ───────── 왼쪽 패널: 직접 편집 가능한 요약 ───────── */}
       <div className={`${styles.leftPane} ${styles.summarySection}`}>
-        <h3>현재 요약</h3>
+        <h3>현재 회의록</h3>
         <div className={styles.scrollContainer}>
           <textarea
             className={styles.textarea}
@@ -112,7 +112,10 @@ export default function MeetingEditor({
             meetingId={meetingId}
             newSummary={editableSummary}
             disabled={!isModified}
-            onSuccess={() => alert('수정이 완료되었습니다')}
+            onSuccess={() => {
+            alert('수정이 완료되었습니다');
+            router.back();
+}}
           />
           <button
             onClick={handleReset}
@@ -126,7 +129,7 @@ export default function MeetingEditor({
 
       {/* ───────── 오른쪽 패널: GPT 수정 요청 ───────── */}
       <div className={`${styles.rightPane} ${styles.summarySection}`}>
-        <h3>GPT 요약 수정 요청</h3>
+        <h3>회의록 수정 요청</h3>
 
         <div className={styles.gptArea}>
           <div className={styles.scrollContainer}>
@@ -141,7 +144,7 @@ export default function MeetingEditor({
               </div>
             ) : (
               <div className={styles.placeholderText}>
-                GPT가 제안한 수정 요약이 여기에 표시됩니다.
+                AI가 제안한 수정 요약이 여기에 표시됩니다.
               </div>
             )}
           </div>
@@ -151,7 +154,7 @@ export default function MeetingEditor({
               className={styles.chatInput}
               value={input}
               onChange={(e) => setInput(e.target.value)}
-              placeholder="GPT에게 요청할 내용을 입력하세요"
+              placeholder="AI에게 요청할 내용을 입력하세요"
               rows={1}
             />
             <button
