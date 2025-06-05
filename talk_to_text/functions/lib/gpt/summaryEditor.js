@@ -1,42 +1,42 @@
-// project-root/lib/gpt/summaryEditor.js
+// 파일 위치: project-root/lib/gpt/summaryEditor.js
 
 import OpenAI from "openai";
 
-// 환경변수에서 API 키 불러오기
+// OpenAI API 키를 환경변수에서 불러와 클라이언트 인스턴스 생성
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
 });
 
 /**
- * requestSummaryEdit_JSON
- * - originalValuesString: "값1\n\n값2\n\n값3\n\n..."
- * - userRequest: "더 간결하게 요약해줘" 같은 요청 문구
- * - GPT에게 “JSON”으로 리턴해 달라고 명시
- * 
- * 반환: JSON 문자열 (예: '{"회의 제목":"편집값1","참여인원":"편집값2",...}')
+ * requestSummaryEdit(originalValuesString, userRequest)
+ * - originalValuesString: 편집 대상 값들의 문자열 (값1\n\n값2\n\n값3…)
+ * - userRequest: 사용자의 지시문(예: "더 간결하게 요약해줘" 등)
+ * - 반환: “값1(편집됨)\n\n값2(편집됨)\n\n값3(편집됨)…”
+ *
+ * - 절대 안내문구, 추가 질문, 형식 자체를 건드리는 내용 금지!
  */
-export async function requestSummaryEdit_JSON(originalValuesString, userRequest) {
-  // GPT에 JSON 객체로만 리턴하라고 강하게 지시
+export async function requestSummaryEdit(originalValuesString, userRequest) {
   const messages = [
     {
       role: "system",
       content: [
-        "당신은 회의 보고서의 각 값(value)만 편집해서 반환하는 비서입니다.",
-        "반환형식은 반드시 JSON 객체 형태입니다. 예시: {\"회의 제목\":\"편집된 값1\",\"참여인원\":\"편집된 값2\", ...}",
-        "절대로 부가적인 안내문구, 설명, 질문을 포함하지 마세요."
+        "당신은 회의 보고서의 [ ] 안에 들어가는 “값(value)”들을 다듬어 주는 비서입니다.",
+        "반환값은 오직 “편집된 값”들만이어야 합니다.",
+        "절대로 [필드명]: 형식, 혹은 자체 문서의 양식을 변경하지 마세요.",
+        "“추가 요청이 있으면 알려주세요” 같은 안내문구를 절대 포함하지 마세요."
       ].join(" ")
     },
     {
       role: "user",
       content: `
-다음은 기존 보고서의 “값(value)” 목록입니다. 각 값 사이에는 빈 줄(\n\n)로 구분되어 있습니다:
+다음은 기존 보고서의 “값(value)” 목록입니다. 각 값(value) 사이에는 빈 줄(\n\n)로 구분되어 있습니다:
 
 ${originalValuesString}
 
-위 값들을 “순서를 유지한 채” 다음 요청대로 편집하여 JSON 객체로 반환해 주세요:
+위 “값(value)”들을 그대로 “순서를 유지한 채” 다음 요청대로 편집하여 돌려주세요:
 "${userRequest}"
 
-반환 예시: {"회의 제목":"편집된 값1","참여인원":"편집된 값2", ...}
+반환 형식: 값1\n\n값2\n\n값3...  (절대로 추가 안내문이나 질문 금지)
       `.trim(),
     },
   ];
@@ -49,17 +49,16 @@ ${originalValuesString}
       top_p: 0.8,
       frequency_penalty: 0.4,
       presence_penalty: 0.3,
-      max_tokens: 1500,
-      stop: null,  // JSON을 제대로 닫을 수 있도록 멈춤 토큰 생략
-      n: 1
+      max_tokens: 1200,
+      // stop 조건: 빈 줄 두 개가 나오면 멈추도록
+      //stop: ["\n\n"],
+      n: 1,
     });
 
-    // 받아온 GPT 응답 메시지 텍스트 (문자열로 JSON 출력되어야 한다)
-    const content = response.choices[0].message.content.trim();
-    return content;
+    // 첫 번째 선택지의 메시지 내용만 리턴
+    return response.choices[0].message.content.trim();
   } catch (err) {
-    console.error("[requestSummaryEdit_JSON] GPT 호출 실패:", err);
-    // 예외 발생 시 빈 JSON으로 리턴하거나, 오류 문구 리턴
-    return JSON.stringify({ error: "GPT 요청 중 오류가 발생했습니다." });
+    console.error("[requestSummaryEdit] GPT API 호출 실패:", err);
+    return "GPT 요청 중 오류가 발생했습니다.";
   }
 }

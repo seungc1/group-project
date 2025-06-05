@@ -1,17 +1,19 @@
-// project-root/app/components/features/MeetingEditor/index.js
-
+// 파일 경로: project-root/app/components/features/Meeting/MeetingEditor/index.js
 'use client';
 
-import { useState } from 'react';
-import styles from './style.module.css';
-import SaveButton from '@/components/common/buttons/SaveButton';
+import { useState } from "react";
+import styles from "./style.module.css"; // 동일 디렉토리의 style.module.css를 가져옵니다
+import SaveButton from "@/components/common/buttons/SaveButton";
 
 export default function MeetingEditor({ meeting, meetingId }) {
-  const [editableSummary, setEditableSummary] = useState(meeting.summary || '');
-  const [input, setInput] = useState("");
-  const [generated, setGenerated] = useState("");
+  // meeting.summary: 백엔드에서 받아온 기존 요약 (문자열)
+  // meetingId: URL-safe 인코딩된 회의 문서 ID
+  const [editableSummary, setEditableSummary] = useState(meeting.summary || "");
+  const [input, setInput] = useState("");        // GPT에게 요청할 텍스트
+  const [generated, setGenerated] = useState(""); // GPT가 반환한 수정된 요약
   const [isGenerating, setIsGenerating] = useState(false);
 
+  // “GPT에게 수정 요청” 버튼 클릭 시 호출
   const handleGenerate = async () => {
     if (!input.trim()) return;
     setIsGenerating(true);
@@ -26,7 +28,7 @@ export default function MeetingEditor({ meeting, meetingId }) {
       });
       const { result, error } = await res.json();
       if (error) throw new Error(error);
-      setGenerated(result);
+      setGenerated(result);   // GPT가 보낸 수정된 전체 보고서(값들) 문자열
     } catch (err) {
       console.error(err);
       setGenerated("GPT 요청 중 오류가 발생했습니다.");
@@ -35,12 +37,14 @@ export default function MeetingEditor({ meeting, meetingId }) {
     }
   };
 
+  // “변경사항 저장” 클릭 시: 좌측 textarea에 GPT가 보낸 수정본을 덮어쓰기
   const handleApply = () => {
     setEditableSummary(generated);
     setGenerated("");
     setInput("");
   };
 
+  // “취소” 클릭 시: GPT 결과 박스 숨김
   const handleCancel = () => {
     setGenerated("");
     setInput("");
@@ -48,9 +52,12 @@ export default function MeetingEditor({ meeting, meetingId }) {
 
   return (
     <div className={styles.container}>
-      {/* 왼쪽: 직접 수정 가능한 요약 */}
+      {/* ─────────────────────────────────────────────────────────────
+          왼쪽 패널: 직접 수정 가능한 “현재 요약” 영역
+      ───────────────────────────────────────────────────────────── */}
       <div className={`${styles.leftPane} ${styles.summarySection}`}>
         <h3>현재 요약</h3>
+        {/* 스크롤 가능한 영역 (textarea) */}
         <div className={styles.scrollContainer}>
           <textarea
             className={styles.textarea}
@@ -58,6 +65,7 @@ export default function MeetingEditor({ meeting, meetingId }) {
             onChange={(e) => setEditableSummary(e.target.value)}
           />
         </div>
+        {/* 항상 보이는 “요약 저장” 버튼 */}
         <SaveButton
           className={styles.saveButton}
           meetingId={meetingId}
@@ -66,10 +74,13 @@ export default function MeetingEditor({ meeting, meetingId }) {
         />
       </div>
 
-      {/* 오른쪽: GPT 수정 요청 */}
+      {/* ─────────────────────────────────────────────────────────────
+          오른쪽 패널: GPT “요약 수정 요청” 영역
+      ───────────────────────────────────────────────────────────── */}
       <div className={`${styles.rightPane} ${styles.summarySection}`}>
         <h3>GPT 요약 수정 요청</h3>
         <div className={styles.gptArea}>
+          {/* 1) 결과 영역(스크롤 가능): GPT 응답이 없으면 플레이스홀더, 있으면 결과 박스 */}
           <div className={styles.scrollContainer}>
             {generated ? (
               <div className={styles.gptResultBox}>
@@ -86,6 +97,8 @@ export default function MeetingEditor({ meeting, meetingId }) {
               </div>
             )}
           </div>
+
+          {/* 2) 항상 보이는 채팅 입력(요청) 행 */}
           <div className={styles.chatRow}>
             <textarea
               className={styles.chatInput}

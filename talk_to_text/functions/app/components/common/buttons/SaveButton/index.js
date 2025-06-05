@@ -1,64 +1,51 @@
-// 파일: app/components/common/buttons/SaveButton/index.js
+// 파일 경로: project-root/app/components/common/buttons/SaveButton/index.js
 'use client';
 
-import { doc, getDoc, updateDoc } from 'firebase/firestore';
-import { db } from 'lib/firebase';
+import { doc, getDoc, updateDoc } from "firebase/firestore";
+import { db } from "@/lib/firebase"; // 루트 경로에서 lib/firebase.js를 가져옵니다
 
-export default function SaveButton({ className, meetingId, projectId, userId, newSummary, onSuccess }) {
+/**
+ * 저장 버튼 컴포넌트
+ * props:
+ *  - className  (string)  : 외부에서 전달된 CSS 클래스
+ *  - meetingId  (string)  : URL-safe 인코딩된 회의 문서 ID
+ *  - newSummary (string)  : 사용자가 입력한 최신 요약 내용
+ *  - onSuccess  (function, optional) : 저장 성공 후 호출될 콜백
+ */
+export default function SaveButton({ className, meetingId, newSummary, onSuccess }) {
   const handleSave = async () => {
     try {
-      const decodedMeetingId = decodeURIComponent(meetingId);
-      const decodedProjectId = decodeURIComponent(projectId);
-      const decodedUserId = decodeURIComponent(userId);
+      // 1) URL-safe 인코딩 해제
+      const decodedId = decodeURIComponent(meetingId);
 
-      // Firestore 경로 예시:
-      // users/{userId}/projects/{projectId}/meetings/{meetingId}
-      const docRef = doc(
-        db,
-        'users',
-        decodedUserId,
-        'projects',
-        decodedProjectId,
-        'meetings',
-        decodedMeetingId
-      );
+      // 2) Firestore 내의 'meetings' 컬렉션에서 해당 문서를 찾습니다.
+      //    (프로젝트 구조에 따라 경로가 다를 수 있습니다. 
+      //     현재는 최상위 컬렉션 'meetings'를 사용한다고 가정합니다.)
+      const docRef = doc(db, "meetings", decodedId);
       const docSnap = await getDoc(docRef);
 
       if (!docSnap.exists()) {
-        alert('저장 실패: 회의 문서를 찾을 수 없습니다.');
+        alert("저장 실패: 회의 문서를 찾을 수 없습니다.");
         return;
       }
 
+      // 3) Firestore 문서 업데이트 (summary 필드만 교체)
       await updateDoc(docRef, { summary: newSummary });
-      alert('수정이 완료되었습니다.');
+      alert("수정된 요약이 저장되었습니다.");
+
+      // 4) 저장 성공 시 호출되는 콜백 (선택적)
       onSuccess?.();
     } catch (error) {
-      alert('저장 실패: ' + error.message);
+      alert("저장 실패: " + error.message);
     }
   };
 
-  const handleKeepEditing = () => {
-    // 모달을 닫고 그대로 에디터에 남아 있게 하고 싶으면 로직 추가
-  };
-
-  const handleGoBack = () => {
-    // 이전 페이지로 돌아가기 (Next.js router 사용)
-    window.history.back();
-  };
-
   return (
-    <div className={className}>
-      <button onClick={handleSave}>
-        요약 저장
-      </button>
-      {/* 저장 후 뜨는 안내창 예시 (임의 구현) */}
-      {/* 
-      <Modal>
-        <p>수정이 완료되었습니다.</p>
-        <button onClick={handleKeepEditing}>계속 수정하기</button>
-        <button onClick={handleGoBack}>이전으로 돌아가기</button>
-      </Modal>
-      */}
-    </div>
+    <button
+      className={className}
+      onClick={handleSave}
+    >
+      요약 저장
+    </button>
   );
 }
