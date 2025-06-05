@@ -9,7 +9,7 @@ import styles from './styles.module.css';
 
 export const NavigationRail = ({ isCollapsed, setIsCollapsed }) => {
   const router = useRouter();
-  const { user, logout, loginWithGoogle } = useAuth();
+  const { user, logout, loginWithGoogle, loading } = useAuth();
 
   const [folders, setFolders] = useState([]);
   const [showFolders, setShowFolders] = useState(false);
@@ -44,6 +44,7 @@ export const NavigationRail = ({ isCollapsed, setIsCollapsed }) => {
   };
 
   const handleFolderAreaClick = () => {
+    if (loading) return;
     if (!user) {
       router.push('/login');
       return;
@@ -61,6 +62,7 @@ export const NavigationRail = ({ isCollapsed, setIsCollapsed }) => {
   };
 
   const handleAddFolder = async () => {
+    if (loading) return;
     if (!user) {
       loginWithGoogle();
       return;
@@ -120,6 +122,7 @@ export const NavigationRail = ({ isCollapsed, setIsCollapsed }) => {
   };
 
   const handleCreateProjectClick = () => {
+    if (loading) return;
     if (!user) {
       router.push('/login');
       return;
@@ -128,6 +131,7 @@ export const NavigationRail = ({ isCollapsed, setIsCollapsed }) => {
   };
 
   const handleProjectsClick = () => {
+    if (loading) return;
     if (!user) {
       router.push('/login');
       return;
@@ -136,6 +140,7 @@ export const NavigationRail = ({ isCollapsed, setIsCollapsed }) => {
   };
 
   const handleBookmarksClick = () => {
+    if (loading) return;
     if (!user) {
       router.push('/login');
       return;
@@ -144,6 +149,7 @@ export const NavigationRail = ({ isCollapsed, setIsCollapsed }) => {
   };
 
   const handleRecordClick = () => {
+    if (loading) return;
     if (!user) {
       router.push('/login');
       return;

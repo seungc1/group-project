@@ -8,13 +8,13 @@ import Header from '@/components/ui/layout/Header';
 
 export default function RecordPage() {
   const { user } = useAuth();
-  if (!user) return null;
-
   const [isRecording, setIsRecording] = useState(false);
   const [audioUrl, setAudioUrl] = useState(null);
   const mediaRecorderRef = useRef(null);
   const audioChunksRef = useRef([]);
   const [fileName, setFileName] = useState(''); // 파일명 상태 추가
+
+  if (!user) return null;
 
   const handleStartRecording = async () => {
     setIsRecording(true);

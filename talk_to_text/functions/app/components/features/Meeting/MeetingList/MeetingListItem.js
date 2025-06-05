@@ -77,14 +77,6 @@ export default function MeetingListItem({ meeting, currentPage, projectId }) {
           }
         </p>
       </div>
-      
-      {/* 상세 페이지로 이동하는 버튼 */}
-      <button 
-        className={styles.viewButton}
-        onClick={e => { e.stopPropagation(); handleClick(); }}
-      >
-        보기
-      </button>
     </div>
   );
 } 

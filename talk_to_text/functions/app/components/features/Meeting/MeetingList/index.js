@@ -4,7 +4,7 @@
  * ProjectList 컴포넌트 (기존 MeetingListItem 디자인/구조와 동일)
  * - 해당 계정의 프로젝트 목록을 MeetingListItem 스타일로 표시
  */
-import { getAllProjects } from '@/lib/meetingsService';
+import { getAllProjects, deleteProject, renameProject } from '@/lib/meetingsService';
 import styles from './styles.module.css';
 import { useState, useEffect } from 'react';
 import { useAuth } from '@/app/context/AuthContext';
@@ -12,21 +12,92 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import Pagination from '@/components/common/Pagination';
 import RequireLogin from '@/components/common/RequireLogin';
 
-function ProjectListItem({ project, currentPage }) {
+function ProjectListItem({ project, currentPage, userId, onProjectDeleted, onProjectRenamed }) {
   const router = useRouter();
+  const [showMenu, setShowMenu] = useState(false);
+  const [editing, setEditing] = useState(false);
+  const [name, setName] = useState(project.name);
+  const [loading, setLoading] = useState(false);
+
   const handleClick = () => {
     router.push(`/projects/${project.id}`);
   };
+
+  const handleRename = async () => {
+    if (!name.trim() || name === project.name) {
+      setEditing(false);
+      setName(project.name);
+      return;
+    }
+    setLoading(true);
+    try {
+      await renameProject(userId, project.id, name.trim());
+      onProjectRenamed?.(project.id, name.trim());
+    } catch (e) {
+      alert('이름 변경 실패');
+      setName(project.name);
+    } finally {
+      setEditing(false);
+      setLoading(false);
+    }
+  };
+
+  const handleDelete = async () => {
+    if (!window.confirm('정말 이 프로젝트를 삭제하시겠습니까?')) return;
+    setLoading(true);
+    try {
+      await deleteProject(userId, project.id);
+      onProjectDeleted?.(project.id);
+    } catch (e) {
+      alert('삭제 실패');
+    } finally {
+      setShowMenu(false);
+      setLoading(false);
+    }
+  };
+
   return (
-    <div className={styles.meetingItem} onClick={handleClick} style={{ cursor: 'pointer' }}>
-      <div className={styles.meetingContent}>
-        <h3 style={{ color: '#111' }}>{project.name}</h3>
+    <div className={styles.meetingItem} style={{ position: 'relative', cursor: 'pointer' }}>
+      <div className={styles.meetingContent} onClick={handleClick}>
+        {editing ? (
+          <input
+            value={name}
+            onChange={e => setName(e.target.value)}
+            onBlur={handleRename}
+            onKeyDown={e => { if (e.key === 'Enter') handleRename(); if (e.key === 'Escape') { setEditing(false); setName(project.name); } }}
+            disabled={loading}
+            autoFocus
+            style={{ fontSize: 18, padding: 4, borderRadius: 4, border: '1px solid #ccc', width: 180 }}
+          />
+        ) : (
+          <h3 style={{ color: '#111', display: 'inline-block', marginRight: 8 }}>{project.name}</h3>
+        )}
         <p>설명: {project.description || '-'}</p>
         <p>생성일: {project.createdAt?.toDate ? project.createdAt.toDate().toLocaleDateString() : '-'}</p>
       </div>
-      <button className={styles.viewButton} onClick={e => { e.stopPropagation(); handleClick(); }}>
-        보기
-      </button>
+      {/* ⋮ 메뉴 */}
+      <div style={{ position: 'absolute', top: 12, right: 12 }}>
+        <button
+          className={styles.moreMenuButton}
+          style={{ color: '#333' }}
+          onClick={e => { e.stopPropagation(); setShowMenu(v => !v); }}
+        >
+          ⋮
+        </button>
+        {showMenu && (
+          <div className={styles.moreMenuDropdown}>
+            <button
+              onClick={e => { e.stopPropagation(); setEditing(true); setShowMenu(false); }}
+              disabled={loading}
+            >프로젝트 이름 변경</button>
+            <button
+              className={styles.danger}
+              onClick={e => { e.stopPropagation(); handleDelete(); }}
+              disabled={loading}
+            >프로젝트 삭제</button>
+          </div>
+        )}
+      </div>
     </div>
   );
 }
@@ -64,7 +135,7 @@ export default function ProjectList() {
   }, [user]);
 
   if (!user) {
-    return <RequireLogin />;
+    return null;
   }
 
   // 프로젝트 정렬 함수
@@ -86,6 +157,14 @@ export default function ProjectList() {
   const handlePageChange = (page) => {
     setCurrentPage(page);
     router.push(`/projects?page=${page}`);
+  };
+
+  // 삭제/이름변경 후 목록 갱신
+  const handleProjectDeleted = (projectId) => {
+    setProjects(prev => prev.filter(p => p.id !== projectId));
+  };
+  const handleProjectRenamed = (projectId, newName) => {
+    setProjects(prev => prev.map(p => p.id === projectId ? { ...p, name: newName } : p));
   };
 
   if (loading) {
@@ -130,7 +209,14 @@ export default function ProjectList() {
       </div>
       <div className={styles.meetingList}>
         {currentProjects.map(project => (
-          <ProjectListItem project={project} key={project.id} currentPage={currentPage} />
+          <ProjectListItem
+            project={project}
+            key={project.id}
+            currentPage={currentPage}
+            userId={user.uid}
+            onProjectDeleted={handleProjectDeleted}
+            onProjectRenamed={handleProjectRenamed}
+          />
         ))}
       </div>
       <Pagination

@@ -10,7 +10,7 @@ import 'react-datepicker/dist/react-datepicker.css';
 import styles from './styles.module.css';
 
 export default function ProjectForm() {
-  const { user } = useAuth();
+  const { user, loading } = useAuth();
   const router = useRouter();
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
@@ -18,7 +18,7 @@ export default function ProjectForm() {
   const [participants, setParticipants] = useState('');
   const [participantNames, setParticipantNames] = useState(['']);
   const [error, setError] = useState('');
-  const [loading, setLoading] = useState(false);
+  const [loadingSubmit, setLoadingSubmit] = useState(false);
 
   const handleParticipantNameChange = (idx, value) => {
     setParticipantNames(prev => prev.map((name, i) => i === idx ? value : name));
@@ -41,7 +41,7 @@ export default function ProjectForm() {
       setError('모든 필수 항목을 입력하세요.');
       return;
     }
-    setLoading(true);
+    setLoadingSubmit(true);
     try {
       const projectId = Date.now().toString();
       let names = participantNames;
@@ -68,13 +68,12 @@ export default function ProjectForm() {
     } catch (err) {
       setError('프로젝트 생성 중 오류가 발생했습니다.');
     } finally {
-      setLoading(false);
+      setLoadingSubmit(false);
     }
   };
 
-  if (!user) {
-    return <div className={styles.error}>로그인이 필요합니다.</div>;
-  }
+  if (loading) return null;
+  if (!user) return null;
 
   return (
     <form onSubmit={handleSubmit} className={styles.form}>
@@ -148,10 +147,10 @@ export default function ProjectForm() {
       {error && <div className={styles.error}>{error}</div>}
       <button 
         type="submit" 
-        disabled={loading} 
+        disabled={loadingSubmit} 
         className={styles.submitButton}
       >
-        {loading ? '생성 중...' : '생성'}
+        {loadingSubmit ? '생성 중...' : '생성'}
       </button>
     </form>
   );
