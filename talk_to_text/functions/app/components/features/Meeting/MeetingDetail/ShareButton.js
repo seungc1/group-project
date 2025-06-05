@@ -1,4 +1,5 @@
-'use client';
+// 파일 위치: app/components/features/Meeting/MeetingDetail/ShareButton.js
+'use client'; 
 
 import { initGapiAuth } from '@/lib/auth';
 import { sendPDFViaGmail } from './SendPDFViaGmail';

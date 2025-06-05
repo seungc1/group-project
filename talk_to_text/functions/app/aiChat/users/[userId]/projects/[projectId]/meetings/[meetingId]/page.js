@@ -1,3 +1,4 @@
+// 파일 위치: app/projects/[projectId]/meetings/[meetingId]/edit/page.js
 import Header from '@/components/ui/layout/Header/index';
 import MeetingEditor from '@/components/features/Meeting/MeetingEditor';
 import { getMeetingDetail } from '@/lib/meetingsService';
@@ -29,7 +30,12 @@ export default async function AiEditMeetingNote({ params }) {
   return (
     <>
       <Header title="회의록 수정" />
-      <MeetingEditor meeting={meeting} meetingId={meetingId} />
+      <MeetingEditor
+      meeting={meeting}
+      userId={userId}
+      projectId={projectId}
+      meetingId={meetingId}
+    />
     </>
   );
 } 
