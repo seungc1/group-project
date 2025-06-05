@@ -29,10 +29,10 @@ export default function Carousel() {
 
       {/* 캐러셀 아이템 2 */}
       <div className={styles['carousel-item']}>
-        <Link href="/projects/new">
+        <Link href="/projects">
          <Image
            src="/images/home2.png"
-           alt="홈 이미지 1"
+           alt="홈 이미지 2"
            width={300}
            height={300}
            draggable="false"
@@ -45,7 +45,7 @@ export default function Carousel() {
         <Link href="https://tasks.google.com/tasks/">
          <Image
            src="/images/home3.png"
-           alt="홈 이미지 1"
+           alt="홈 이미지 3"
            width={300}
            height={300}
            draggable="false"
