@@ -16,12 +16,13 @@ from nlp.text_processing import extract_keywords, extract_keywords_tfidf, summar
 from firebase.storage_handler import upload_summary_text
 from firebase.firestore_handler import save_meeting_data, save_textinfo, save_tags, save_calendar_logs, get_meeting_data, get_all_transcripts
 from cal_module.datetime_extractor import extract_datetimes_from_text
-from task.task_extractor import extract_task_commands_with_solar
+from task.task_extractor import extract_mainagenda_section, extract_resolution_section, extract_task_commands_with_solar
 # from task.google_task_register import register_tasks, register_tasks_with_token
 from task.tasks_api import register_tasks_with_token
 
 from calendar_logs_project.main import extract_and_store_schedule_logs
 from cal_module.calendar_api import create_calendar_event_with_token
+from collections import OrderedDict
 
 # .env 파일 강제 로드
 from dotenv import load_dotenv
@@ -196,19 +197,48 @@ def process_audio_endpoint():
                 event_links.append(event_link)
                 update_calendar_log(dt_info["logId"], event_link)
 
-        # 4-3. 명령형 문장 추출 및 Google Tasks 등록    
+        # 4-3. 명령형 문장 추출 및 Google Tasks 등록
+        
+        # 1. 회의록에서 [의결사항] 블록 추출
+        resolution_text = extract_resolution_section(summary_text)
+        print("[의결사항 블록]", resolution_text)
         # 1. 명령형 문장 추출
-        commands = extract_task_commands_with_solar(summary_text)
-        # commands = [cmd for cmd in commands if cmd.strip()]  # 불필요한 공백 제거
-        print("추출된 명령형 문장:", commands)
-        print("access_token:", access_token)
+        resolution_commands = extract_task_commands_with_solar(resolution_text)
+        resolution_commands = [cmd for cmd in resolution_commands if cmd.strip()]
+        print("[의결사항 명령형 문장]", resolution_commands)
+        
+        # 2. 회의록에서 [주요안건] 블록 추출
+        mainagenda_text = extract_mainagenda_section(summary_text)
+        print("[주요안건 블록]", mainagenda_text)
+        # 2. 명령형 문장 추출
+        mainagenda_commands = extract_task_commands_with_solar(mainagenda_text)
+        mainagenda_commands = [cmd for cmd in mainagenda_commands if cmd.strip()]
+        print("[주요안건 명령형 문장]", mainagenda_commands)
+        
+        # 3. 전체 명령형 문장 추출
+        all_commands = extract_task_commands_with_solar(summary_text)
+        all_commands = [cmd for cmd in all_commands if cmd.strip()]
+        print("[전체 명령형 문장]", all_commands)
+        
+        # 4. 최종 Tasks 구성
+        # 순서: 의결사항 → 주요안건 → 전체명령형 보완 등록
+        final_tasks = list(OrderedDict.fromkeys(resolution_commands))
+        for cmd in mainagenda_commands:
+            if cmd not in final_tasks:
+                final_tasks.append(cmd)
+        for cmd in all_commands:
+            if cmd not in final_tasks:
+                final_tasks.append(cmd)
+                
+        # 최종 결과 출력
+        print("[최종 등록할 Tasks]", final_tasks)
 
-        # 2. Google Tasks 등록 (사용자별 accessToken 사용)
-        if commands and access_token:
-            register_tasks_with_token(commands, access_token)
+        # 5. Google Tasks 등록 (사용자별 accessToken 사용)
+        if final_tasks and access_token:
+            register_tasks_with_token(final_tasks, access_token)
         else:
             print("명령형 문장 없음 또는 access_token 없음으로 등록 생략")
-        
+ 
         # 5. 요약 파일 저장 및 Firebase 업로드
         summary_url = upload_summary_text(summary, audio_path, keywords)
 
