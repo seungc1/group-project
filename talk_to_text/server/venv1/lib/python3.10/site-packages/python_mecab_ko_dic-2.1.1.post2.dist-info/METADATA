@@ -1,0 +1,31 @@
+Metadata-Version: 2.1
+Name: python-mecab-ko-dic
+Version: 2.1.1.post2
+Summary: mecab-ko-dic packaged for Python
+Home-page: https://github.com/jonghwanhyeon/python-mecab-ko-dic
+Author: Jonghwan Hyeon
+Author-email: jonghwanhyeon93@gmail.com
+License: Apache License 2.0
+Keywords: mecab,mecab-ko,mecab-dic
+Classifier: Intended Audience :: Science/Research
+Classifier: License :: OSI Approved :: Apache Software License
+Classifier: Natural Language :: Korean
+Classifier: Operating System :: OS Independent
+Classifier: Programming Language :: Python :: 3
+Classifier: Programming Language :: Python :: 3 :: Only
+Classifier: Topic :: Text Processing
+Classifier: Topic :: Text Processing :: Linguistic
+Description-Content-Type: text/markdown
+License-File: LICENSE
+
+# python-mecab-ko-dic
+This is a version of[`mecab-ko-dic`](https://bitbucket.org/eunjeon/mecab-ko-dic) packaged for easy use in Python.  In order to use `mecab-ko-dic`, a complicated process of installing [`mecab-ko`](https://bitbucket.org/eunjeon/mecab-ko) and building the dictionary is required. This library performs these processes in advance and makes the built dictionary available just through installation.
+
+## Credits
+The dictionary was created by Yongwoon Lee and Yungho Yu as part of [the Eunjeon proejct](http://eunjeon.blogspot.com/).
+
+## Usage
+```python
+import mecab_ko_dic
+print("Dictionary path:", mecab_ko_dic.dictionary_path)
+```

@@ -7,6 +7,7 @@
 
 // 컴포넌트 스타일 임포트
 import styles from './styles.module.css';
+import Img from 'next/image';
 
 export default function Carousel() {
   // 캐러셀 UI 렌더링
@@ -19,10 +20,7 @@ export default function Carousel() {
       <div className={styles['carousel-item']}></div>
       
       {/* 캐러셀 아이템 3 */}
-      <div className={styles['carousel-item']}></div>
-      
-      {/* 캐러셀 아이템 4 */}
-      <div className={styles['carousel-item']}></div>
+      <div className={styles['carousel-item']}>사람</div> 
     </section>
   );
-} 
+}
