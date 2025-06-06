@@ -120,7 +120,7 @@ export default function ProjectDetailPage() {
                     <button
                       onClick={(e) => {
                         e.stopPropagation();
-                        toggleBookmark(meeting.id);
+                        toggleBookmark(meeting.id, projectId, project?.name);
                       }}
                       className={styles.bookmarkButton}
                       title={bookmarkedMeetings.some(b => b.meetingId === meeting.id) ? '북마크 해제' : '북마크 추가'}
