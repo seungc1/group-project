@@ -10,15 +10,15 @@ import styles from './styles.module.css';
 import Header from '@/components/ui/layout/Header';
 
 export default function BookmarksPage() {
-  const { user } = useAuth();
+  const { user, loading } = useAuth();
   const { bookmarkedMeetings } = useBookmarks(user);
   const [bookmarkedList, setBookmarkedList] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [loadingBookmarks, setLoadingBookmarks] = useState(true);
   const router = useRouter();
 
   const bookmarkMap = useMemo(() => {
     const map = new Map();
-    bookmarkedMeetings.forEach(b => {
+    bookmarkedMeetings?.forEach?.(b => {
       map.set(b.meetingId, b.projectName);
     });
     return map;
@@ -26,9 +26,15 @@ export default function BookmarksPage() {
 
   useEffect(() => {
     const fetchData = async () => {
-      if (!user || !bookmarkedMeetings.length) {
+      // user, bookmarkedMeetings가 완전히 준비되지 않았으면 로딩 유지
+      if (loading || !user || !Array.isArray(bookmarkedMeetings)) {
         setBookmarkedList([]);
-        setLoading(false);
+        setLoadingBookmarks(true);
+        return;
+      }
+      if (!bookmarkedMeetings.length) {
+        setBookmarkedList([]);
+        setLoadingBookmarks(false);
         return;
       }
       const result = [];
@@ -39,10 +45,12 @@ export default function BookmarksPage() {
         } catch {}
       }
       setBookmarkedList(result);
-      setLoading(false);
+      setLoadingBookmarks(false);
     };
     fetchData();
-  }, [user, bookmarkedMeetings]);
+  }, [user, loading, bookmarkedMeetings]);
+
+  if (loading || !user || loadingBookmarks) return null;
 
   return (
     <>
@@ -51,7 +59,7 @@ export default function BookmarksPage() {
         {loading ? (
           <div style={{ padding: 32 }}>로딩 중...</div>
         ) : bookmarkedList.length === 0 ? (
-          <div className={styles.empty}>북마크한 회의가 없습니다.</div>
+          null
         ) : (
           <ul className={styles.bookmarksList}>
             {bookmarkedList.map(meeting => (

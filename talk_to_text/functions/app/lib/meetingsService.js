@@ -329,4 +329,42 @@ export const getAllProjects = async (userId) => {
   }));
 }; 
 
-export { markCalendarLogAsSynced }; 
+export { markCalendarLogAsSynced };
+
+// 프로젝트 삭제 (meetings, textinfo, tags, calendar_logs 등 하위 데이터도 함께 삭제)
+export const deleteProject = async (userId, projectId) => {
+  // 1. meetings 하위 문서들 삭제
+  const meetingsCol = collection(db, 'users', userId, 'projects', projectId, 'meetings');
+  const meetingsSnap = await getDocs(meetingsCol);
+  for (const meetingDoc of meetingsSnap.docs) {
+    // textinfo 삭제
+    const textinfoCol = collection(db, 'users', userId, 'projects', projectId, 'meetings', meetingDoc.id, 'textinfo');
+    const textinfoSnap = await getDocs(textinfoCol);
+    for (const textinfoDoc of textinfoSnap.docs) {
+      await deleteDoc(textinfoDoc.ref);
+    }
+    // tags 삭제
+    const tagsCol = collection(db, 'users', userId, 'projects', projectId, 'meetings', meetingDoc.id, 'tags');
+    const tagsSnap = await getDocs(tagsCol);
+    for (const tagDoc of tagsSnap.docs) {
+      await deleteDoc(tagDoc.ref);
+    }
+    // calendar_logs 삭제
+    const calCol = collection(db, 'users', userId, 'projects', projectId, 'meetings', meetingDoc.id, 'calendar_logs');
+    const calSnap = await getDocs(calCol);
+    for (const calDoc of calSnap.docs) {
+      await deleteDoc(calDoc.ref);
+    }
+    // meeting 문서 삭제
+    await deleteDoc(meetingDoc.ref);
+  }
+  // 2. 프로젝트 문서 삭제
+  const projectRef = doc(db, 'users', userId, 'projects', projectId);
+  await deleteDoc(projectRef);
+};
+
+// 프로젝트 이름 변경
+export const renameProject = async (userId, projectId, newName) => {
+  const projectRef = doc(db, 'users', userId, 'projects', projectId);
+  await updateDoc(projectRef, { name: newName });
+}; 

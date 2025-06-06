@@ -162,20 +162,6 @@
   line-height: 1.5;
 }
 
-.viewButton {
-  padding: 8px 16px;
-  background-color: #007bff;
-  color: white;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  transition: background-color 0.2s;
-}
-
-.viewButton:hover {
-  background-color: #0056b3;
-}
-
 .loading {
   display: flex;
   justify-content: center;
@@ -249,4 +235,42 @@
   background: #eef2ff;
   color: #4f46e5;
   font-weight: bold;
+}
+
+.moreMenuButton {
+  background: none;
+  border: none;
+  font-size: 20px;
+  cursor: pointer;
+  padding: 4px;
+}
+
+.moreMenuDropdown {
+  position: absolute;
+  right: 0;
+  top: 28px;
+  background: #fff;
+  border: 1px solid #eee;
+  border-radius: 6px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  z-index: 10;
+  min-width: 120px;
+}
+
+.moreMenuDropdown button {
+  width: 100%;
+  padding: 8px 12px;
+  background: none;
+  border: none;
+  text-align: left;
+  cursor: pointer;
+}
+
+.moreMenuDropdown button:disabled {
+  color: #aaa;
+  cursor: not-allowed;
+}
+
+.moreMenuDropdown .danger {
+  color: #d32f2f;
 } 

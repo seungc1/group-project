@@ -12,11 +12,14 @@ const AuthContext = createContext();
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
   const [accessToken, setAccessToken] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    return onAuthStateChanged(auth, (currentUser) => {
+    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
       setUser(currentUser);
+      setLoading(false);
     });
+    return unsubscribe;
   }, []);
 
   const logout = async () => {
@@ -58,7 +61,7 @@ export function AuthProvider({ children }) {
   };
 
   return (
-    <AuthContext.Provider value={{ user, logout,loginWithGoogle, accessToken }}>
+    <AuthContext.Provider value={{ user, logout,loginWithGoogle, accessToken, loading }}>
       {children}
     </AuthContext.Provider>
   );

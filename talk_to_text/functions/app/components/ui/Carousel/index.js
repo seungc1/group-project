@@ -9,6 +9,7 @@ import Image from 'next/image';
 import Link from 'next/link'; // Link 컴포넌트 임포트
 // 컴포넌트 스타일 임포트
 import styles from './styles.module.css';
+import Img from 'next/image';
 
 export default function Carousel() {
   // 캐러셀 UI 렌더링
