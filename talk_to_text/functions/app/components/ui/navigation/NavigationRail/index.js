@@ -225,20 +225,22 @@ export const NavigationRail = ({ isCollapsed, setIsCollapsed }) => {
               width={24}
               height={24}
             /></div>
-            <span>폴더</span>
-            <button
-              className={styles['editButton']}
-              style={{ marginLeft: 'auto' }}
-              onClick={handleEditClick}
-              title="폴더 편집"
-            >
-              <Image
-                src="/images/plus.png"
-                alt="설정"
-                width={12}
-                height={12}
-              />
-            </button>
+            <span style={{ marginLeft: 12 }}>폴더</span>
+            {!isCollapsed && (
+              <button
+                className={styles['editButton']}
+                style={{ marginLeft: 'auto' }}
+                onClick={handleEditClick}
+                title="폴더 편집"
+              >
+                <Image
+                  src="/images/plus.png"
+                  alt="설정"
+                  width={12}
+                  height={12}
+                />
+              </button>
+            )}
           </div>
           {showFolders && (
             <div className={styles['folderListInNav']}>
