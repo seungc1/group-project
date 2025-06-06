@@ -66,3 +66,63 @@
 .createButton:hover {
   background-color: #4727e5; /* green-400 */
 }
+
+.heroSection {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 50px; /* 캐릭터랑 텍스트 간격 */
+  padding: 40px;
+}
+
+.characterWrapper {
+  width: 300px; /* 네모 박스 크기 맞춤 */
+  height: 300px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.characterImage {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+}
+
+.textSection {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+}
+
+.container {
+  display: flex;
+  flex-direction: row; /* 가로 배치 강제 */
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  gap: 40px; /* 캐릭터랑 텍스트 사이 간격 */
+}
+
+.leftSection {
+  width: 300px;
+  height: 300px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.characterImage {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+}
+
+.rightSection {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+}

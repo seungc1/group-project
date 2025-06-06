@@ -68,12 +68,22 @@ export default function LoginPage() {
   };
 
   return (
-    <div className={styles.container}>
-      <h1 className={styles.title}>TalkToText</h1>
-      <p className={styles.subtitle}>Google 계정으로 시작하세요.</p>
-      <button className={styles.loginBtn} onClick={handleLogin}>
-        Google로 계속하기
-      </button>
+  <div className={styles.container}>
+    <div className={styles.contentWrapper}>
+      {/* 왼쪽 캐릭터 영역 */}
+      <div className={styles.characterWrapper}>
+        <img src="images/login_img.png" alt="Login Character" className={styles.characterImage} />
+      </div>
+
+      {/* 오른쪽 텍스트 + 버튼 영역 */}
+      <div className={styles.rightSection}>
+        <h1 className={styles.title}>TalkToText</h1>
+        <p className={styles.subtitle}>Google 계정으로 시작하세요.</p>
+        <button className={styles.loginBtn} onClick={handleLogin}>
+          Google로 계속하기
+        </button>
+      </div>
     </div>
-  );
+  </div>
+);
 }
