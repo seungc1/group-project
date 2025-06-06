@@ -66,6 +66,9 @@ def is_valid_command(text: str) -> bool:
     for pattern in COMMAND_PATTERNS:
         if re.search(pattern, text):
             return True
+    # 추가: 명령 축약형 패턴도 허용 (업로드, 작성, 검토, 공유, 확인 등)
+    if re.match(r".*(업로드|작성|검토|공유|확인)$", text):
+        return True    
     return False
 
 # 명령형 문장 추출용 프롬프트 생성
@@ -75,9 +78,12 @@ def make_prompt(text: str) -> str:
 예시 출력 형식:
 - 보고서를 작성해주세요
 - 코드를 수정해주세요
+- 업로드
+- 작성
 
 조건:
 - 명령형 표현(예: ~해주세요, ~하십시오, ~합니다 등)을 포함한 문장만 출력할 것
+- 또는 명령문 형태의 축약형(예: "업로드", "작성", "발표")도 명령문으로 간주하여 출력할 것
 - 회의 요약이나 다른 형식 없이, 오직 명령형 문장 리스트만 출력할 것
 
 텍스트:
@@ -94,7 +100,7 @@ def extract_task_commands_with_solar(text: str) -> list[str]:
     data = {
         "model": "solar-pro2-preview",
         "messages": [{"role": "user", "content": make_prompt(text)}],
-        "reasoning_effort": "high"
+        "reasoning_effort": "medium",
     }
 
     try:
@@ -109,7 +115,7 @@ def extract_task_commands_with_solar(text: str) -> list[str]:
         print(content)
 
         # 각 줄을 리스트로 분리하고 앞쪽 불릿 기호(-, •, ● 등) 제거 숫자 포함
-        raw_lines = [re.sub(r"^[-•●\d\)\.\s]+", "", line.strip()) for line in content.splitlines() if line.strip()]
+        raw_lines = [re.sub(r"^[-•●→‣※☆★▶→\d\)\.\s]+", "", line.strip()) for line in content.splitlines() if line.strip()]
         # 유효한 명령문인지 확인 후 필터링 (예: "해주세요", "하시기 바랍니다" 등)
         filtered = [line for line in raw_lines if is_valid_command(line)]
 
@@ -126,3 +132,23 @@ def extract_task_commands_with_solar(text: str) -> list[str]:
     except Exception as e:
         logger.exception(f"[명령형 문장 추출 실패] {e}")
         return []
+
+# 회의록에서 [의결사항] 항목의 추출 함수
+def extract_resolution_section(text: str) -> str:
+    # 의결사항 블록 추출
+    match = re.search(r"\[의결사항\]:\s*(.*?)(?:\n\[|\Z)", text, re.DOTALL)
+    if match:
+        resolution_text = match.group(1).strip()
+        return resolution_text
+    else:
+        return ""   # 없으면 빈 문자열 반환
+    
+# 회의록에서 [주요안건] 항목의 추출 함수
+def extract_mainagenda_section(text: str) -> str:
+    # 주요안건 블록 추출
+    match = re.search(r"\[주요안건\]:\s*(.*?)(?:\n\[|\Z)", text, re.DOTALL)
+    if match:
+        mainagenda_text = match.group(1).strip()
+        return mainagenda_text
+    else:
+        return ""   # 없으면 빈 문자열 반환
