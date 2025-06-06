@@ -1,8 +1,17 @@
 {
   "compilerOptions": {
-    "baseUrl": ".",
+    "baseUrl": "app",
     "paths": {
-      "@/*": ["./app/*"] // 여기를 app 기준으로 재설정
+      "@/*": ["*"]
     }
   }
 }
+
+// {
+//   "compilerOptions": {
+//     "baseUrl": ".",
+//     "paths": {
+//       "@/*": ["functions/app/*"]
+//     }
+//   }
+//}

@@ -7,7 +7,7 @@
 // Next.js 서버 응답 객체 임포트
 import { NextResponse } from 'next/server';
 // Firebase 데이터베이스 인스턴스 임포트
-import { db } from '@/lib/firebase';
+import { db } from 'lib/firebase';
 // Firestore 쿼리 관련 함수들 임포트
 import { collection, getDocs, orderBy, query } from 'firebase/firestore';
 

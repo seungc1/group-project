@@ -1,6 +1,6 @@
 export const processAudio = async (audioUrl) => {
   try {
-    const response = await fetch('/api/process-audio', {
+    const response = await fetch('http://localhost:5000/api/process-audio', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

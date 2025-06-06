@@ -8,9 +8,12 @@
 // 컴포넌트 스타일 임포트
 import styles from './styles.module.css';
 import DownloadButton from './DownloadButton';
+import ShareButton from './ShareButton';
 import EditSummaryButton from './EditSummaryButton';
+import { useAuth } from '@/app/context/AuthContext';
 
 export default function MeetingSummary({ meeting }) {
+  const { user } = useAuth();
   // 요약 섹션 UI 렌더링
   return (
     <div className={styles.summarySection}>
@@ -35,7 +38,8 @@ export default function MeetingSummary({ meeting }) {
       {meeting.summaryDownloadUrl && (
         <div className={styles.downloadSection}>
           <DownloadButton url={meeting.summaryDownloadUrl} />
-          <EditSummaryButton meetingId={meeting.id} />
+          <ShareButton url={meeting.summaryDownloadUrl} />
+          <EditSummaryButton meeting={meeting} userId={user?.uid} />
         </div>
       )}
     </div>

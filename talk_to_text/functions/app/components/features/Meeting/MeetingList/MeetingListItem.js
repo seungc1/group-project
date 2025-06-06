@@ -12,6 +12,8 @@
  * @param {string[]} props.meeting.participantName - 참석자 이름 배열
  * @param {number} props.meeting.participants - 참석자 수
  * @param {Array} props.meeting.textinfo - 회의 내용 세그먼트 배열
+ * @param {string} props.currentPage - 현재 페이지
+ * @param {string} props.projectId - 프로젝트 ID
  * 
  * @example
  * <MeetingListItem meeting={{
@@ -20,7 +22,7 @@
  *   participantName: ["홍길동", "김철수"],
  *   participants: 2,
  *   textinfo: [{text: "회의 내용..."}]
- * }} />
+ * }} currentPage="1" projectId="456" />
  * 
  * @returns {JSX.Element} 회의 목록 항목 컴포넌트
  */
@@ -30,43 +32,51 @@
 import { useRouter } from 'next/navigation';
 import styles from './styles.module.css';
 
-export default function MeetingListItem({ meeting }) {
+export default function MeetingListItem({ meeting, currentPage, projectId }) {
   const router = useRouter();
 
   // 회의 상세 페이지로 이동하는 핸들러 함수
   const handleClick = () => {
     const encodedId = encodeURIComponent(meeting.id);
-    router.push(`/meetings/${encodedId}`);
+    const encodedProjectId = encodeURIComponent(projectId || meeting.projectId);
+    let url = `/projects/${encodedProjectId}/meetings/${encodedId}`;
+    if (currentPage) {
+      url += `?page=${currentPage}`;
+    }
+    router.push(url);
   };
 
   return (
-    <div className={styles.meetingItem}>
+    <div className={styles.meetingItem} onClick={handleClick} style={{ cursor: 'pointer' }}>
       {/* 회의 내용 컨테이너 */}
       <div className={styles.meetingContent}>
         {/* 회의 제목 */}
         <h3>{meeting.title}</h3>
         
-        {/* 참석자 이름 목록 */}
-        <p>참석자: {meeting.participantName?.join(', ')}</p>
-        
-        {/* 참석자 수 */}
-        <p>참석자 수: {meeting.participants}명</p>
-        
-        {/* 회의 내용 요약 (첫 3개 세그먼트만 표시) */}
-        {meeting.textinfo && (
-          <p className={styles.summary}>
-            {meeting.textinfo.slice(0, 3).map(segment => segment.text).join(' ')}...
-          </p>
-        )}
+        {/* 참석자 이름 및 회의 날짜 */}
+        <p style={{ color: '#111' }}>
+          회의날짜: {meeting.meetingDate
+            ? (typeof meeting.meetingDate === 'string'
+                ? meeting.meetingDate
+                : meeting.meetingDate.toDate
+                  ? meeting.meetingDate.toDate().toLocaleDateString()
+                  : String(meeting.meetingDate))
+            : '날짜 없음'}
+        </p>
+        <p style={{ color: '#111' }}>
+          참석자: {
+            Array.isArray(meeting.participantNames)
+              ? meeting.participantNames.join(', ')
+              : typeof meeting.participantNames === 'string' && meeting.participantNames
+                ? (() => { try { return JSON.parse(meeting.participantNames).join(', '); } catch { return meeting.participantNames; } })()
+                : Array.isArray(meeting.participantName)
+                  ? meeting.participantName.join(', ')
+                  : typeof meeting.participantName === 'string' && meeting.participantName
+                    ? meeting.participantName
+                    : '정보 없음'
+          }
+        </p>
       </div>
-      
-      {/* 상세 페이지로 이동하는 버튼 */}
-      <button 
-        className={styles.viewButton}
-        onClick={handleClick}
-      >
-        보기
-      </button>
     </div>
   );
 } 

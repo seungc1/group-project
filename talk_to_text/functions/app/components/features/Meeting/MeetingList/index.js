@@ -1,29 +1,229 @@
+'use client';
+
 /**
- * 회의 목록을 표시하는 컴포넌트
- * - 회의 데이터를 가져와서 목록으로 표시
- * - 각 회의 항목 클릭 시 상세 페이지로 이동
- * - 로딩, 에러, 빈 목록 상태 처리
+ * ProjectList 컴포넌트 (기존 MeetingListItem 디자인/구조와 동일)
+ * - 해당 계정의 프로젝트 목록을 MeetingListItem 스타일로 표시
  */
-import { getRecentMeetings } from '@/app/services/meetingService';
-import MeetingListItem from './MeetingListItem';
+import { getAllProjects, deleteProject, renameProject } from '@/lib/meetingsService';
 import styles from './styles.module.css';
+import { useState, useEffect } from 'react';
+import { useAuth } from '@/app/context/AuthContext';
+import { useRouter, useSearchParams } from 'next/navigation';
+import Pagination from '@/components/common/Pagination';
+import RequireLogin from '@/components/common/RequireLogin';
 
-export default async function MeetingList() {
-  // 서버에서 회의 데이터 가져오기
-  const meetings = await getRecentMeetings();
+function ProjectListItem({ project, currentPage, userId, onProjectDeleted, onProjectRenamed }) {
+  const router = useRouter();
+  const [showMenu, setShowMenu] = useState(false);
+  const [editing, setEditing] = useState(false);
+  const [name, setName] = useState(project.name);
+  const [loading, setLoading] = useState(false);
 
-  // 회의 목록이 비어있을 때 표시
-  if (meetings.length === 0) {
-    return <div className={styles.empty}>등록된 회의가 없습니다.</div>;
+  const handleClick = () => {
+    router.push(`/projects/${project.id}`);
+  };
+
+  const handleRename = async () => {
+    if (!name.trim() || name === project.name) {
+      setEditing(false);
+      setName(project.name);
+      return;
+    }
+    setLoading(true);
+    try {
+      await renameProject(userId, project.id, name.trim());
+      onProjectRenamed?.(project.id, name.trim());
+    } catch (e) {
+      alert('이름 변경 실패');
+      setName(project.name);
+    } finally {
+      setEditing(false);
+      setLoading(false);
+    }
+  };
+
+  const handleDelete = async () => {
+    if (!window.confirm('정말 이 프로젝트를 삭제하시겠습니까?')) return;
+    setLoading(true);
+    try {
+      await deleteProject(userId, project.id);
+      onProjectDeleted?.(project.id);
+    } catch (e) {
+      alert('삭제 실패');
+    } finally {
+      setShowMenu(false);
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div className={styles.meetingItem} style={{ position: 'relative', cursor: 'pointer' }}>
+      <div className={styles.meetingContent} onClick={handleClick}>
+        {editing ? (
+          <input
+            value={name}
+            onChange={e => setName(e.target.value)}
+            onBlur={handleRename}
+            onKeyDown={e => { if (e.key === 'Enter') handleRename(); if (e.key === 'Escape') { setEditing(false); setName(project.name); } }}
+            disabled={loading}
+            autoFocus
+            style={{ fontSize: 18, padding: 4, borderRadius: 4, border: '1px solid #ccc', width: 180 }}
+          />
+        ) : (
+          <h3 style={{ color: '#111', display: 'inline-block', marginRight: 8 }}>{project.name}</h3>
+        )}
+        <p>설명: {project.description || '-'}</p>
+        <p>생성일: {project.createdAt?.toDate ? project.createdAt.toDate().toLocaleDateString() : '-'}</p>
+      </div>
+      {/* ⋮ 메뉴 */}
+      <div style={{ position: 'absolute', top: 12, right: 12 }}>
+        <button
+          className={styles.moreMenuButton}
+          style={{ color: '#333' }}
+          onClick={e => { e.stopPropagation(); setShowMenu(v => !v); }}
+        >
+          ⋮
+        </button>
+        {showMenu && (
+          <div className={styles.moreMenuDropdown}>
+            <button
+              onClick={e => { e.stopPropagation(); setEditing(true); setShowMenu(false); }}
+              disabled={loading}
+            >프로젝트 이름 변경</button>
+            <button
+              className={styles.danger}
+              onClick={e => { e.stopPropagation(); handleDelete(); }}
+              disabled={loading}
+            >프로젝트 삭제</button>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+export default function ProjectList() {
+  const [projects, setProjects] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const { user } = useAuth();
+  const searchParams = useSearchParams();
+  const router = useRouter();
+  const pageParam = parseInt(searchParams.get('page') || '1', 10);
+  const [currentPage, setCurrentPage] = useState(pageParam);
+  const [sortOrder, setSortOrder] = useState('desc'); // 'asc' 또는 'desc'
+  const projectsPerPage = 5;
+
+  useEffect(() => {
+    setCurrentPage(pageParam);
+  }, [pageParam]);
+
+  useEffect(() => {
+    const fetchProjects = async () => {
+      if (user) {
+        try {
+          const projectsList = await getAllProjects(user.uid);
+          setProjects(projectsList);
+        } catch (err) {
+          setError(err.message);
+        } finally {
+          setLoading(false);
+        }
+      }
+    };
+    fetchProjects();
+  }, [user]);
+
+  if (!user) {
+    return null;
   }
 
-  // 회의 목록 UI 렌더링
+  // 프로젝트 정렬 함수
+  const sortProjects = (projects, order) => {
+    return [...projects].sort((a, b) => {
+      const dateA = new Date(a.createdAt?.toDate?.() || 0);
+      const dateB = new Date(b.createdAt?.toDate?.() || 0);
+      return order === 'asc' ? dateA - dateB : dateB - dateA;
+    });
+  };
+
+  // 정렬 순서 변경
+  const toggleSortOrder = () => {
+    const newOrder = sortOrder === 'asc' ? 'desc' : 'asc';
+    setSortOrder(newOrder);
+    setProjects(prev => sortProjects(prev, newOrder));
+  };
+
+  const handlePageChange = (page) => {
+    setCurrentPage(page);
+    router.push(`/projects?page=${page}`);
+  };
+
+  // 삭제/이름변경 후 목록 갱신
+  const handleProjectDeleted = (projectId) => {
+    setProjects(prev => prev.filter(p => p.id !== projectId));
+  };
+  const handleProjectRenamed = (projectId, newName) => {
+    setProjects(prev => prev.map(p => p.id === projectId ? { ...p, name: newName } : p));
+  };
+
+  if (loading) {
+    return <div className={styles.loading}>로딩 중...</div>;
+  }
+
+  if (error) {
+    return <div className={styles.error}>에러 발생: {error}</div>;
+  }
+
+  if (projects.length === 0) {
+    return <div className={styles.empty}>프로젝트가 없습니다.</div>;
+  }
+
+  // 페이지네이션 계산
+  const indexOfLast = currentPage * projectsPerPage;
+  const indexOfFirst = indexOfLast - projectsPerPage;
+  const currentProjects = projects.slice(indexOfFirst, indexOfLast);
+  const totalPages = Math.ceil(projects.length / projectsPerPage);
+
   return (
-    <div className={styles.meetingsList}>
-      {/* 각 회의 항목을 순회하며 렌더링 */}
-      {meetings.map((meeting) => (
-        <MeetingListItem key={meeting.id} meeting={meeting} />
-      ))}
-    </div>
+    <>
+      <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: 16 }}>
+        <button
+          onClick={toggleSortOrder}
+          style={{
+            padding: '8px 16px',
+            borderRadius: 6,
+            border: '1px solid #e5e7eb',
+            background: '#fff',
+            color: '#4f46e5',
+            cursor: 'pointer',
+            display: 'flex',
+            alignItems: 'center',
+            gap: 8,
+            fontSize: 14
+          }}
+        >
+          {sortOrder === 'asc' ? '오래된순' : '최신순'}
+          {sortOrder === 'asc' ? '↑' : '↓'}
+        </button>
+      </div>
+      <div className={styles.meetingList}>
+        {currentProjects.map(project => (
+          <ProjectListItem
+            project={project}
+            key={project.id}
+            currentPage={currentPage}
+            userId={user.uid}
+            onProjectDeleted={handleProjectDeleted}
+            onProjectRenamed={handleProjectRenamed}
+          />
+        ))}
+      </div>
+      <Pagination
+        currentPage={currentPage}
+        totalPages={totalPages}
+        onPageChange={handlePageChange}
+      />
+    </>
   );
 } 

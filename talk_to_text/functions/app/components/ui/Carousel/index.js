@@ -5,24 +5,54 @@
  */
 'use client';
 
+import Image from 'next/image';
+import Link from 'next/link'; // Link 컴포넌트 임포트
 // 컴포넌트 스타일 임포트
 import styles from './styles.module.css';
+import Img from 'next/image';
 
 export default function Carousel() {
   // 캐러셀 UI 렌더링
   return (
     <section className={styles.carousel}>
-      {/* 캐러셀 아이템 1 */}
-      <div className={styles['carousel-item']}></div>
-      
+      {/* 캐러셀 아이템 1: 클릭 시 /projects/new 로 이동 */}
+      <div className={styles['carousel-item']}>
+        <Link href="/projects/new">
+         <Image
+           src="/images/home1.png"
+           alt="홈 이미지 1"
+           width={300}
+           height={300}
+           draggable="false"
+         />
+       </Link>
+      </div>
+
       {/* 캐러셀 아이템 2 */}
-      <div className={styles['carousel-item']}></div>
-      
+      <div className={styles['carousel-item']}>
+        <Link href="/projects">
+         <Image
+           src="/images/home2.png"
+           alt="홈 이미지 2"
+           width={300}
+           height={300}
+           draggable="false"
+         />
+       </Link>
+      </div>
+
       {/* 캐러셀 아이템 3 */}
-      <div className={styles['carousel-item']}></div>
-      
-      {/* 캐러셀 아이템 4 */}
-      <div className={styles['carousel-item']}></div>
+      <div className={styles['carousel-item']}>
+        <Link href="https://tasks.google.com/tasks/">
+         <Image
+           src="/images/home3.png"
+           alt="홈 이미지 3"
+           width={300}
+           height={300}
+           draggable="false"
+         />
+       </Link>
+      </div>
     </section>
   );
-} 
+}
