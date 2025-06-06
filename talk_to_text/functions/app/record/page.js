@@ -161,7 +161,7 @@ export default function RecordPage() {
                   WAV 파일 다운로드
                 </button>
 
-                <Link href="/create" className={styles.createButton}>
+                <Link href="/projects/new" className={styles.createButton}>
                   회의록 생성하러가기
                 </Link>
               </div>
