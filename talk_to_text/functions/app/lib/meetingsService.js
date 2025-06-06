@@ -329,7 +329,7 @@ export const getAllProjects = async (userId) => {
   }));
 }; 
 
-export { markCalendarLogAsSynced };
+export { markCalendarLogAsSynced }; 
 
 // 프로젝트 삭제 (meetings, textinfo, tags, calendar_logs 등 하위 데이터도 함께 삭제)
 export const deleteProject = async (userId, projectId) => {
