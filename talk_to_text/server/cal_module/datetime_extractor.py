@@ -33,10 +33,38 @@ def rule_based_datetime(text: str, base: datetime) -> list[tuple[str, datetime]]
     if "모레" in text:
         results.append(("모레", base + timedelta(days=2)))
     if "다음 주" in text or "다음주" in text:
+        # 이번주 월요일
+        this_monday = base - timedelta(days=base.weekday())
+        # 다음주 월요일
+        next_monday = this_monday + timedelta(weeks=1)
+
+        # 다음주 화요일이면, 이번주 월요일로 갔다가, 여기서 7일 더해서 다음주로 월요일로 가서, 거기서 원하는 요일 계산
         for label, weekday in DAYS.items():
-            if label in text:
-                offset = (weekday - base.weekday() + 7) % 7 + 7
-                results.append((f"다음주 {label}", base + timedelta(days=offset)))
+            pattern = rf"다음\s*주\s*{label}"
+            if re.search(pattern, text):
+                days_to_target = (weekday - 0 + 7) % 7
+                target_date = next_monday + timedelta(days=days_to_target)
+                results.append((f"다음주 {label}", target_date))
+    
+    # 숫자 기반 일정 패턴 처리
+    date_pattern = re.search(r"(\d{1,2})월\s*(\d{1,2})일", text)
+    if date_pattern:
+        month, day = map(int, date_pattern.groups())
+        try:
+            year = base.year
+            candidate_date = datetime(year, month, day)
+            if candidate_date < base:
+                candidate_date = datetime(year + 1, month, day)
+            results.append((f"{month}월 {day}일", candidate_date))
+        except ValueError:
+            pass
+
+    return results
+    # if "다음 주" in text or "다음주" in text:
+    #     for label, weekday in DAYS.items():
+    #         if label in text:
+    #             offset = (weekday - base.weekday() + 7) % 7 + 7
+    #             results.append((f"다음주 {label}", base + timedelta(days=offset)))
     return results
 
 # 시각 추출 함수
