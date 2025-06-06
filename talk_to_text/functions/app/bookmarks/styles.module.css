@@ -1,7 +1,7 @@
 .bookmarksContainer {
-  max-width: 800px;
-  margin: 0 auto;
-  padding: 32px;
+  max-width: 100%;
+  margin: 0;
+  padding: 32px 0 0 0;
 }
 
 .bookmarksTitle {
@@ -17,15 +17,20 @@
 .bookmarksList {
   list-style: none;
   padding: 0;
+  margin: 0;
 }
 
 .bookmarkItem {
   background: #f8f9fa;
-  border-radius: 8px;
-  margin-bottom: 16px;
-  padding: 20px;
+  border-radius: 0;
+  margin-bottom: 8px;
+  padding: 20px 0 20px 24px;
   cursor: pointer;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+  box-shadow: none;
+  width: 100%;
+  min-width: 0;
+  max-width: 100%;
+  border-bottom: 1px solid #ececec;
 }
 
 .projectName {

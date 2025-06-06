@@ -178,9 +178,11 @@ export default function Calendar({ projectId }) {
                   }}
                 >
                   <span>{meeting.title}</span>
+                  {/*
                   <span style={{ color: '#888', fontSize: '0.9em', marginLeft: 8 }}>
                     {meetingDate ? meetingDate.toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit' }) : ''}
                   </span>
+                  */}
                 </div>
               );
             })}

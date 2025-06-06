@@ -21,7 +21,7 @@ export default function FloatingActionButton() {
 
   // 회의록 생성 페이지로 이동하는 핸들러 함수
   const handleClick = () => {
-    router.push('/create');
+    router.push('/projects/new');
   };
 
   return (

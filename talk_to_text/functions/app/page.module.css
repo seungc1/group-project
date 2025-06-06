@@ -209,6 +209,7 @@ a.secondary {
   box-shadow: none;
   border-radius: 0;
   justify-content: flex-start;
+  position: relative;
 }
 
 .leftPanel {
