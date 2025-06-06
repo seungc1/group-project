@@ -1,27 +1,53 @@
+/* 파일 위치 : app/components/ui/Carousel/styles.module.css */
+
 .carousel {
   display: flex;
-  flex-wrap: wrap;
+  /* flex-wrap: wrap;  기존 wrap 제거 → 한 줄로 고정  */
+  flex-wrap: nowrap;
   gap: 16px;
-  justify-content: flex-start;
-  padding: 1rem;
-  scroll-snap-type: x mandatory;
+
+  /* 컨테이너가 아이템보다 넓어도 가운데 정렬 */
+  justify-content: center;
+
+  /* 아이템이 화면을 벗어나면 가로 스크롤 생기도록 */
+  overflow-x: auto;
+  /* 터치스크롤 부드럽게 (iOS 등) */
   -webkit-overflow-scrolling: touch;
+
+  padding: 1rem;
+
+  /* 스냅 기능이 필요하다면 그대로 두거나, 원하지 않으면 제거하세요 */
+  scroll-snap-type: x mandatory;
 }
 
 .carousel-item {
+  /* 고정 폭을 유지하면서 한 줄(row)에 고정 */
   width: 300px;
   min-width: 300px;
   max-width: 300px;
+
   flex: 0 0 auto;
   height: 300px;
+
   background-color: #f3f4f6;
   border-radius: 0.5rem;
+
+  /* 스크롤 스냅이 필요하다면 유지 */
   scroll-snap-align: start;
+
+  /* 이미지가 중앙에 정렬되도록 flex 컨테이너로 변경 */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden; /* 이미지가 넘칠 때 잘라내기 */
 }
 
+/* 기존 .carousel-item img 대신 아래처럼 수정 */
 .carousel-item img {
+  /* 아이템을 가득 채우며 비율 유지 */
   width: 100%;
   height: 100%;
   object-fit: cover;
+  /* 테두리 반경이 아이템과 동일해야 끊김 없이 모서리가 둥글게 보임 */
   border-radius: 0.5rem;
 }

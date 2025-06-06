@@ -3,6 +3,7 @@
  * - 여러 항목을 슬라이드 형태로 표시
  * - 현재는 기본 구조만 구현되어 있으며, 실제 슬라이드 기능은 추후 구현 예정
  */
+//파일위치 group-project/talk_to_text/functions/app/components/ui/Carousel/index.js
 'use client';
 
 import Image from 'next/image';
