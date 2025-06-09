@@ -33,38 +33,41 @@ def rule_based_datetime(text: str, base: datetime) -> list[tuple[str, datetime]]
     if "모레" in text:
         results.append(("모레", base + timedelta(days=2)))
     if "다음 주" in text or "다음주" in text:
-        # 이번주 월요일
+        # 이번주 월요일 (현재 날짜에서 이번주 주 시작일로 이동)
         this_monday = base - timedelta(days=base.weekday())
-        # 다음주 월요일
+        # 다음주 월요일 (이번주 월요일에서 +1주 이동 → 다음주 주 시작일 확보)
         next_monday = this_monday + timedelta(weeks=1)
 
         # 다음주 화요일이면, 이번주 월요일로 갔다가, 여기서 7일 더해서 다음주로 월요일로 가서, 거기서 원하는 요일 계산
         for label, weekday in DAYS.items():
             pattern = rf"다음\s*주\s*{label}"
             if re.search(pattern, text):
+                # 다음주 월요일에서 원하는 요일까지 offset 계산
                 days_to_target = (weekday - 0 + 7) % 7
                 target_date = next_monday + timedelta(days=days_to_target)
+                
+                # (표현, datetime) 결과로 저장
                 results.append((f"다음주 {label}", target_date))
     
-    # 숫자 기반 일정 패턴 처리
+    # 숫자 기반 일정 패턴 처리 (예: "6월 10일" → 날짜 인식)
     date_pattern = re.search(r"(\d{1,2})월\s*(\d{1,2})일", text)
     if date_pattern:
+        # 정규식으로 월(month), 일(day) 추출
         month, day = map(int, date_pattern.groups())
         try:
-            year = base.year
+            year = base.year # 기준 년도는 현재 년도 사용
             candidate_date = datetime(year, month, day)
+            
+            # 만약 추출된 날짜가 오늘 기준(base)보다 이전이면 → 다음 해로 보정 처리
             if candidate_date < base:
                 candidate_date = datetime(year + 1, month, day)
+                
+            # (표현 텍스트, datetime 객체)를 결과 리스트에 추가
             results.append((f"{month}월 {day}일", candidate_date))
         except ValueError:
+            # 유효하지 않은 날짜(예: 2월 30일 등)는 무시
             pass
 
-    return results
-    # if "다음 주" in text or "다음주" in text:
-    #     for label, weekday in DAYS.items():
-    #         if label in text:
-    #             offset = (weekday - base.weekday() + 7) % 7 + 7
-    #             results.append((f"다음주 {label}", base + timedelta(days=offset)))
     return results
 
 # 시각 추출 함수
