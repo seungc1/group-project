@@ -2,11 +2,9 @@
 
 > **효율적인 업무를 위한 AI 기반 회의 기록 및 요약 어시스턴트**
 
+## 📽️ Talk To Text 프로젝트 Video
 
-## 📽️ Demo Video
-
-[![Watch the video](https://youtu.be/_rPw4lNMDEU)
-
+[![Watch the video](https://img.youtube.com/vi/_rPw4lNMDEU/0.jpg)](https://www.youtube.com/watch?v=_rPw4lNMDEU)
 ## 📖 프로젝트 소개
 
 **Talk to Text**는 회의 내용을 자동으로 기록하고 관리해주는 올인원 웹 애플리케이션입니다.
