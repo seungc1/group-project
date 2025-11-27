@@ -1,0 +1,24 @@
+{
+  "firestore": {
+    "rules": "firestore.rules"
+  },
+  "functions": {
+    "source": "functions",
+    "runtime": "nodejs18",
+    "platform": "gcfv2"
+  },
+  "hosting": {
+    "public": "functions/.next",
+    "ignore": [
+      "firebase.json",
+      "**/.*",
+      "**/node_modules/**"
+    ],
+    "rewrites": [
+      {
+        "source": "**",
+        "function": "nextApp"
+      }
+    ]
+  }
+}

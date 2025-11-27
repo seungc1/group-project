@@ -1,0 +1,222 @@
+/* 파일 위치: app/components/features/Meeting/MeetingEditor/style.module.css */
+
+/* ─────────────────────────────────────────────
+   공통 섹션 카드
+───────────────────────────────────────────── */
+.summarySection {
+  background-color: #fff;
+  border-radius: 0.5rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0rem;
+}
+
+/* ─────────────────────────────────────────────
+   2단 레이아웃 (여백 ↓)
+───────────────────────────────────────────── */
+.container {
+  display: flex;
+  gap: 5px;
+  margin-top: 0;
+  width: 100%;
+  height: 90vh;
+  box-sizing: border-box;
+  padding: 0rem;
+}
+
+/* ─────────────────────────────────────────────
+   좌/우 Pane 공통
+───────────────────────────────────────────── */
+.leftPane,
+.rightPane {
+  flex: 1;
+  background: #f9f9f9;
+  padding: 10px;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  display: flex;
+  flex-direction: column;
+}
+
+/* ─────────────────────────────────────────────
+   패널 내부 h3(소제목) 여백 ↓
+───────────────────────────────────────────── */
+.leftPane > h3,
+.rightPane > h3 {
+  margin-top: 0;
+  margin-bottom: 0.5rem;
+}
+
+/* ─────────────────────────────────────────────
+   스크롤 컨테이너 (SaveButton / ChatRow 제외)
+───────────────────────────────────────────── */
+.scrollContainer {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  margin-bottom: 1rem;
+}
+
+/* ─────────────────────────────────────────────
+   텍스트 에어리어 (요약 / 수정 요청)
+───────────────────────────────────────────── */
+.textarea {
+  width: 100%;
+  height: 100%;
+  resize: none;
+  padding: 12px;
+  font-size: 14px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box;
+  min-height: 140px;
+  overflow-y: auto;
+}
+
+/* ─────────────────────────────────────────────
+   GPT 영역 래퍼
+───────────────────────────────────────────── */
+.gptArea {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+/* GPT 결과가 없을 때 보여줄 안내문구 */
+.placeholderText {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #999;
+  font-size: 14px;
+  text-align: center;
+  padding: 16px;
+  border: 1px dashed #ccc;
+  border-radius: 4px;
+  background-color: #fafafa;
+}
+
+/* ─────────────────────────────────────────────
+   GPT 제안 결과 박스
+───────────────────────────────────────────── */
+.gptResultBox {
+  background: #f0faff;
+  border: 1px solid #bbe1ff;
+  border-radius: 4px;
+  padding: 12px;
+  overflow-y: auto;
+  box-sizing: border-box;
+  height: 100%;
+}
+
+.generatedPreview {
+  white-space: pre-wrap;
+  word-break: keep-all;
+}
+
+/* 수정/취소 버튼 라인 (GPT 결과 하단) */
+.actionRow {
+  display: flex;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+/* ─────────────────────────────────────────────
+   actionRow 내부 버튼 스타일
+───────────────────────────────────────────── */
+.actionRow button {
+  flex: 1;
+  background-color: #2563eb;   /* 활성화 시 파란색 */
+  color: #fff;
+  border: none;
+  border-radius: 9999px;       /* pill 모양 */
+  padding: 6px 12px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.actionRow button:not(:disabled):hover {
+  background-color: #1d4ed8;   /* 호버 시 짙은 파란색 */
+}
+
+.actionRow button:disabled {
+  background-color: #9ca3af;   /* 비활성화 시 회색 */
+  cursor: not-allowed;
+}
+
+/* ─────────────────────────────────────────────
+   채팅 입력 행 (항상 보이는 하단 고정)
+───────────────────────────────────────────── */
+.chatRow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 0.5rem;
+}
+
+.chatInput {
+  flex: 1;
+  padding: 6px 12px;
+  font-size: 14px;
+  border: 1px solid #ccc;
+  border-radius: 20px;
+  resize: none;
+  min-height: 36px;
+  line-height: 1.4;
+  overflow-y: auto;
+  box-sizing: border-box;
+}
+
+.chatButton {
+  padding: 6px 12px;
+  background-color: #0070f3;
+  color: #fff;
+  border: none;
+  border-radius: 20px;
+  cursor: pointer;
+  white-space: nowrap;
+  font-size: 14px;
+}
+
+.chatButton:disabled {
+  background-color: #aaa;
+  cursor: not-allowed;
+}
+
+/* ─────────────────────────────────────────────
+   버튼 컨테이너 (Save 및 Reset 버튼)
+───────────────────────────────────────────── */
+.buttonRow {
+  display: flex;
+  gap: 12px;         /* 버튼 사이 간격 조정 */
+  margin-top: 0.5rem; /* textarea 하단 여백 */
+}
+
+/* SaveButton과 Reset 버튼의 공통 스타일 */
+.buttonRow button {
+  flex: 1;
+  height: 40px;
+  background-color: #2563eb;   /* 활성화 시 파란색 */
+  color: #fff;
+  border: none;
+  border-radius: 9999px;       /* pill 모양 */
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.buttonRow button:not(:disabled):hover {
+  background-color: #1d4ed8;   /* 호버 시 짙은 파란색 */
+}
+
+.buttonRow button:disabled {
+  background-color: #9ca3af;   /* 비활성화 시 회색 */
+  cursor: not-allowed;
+}

@@ -1,0 +1,102 @@
+.form {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 2rem;
+}
+
+.formGroup {
+  margin-bottom: 1.5rem;
+}
+
+.formGroup label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: 500;
+  color: #374151;
+}
+
+.formGroup input {
+  width: 100%;
+  padding: 0.75rem;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.5rem;
+  font-size: 1rem;
+}
+
+.formGroup input:focus {
+  outline: none;
+  border-color: #4f46e5;
+  box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+}
+
+.participantInput {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.participantInput input {
+  flex: 1;
+}
+
+.addButton,
+.removeButton {
+  padding: 0.5rem 1rem;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.375rem;
+  background: white;
+  color: #4f46e5;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.addButton:hover,
+.removeButton:hover {
+  background: #f3f4f6;
+}
+
+.submitButton {
+  width: 100%;
+  padding: 1rem;
+  border: none;
+  border-radius: 0.5rem;
+  background: #4f46e5;
+  color: white;
+  font-weight: 600;
+  font-size: 1.125rem;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.submitButton:hover {
+  background: #4338ca;
+}
+
+.submitButton:disabled {
+  background: #9ca3af;
+  cursor: not-allowed;
+}
+
+.error {
+  color: #dc2626;
+  margin-bottom: 1rem;
+  padding: 0.75rem;
+  background: #fee2e2;
+  border-radius: 0.5rem;
+}
+
+.input {
+  width: 100%;
+  padding: 0.75rem;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.5rem;
+  font-size: 1rem;
+}
+
+.datepickerCalendar {
+  border: 1px solid #e5e7eb;
+  border-radius: 0.5rem;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+} 

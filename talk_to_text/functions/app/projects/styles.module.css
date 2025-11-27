@@ -1,0 +1,218 @@
+.container {
+  display: flex;
+  width: 100%;
+  min-height: 100vh;
+  background: #F6F6F6;
+}
+
+.navigationRail {
+  width: 80px;
+  background: white;
+  padding: 20px 0;
+  box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+}
+
+.navItems {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.navItem {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  padding: 10px;
+  border-radius: 8px;
+  transition: background-color 0.2s;
+}
+
+.navItem:hover {
+  background-color: #f0f0f0;
+}
+
+.icon {
+  font-size: 24px;
+}
+
+.navItem span {
+  font-size: 12px;
+  text-align: center;
+}
+
+.mainContent {
+  flex: 1;
+  padding: 32px;
+}
+
+.header {
+  margin-bottom: 32px;
+}
+
+.header h1 {
+  font-size: 24px;
+  font-weight: 600;
+  color: #333;
+}
+
+.loading {
+  text-align: center;
+  padding: 40px;
+  font-size: 18px;
+  color: #666;
+}
+
+.meetingsList {
+  display: grid;
+  gap: 20px;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+}
+
+.meetingItem {
+  background: white;
+  border-radius: 12px;
+  padding: 24px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.meetingContent h3 {
+  font-size: 18px;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 8px;
+}
+
+.meetingContent p {
+  color: #666;
+  margin-bottom: 8px;
+  font-size: 14px;
+}
+
+.summary {
+  color: #888;
+  font-size: 14px;
+  line-height: 1.5;
+  margin-top: 12px;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.viewButton {
+  padding: 10px 20px;
+  background: #4a90e2;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  align-self: flex-end;
+}
+
+.viewButton:hover {
+  background: #357abd;
+}
+
+.title {
+  font-size: 2rem;
+  color: #333;
+  margin-bottom: 1rem;
+}
+
+.meetingCount {
+  color: #666;
+  margin-bottom: 2rem;
+}
+
+.meetingsList {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.meetingCard {
+  background: white;
+  border-radius: 8px;
+  padding: 1.5rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.meetingCard:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.meetingTitle {
+  font-size: 1.5rem;
+  color: #333;
+  margin-bottom: 1rem;
+}
+
+.meetingInfo {
+  color: #666;
+}
+
+.meetingInfo p {
+  margin: 0.5rem 0;
+}
+
+.audioSection {
+  margin-top: 1rem;
+}
+
+.audioPlayer {
+  width: 100%;
+  margin-top: 0.5rem;
+}
+
+.error {
+  color: #dc3545;
+  text-align: center;
+  padding: 2rem;
+}
+
+.noMeetings {
+  text-align: center;
+  padding: 2rem;
+  color: #666;
+}
+
+/* 새로 추가된 스타일 */
+.textInfo {
+  margin-top: 1.5rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid #eee;
+}
+
+.transcript {
+  margin-top: 1rem;
+}
+
+.transcriptSegment {
+  margin: 0.8rem 0;
+  line-height: 1.5;
+}
+
+.speaker {
+  font-weight: bold;
+  color: #2c5282;
+  margin-right: 0.5rem;
+}
+
+.text {
+  color: #2d3748;
+}
+
+.expanded {
+  background: #f8f9fa;
+} 

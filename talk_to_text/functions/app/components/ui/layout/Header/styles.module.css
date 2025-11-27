@@ -1,0 +1,32 @@
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem;
+  }
+  
+  .header h1 {
+    margin: 0;
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: #1f2937;
+  }
+  
+  .header-actions {
+    display: flex;
+    gap: 0.5rem;
+  }
+  
+  .icon-button {
+    background: none;
+    border: none;
+    padding: 0.5rem;
+    cursor: pointer;
+    font-size: 1.25rem;
+    color: #6b7280;
+    transition: color 0.2s;
+  }
+  
+  .icon-button:hover {
+    color: #1f2937;
+  }
