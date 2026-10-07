@@ -104,3 +104,6 @@ talk_to_text/
 │   └── main.py          # Flask App Entry
 └── ...
 ```
+
+
+<!-- Security scan triggered at 2026-10-07 11:17:53 -->
