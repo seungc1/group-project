@@ -1,0 +1,52 @@
+/* 파일 위치: app/components/ui/Carousel/styles.module.css */
+
+/* ─────────────────────────────────────────────────── */
+/*  캐러셀 컨테이너  */
+.carousel {
+  display: flex;
+  flex-wrap: nowrap;              /* 한 줄에 고정, 줄 바꿈 금지 */
+  gap: 16px;
+  justify-content: center;        /* 넉넉할 땐 중앙 정렬 */
+  overflow-x: auto;               /* 너무 좁으면 가로 스크롤 허용 */
+  -webkit-overflow-scrolling: touch;
+  padding: 1rem;
+  scroll-snap-type: x mandatory;   /* 필요하다면 유지, 원치 않으면 삭제 */
+}
+
+/* ─────────────────────────────────────────────────── */
+/*  개별 캐러셀 아이템  */
+.carousel-item {
+  /* 브라우저 너비에 따라 200px ~ 300px 사이로 유연해지는 크기 */
+  width: clamp(200px, 30vw, 300px);
+  height: clamp(200px, 30vw, 300px);
+
+  flex: 0 0 auto;                 /* 부모 flex가 줄 바꿈하지 않도록 고정 */
+  background-color: #f3f4f6;
+  border-radius: 0.5rem;
+  scroll-snap-align: start;       /* 필요하다면 유지 */
+
+  /* position: relative;은 image-wrapper 가 대신하므로 생략 가능 */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;               /* 이미지가 넘칠 때 자르기 */
+}
+
+/* ─────────────────────────────────────────────────── */
+/*  이미지 래퍼(div) - fill 모드를 쓰기 위해 position: relative; 설정  */
+.image-wrapper {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+/* ─────────────────────────────────────────────────── */
+/*  img 태그 직접 스타일링 (사실 Next/Image fill과 object-fit cover 로 커버)  */
+.carousel-item img {
+  /* 아래 스타일은 사실 .image-wrapper + <Image fill> 조합으로 대체됩니다.
+     일반 <img>라면 이렇게 해주면 비율 유지하면서 박스를 채웁니다. */
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 0.5rem;
+}

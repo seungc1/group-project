@@ -1,0 +1,109 @@
+.error {
+  color: #dc3545;
+  font-size: 0.875rem;
+  margin-top: 0.25rem;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  max-width: 800px;
+  width: 100%;
+  margin: 2rem auto;
+  padding: 2rem;
+  background-color: white;
+  border-radius: 0.75rem;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.formGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.formGroup label {
+  font-weight: 600;
+  color: #374151;
+  font-size: 1.125rem;
+}
+
+.formGroup input, .textArea {
+  padding: 1rem;
+  border: 2px solid #d1d5db;
+  border-radius: 0.5rem;
+  font-size: 1.125rem;
+  transition: all 0.2s;
+  background-color: #f9fafb;
+  color: black;
+}
+
+.formGroup input:focus, .textArea:focus {
+  outline: none;
+  border-color: #4f46e5;
+  box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.2);
+  background-color: white;
+}
+
+.formGroup input::placeholder, .textArea::placeholder {
+  color: #9ca3af;
+} 
+
+.textArea {
+  min-height: 120px;
+  resize: vertical;
+  font-family: inherit;
+  line-height: 1.5;
+}
+
+.datepickerCalendar {
+  min-width: 100% !important;
+  font-size: 1.1rem;
+}
+
+.meetingCreateTitle {
+  color: #111;
+}
+
+.successModalOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0,0,0,0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+}
+
+.successModalBox {
+  background: #fff;
+  border-radius: 12px;
+  padding: 32px;
+  min-width: 320px;
+  text-align: center;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.15);
+}
+
+.successModalTitle {
+  margin-bottom: 16px;
+  color: black;
+}
+
+.successModalText {
+  margin-bottom: 24px;
+  color: black;
+}
+
+.successModalButton {
+  padding: 10px 32px;
+  background: #4a90e2;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  font-size: 16px;
+  cursor: pointer;
+}

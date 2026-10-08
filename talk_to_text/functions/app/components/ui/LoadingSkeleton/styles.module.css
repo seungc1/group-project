@@ -1,0 +1,32 @@
+.container {
+  padding: 24px;
+}
+
+.header {
+  height: 32px;
+  background: #e5e7eb;
+  border-radius: 4px;
+  margin-bottom: 24px;
+  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+.content {
+  display: grid;
+  gap: 16px;
+}
+
+.item {
+  height: 80px;
+  background: #e5e7eb;
+  border-radius: 4px;
+  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: .5;
+  }
+} 

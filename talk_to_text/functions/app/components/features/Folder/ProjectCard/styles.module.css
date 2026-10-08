@@ -1,0 +1,90 @@
+.projectCard {
+  padding: 20px;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  cursor: pointer;
+  background: white;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  transition: all 0.2s ease;
+  position: relative;
+}
+.expanded {
+  background: #f8fafc;
+}
+.cardHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.projectName {
+  margin: 0;
+  color: #111;
+  font-size: 18px;
+  font-weight: 600;
+}
+.projectDesc {
+  margin: 8px 0 0;
+  color: #666;
+  font-size: 14px;
+}
+.arrow {
+  transition: transform 0.2s ease;
+}
+.arrow.expanded {
+  transform: rotate(180deg);
+}
+.menuWrap {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  position: relative;
+}
+.menuButton {
+  background: none;
+  border: none;
+  font-size: 20px;
+  cursor: pointer;
+  padding: 4px;
+  color: #222;
+}
+.menuDropdown {
+  position: absolute;
+  right: 0;
+  top: 40px;
+  background: #fff;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+  border-radius: 8px;
+  min-width: 120px;
+  z-index: 10;
+}
+.menuItemDanger {
+  width: 100%;
+  padding: 10px 16px;
+  background: none;
+  border: none;
+  text-align: left;
+  cursor: pointer;
+  color: #d32f2f;
+  font-size: 15px;
+}
+.meetingListWrap {
+  margin-top: 12px;
+  padding: 16px;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  background: white;
+}
+.meetingLoading, .meetingEmpty {
+  text-align: center;
+  padding: 20px;
+  color: #666;
+}
+.meetingList {
+  display: grid;
+  gap: 12px;
+}
+.meetingItem {
+  padding: 8px 0;
+  border-bottom: 1px solid #f0f0f0;
+}
+  

@@ -1,0 +1,51 @@
+.bookmarksContainer {
+  max-width: 100%;
+  margin: 0;
+  padding: 32px 0 0 0;
+}
+
+.bookmarksTitle {
+  font-size: 24px;
+  margin-bottom: 24px;
+}
+
+.empty {
+  color: #333;
+  padding: 24px 0;
+}
+
+.bookmarksList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.bookmarkItem {
+  background: #f8f9fa;
+  border-radius: 0;
+  margin-bottom: 8px;
+  padding: 20px 0 20px 24px;
+  cursor: pointer;
+  box-shadow: none;
+  width: 100%;
+  min-width: 0;
+  max-width: 100%;
+  border-bottom: 1px solid #ececec;
+}
+
+.projectName {
+  color: #555;
+  margin: 8px 0;
+  font-weight: bold;
+  font-size: 18px;
+}
+
+.meetingTitle {
+  font-size: 17px;
+  color: black;
+}
+
+.meetingDate {
+  color: #555;
+  margin: 8px 0;
+} 

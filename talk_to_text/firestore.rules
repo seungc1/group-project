@@ -1,0 +1,10 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // 모든 컬렉션에 대해 인증 없이도 모든 작업 허용
+    match /{document=**} {
+      allow read, write: if true;
+    }
+  }
+}

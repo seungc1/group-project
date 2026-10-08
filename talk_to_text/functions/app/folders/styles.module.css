@@ -1,0 +1,36 @@
+.container {
+  display: flex;
+  min-height: 100vh;
+}
+
+.main {
+  flex: 1;
+  padding: 32px;
+}
+
+.title {
+  font-size: 24px;
+  margin-bottom: 24px;
+  color: #333;
+}
+
+.loading,
+.empty,
+.error {
+  text-align: center;
+  padding: 48px;
+  color: #666;
+  background: #f5f5f5;
+  border-radius: 8px;
+  margin: 16px 0;
+}
+
+.error {
+  color: #dc2626;
+  background: #fee2e2;
+}
+
+.projectList {
+  display: grid;
+  gap: 20px;
+} 
