@@ -1,0 +1,59 @@
+/**
+ * 캐러셀 UI 컴포넌트
+ * - 여러 항목을 슬라이드 형태로 표시
+ * - 현재는 기본 구조만 구현되어 있으며, 실제 슬라이드 기능은 추후 구현 예정
+ */
+//파일위치 group-project/talk_to_text/functions/app/components/ui/Carousel/index.js
+'use client';
+
+import Image from 'next/image';
+import Link from 'next/link'; // Link 컴포넌트 임포트
+// 컴포넌트 스타일 임포트
+import styles from './styles.module.css';
+import Img from 'next/image';
+
+export default function Carousel() {
+  // 캐러셀 UI 렌더링
+  return (
+    <section className={styles.carousel}>
+      {/* 캐러셀 아이템 1: 클릭 시 /projects/new 로 이동 */}
+      <div className={styles['carousel-item']}>
+        <Link href="/projects/new">
+         <Image
+           src="/images/home1.png"
+           alt="홈 이미지 1"
+           width={300}
+           height={300}
+           draggable="false"
+         />
+       </Link>
+      </div>
+
+      {/* 캐러셀 아이템 2 */}
+      <div className={styles['carousel-item']}>
+        <Link href="/projects">
+         <Image
+           src="/images/home2.png"
+           alt="홈 이미지 2"
+           width={300}
+           height={300}
+           draggable="false"
+         />
+       </Link>
+      </div>
+
+      {/* 캐러셀 아이템 3 */}
+      <div className={styles['carousel-item']}>
+        <Link href="https://tasks.google.com/tasks/">
+         <Image
+           src="/images/home3.png"
+           alt="홈 이미지 3"
+           width={300}
+           height={300}
+           draggable="false"
+         />
+       </Link>
+      </div>
+    </section>
+  );
+}
